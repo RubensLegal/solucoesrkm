@@ -11,16 +11,16 @@ export function Header() {
             <div className="flex items-center justify-between max-w-7xl mx-auto">
                 <div className="flex items-center gap-8">
                     <Link href="/" className="font-bold text-2xl tracking-tighter hover:scale-105 transition-transform" style={{
-                        background: 'linear-gradient(to right, rgb(129, 140, 248), rgb(168, 85, 247))',
+                        background: 'linear-gradient(to right, rgb(96, 165, 250), rgb(168, 85, 247))',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                     }}>
-                        {t('brand')}
+                        Tracka
                     </Link>
 
                     <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-300">
                         <Link href="/" className="hover:text-white transition-colors">{t('nav.home')}</Link>
-                        <Link href="/tracka" className="hover:text-white transition-colors">Tracka</Link>
+                        <Link href="/about" className="hover:text-white transition-colors">{t('brand')}</Link>
                         <Link href="/faq" className="hover:text-white transition-colors">{t('nav.help')}</Link>
                     </nav>
                 </div>
