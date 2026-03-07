@@ -41,34 +41,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 // ─── Pricing Fetcher ──────────────────────────────────────────────
 
-/** Busca planos da API pública do Tracka com fallback para messages locais. */
+/** Busca planos — sempre usa traduções i18n para textos visíveis. */
 async function fetchPricing(t: any): Promise<PricingParams[]> {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
-
     const freeExcluded = (() => {
         try { return t.has('pricing.free.excluded') ? t('pricing.free.excluded').split(',') : []; }
         catch { return []; }
     })();
 
-    try {
-        const res = await fetch(`${appUrl}/api/public/plans`, {
-            next: { revalidate: 3600 }, // Cache 1h (ISR)
-        });
-        if (res.ok) {
-            const data = await res.json();
-            if (data.plans?.length > 0) {
-                // Enrich Free plan with excludedFeatures from i18n
-                return data.plans.map((plan: PricingParams) => {
-                    if (plan.name === 'Free' && (!plan.excludedFeatures || plan.excludedFeatures.length === 0)) {
-                        return { ...plan, excludedFeatures: freeExcluded };
-                    }
-                    return plan;
-                });
-            }
-        }
-    } catch {
-        // Fallback silencioso para dados locais
-    }
     return [
         {
             name: t('pricing.free.name'),
@@ -187,6 +166,7 @@ export default async function TrackaLandingPage() {
                         title={t('pricing.title')}
                         subtitle={t('pricing.subtitle')}
                         trialText={t('pricing.trial')}
+                        includedLabel={t('pricing.included_label')}
                     />
                 )}
 

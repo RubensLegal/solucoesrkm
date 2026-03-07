@@ -18,9 +18,10 @@ interface PricingSectionProps {
     title?: string;
     subtitle?: string;
     trialText?: string;
+    includedLabel?: string;
 }
 
-export function PricingSection({ items, title, subtitle, trialText }: PricingSectionProps) {
+export function PricingSection({ items, title, subtitle, trialText, includedLabel }: PricingSectionProps) {
     if (!items || items.length === 0) return null;
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
@@ -121,7 +122,7 @@ export function PricingSection({ items, title, subtitle, trialText }: PricingSec
                             {/* Divider */}
                             <div className="relative z-10 border-t border-white/10 pt-6 mb-2">
                                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                                    O que está incluído
+                                    {includedLabel || "What's included"}
                                 </p>
                             </div>
 
