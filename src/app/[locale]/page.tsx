@@ -45,25 +45,37 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 async function fetchPricing(t: any): Promise<PricingParams[]> {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
+    const freeExcluded = (() => {
+        try { return t.has('pricing.free.excluded') ? t('pricing.free.excluded').split(',') : []; }
+        catch { return []; }
+    })();
+
     try {
         const res = await fetch(`${appUrl}/api/public/plans`, {
             next: { revalidate: 3600 }, // Cache 1h (ISR)
         });
         if (res.ok) {
             const data = await res.json();
-            if (data.plans?.length > 0) return data.plans;
+            if (data.plans?.length > 0) {
+                // Enrich Free plan with excludedFeatures from i18n
+                return data.plans.map((plan: PricingParams) => {
+                    if (plan.name === 'Free' && (!plan.excludedFeatures || plan.excludedFeatures.length === 0)) {
+                        return { ...plan, excludedFeatures: freeExcluded };
+                    }
+                    return plan;
+                });
+            }
         }
     } catch {
         // Fallback silencioso para dados locais
     }
-
-    // Fallback: pricing das messages (i18n)
     return [
         {
             name: t('pricing.free.name'),
             price: t('pricing.free.price'),
             description: t('pricing.free.desc'),
             features: t('pricing.free.features').split(','),
+            excludedFeatures: freeExcluded,
             isPopular: false,
             buttonText: t('pricing.free.button'),
             buttonLink: '/register',
@@ -169,7 +181,12 @@ export default async function TrackaLandingPage() {
 
                 {/* Pricing */}
                 {config.showPricing !== false && pricingItems.length > 0 && (
-                    <PricingSection items={pricingItems} title={t('pricing.title')} />
+                    <PricingSection
+                        items={pricingItems}
+                        title={t('pricing.title')}
+                        subtitle={t('pricing.subtitle')}
+                        trialText={t('pricing.trial')}
+                    />
                 )}
 
                 {/* CTA + FAQ + Footer */}

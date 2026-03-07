@@ -26,6 +26,7 @@ export interface PricingParams {
     price: string;
     description: string;
     features: string[];
+    excludedFeatures?: string[];
     isPopular: boolean;
     buttonText: string;
     buttonLink: string;

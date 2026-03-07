@@ -88,27 +88,31 @@
         },
         "pricing": {
             "title": "Planos e Preços",
+            "subtitle": "Escolha o plano ideal para suas necessidades.",
+            "trial": "✨ 15 dias grátis com todas as features ao se cadastrar!",
+            "included_label": "O QUE ESTÁ INCLUÍDO",
             "free": {
                 "name": "Free",
-                "price": "R$0",
-                "desc": "Para começar",
-                "features": "Até 50 itens,1 casa,2 cômodos,Busca básica",
+                "price": "Grátis",
+                "desc": "Para uso pessoal e pequenas organizações.",
+                "features": "50 Itens,50 Vision AI 🤖,1 Casas,5 Cômodos/casa,5 Móveis/cômodo,1 Fotos/item,0 Colaboradores/casa",
+                "excluded": "Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
                 "button": "Começar Grátis"
             },
             "plus": {
                 "name": "Plus",
-                "price": "R$9,90/mês",
-                "desc": "Para quem quer mais",
-                "features": "Até 500 itens,3 casas,15 cômodos,Busca avançada,IA básica",
-                "button": "Assinar Plus",
-                "popular": "MAIS POPULAR"
+                "price": "R$ 9,90/mês",
+                "desc": "Para quem precisa de mais espaço e recursos.",
+                "features": "200 Itens,200 Vision AI 🤖,3 Casas,15 Cômodos/casa,15 Móveis/cômodo,1 Fotos/item,2 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
+                "button": "Assinar Agora",
+                "popular": "POPULAR"
             },
             "pro": {
                 "name": "Pro",
-                "price": "R$19,90/mês",
-                "desc": "Para profissionais",
-                "features": "Itens ilimitados,Casas ilimitadas,Cômodos ilimitados,IA completa,Suporte prioritário",
-                "button": "Assinar Pro"
+                "price": "R$ 19,90/mês",
+                "desc": "Para quem precisa do máximo do Tracka.",
+                "features": "2.000 Itens,2.000 Vision AI 🤖,10 Casas,50 Cômodos/casa,50 Móveis/cômodo,1 Fotos/item,10 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
+                "button": "Assinar Agora"
             }
         },
         "faq": {

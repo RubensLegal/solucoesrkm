@@ -88,27 +88,31 @@
         },
         "pricing": {
             "title": "Plans & Pricing",
+            "subtitle": "Choose the ideal plan for your needs.",
+            "trial": "✨ 15-day free trial with all features on sign up!",
+            "included_label": "WHAT'S INCLUDED",
             "free": {
                 "name": "Free",
-                "price": "$0",
-                "desc": "To get started",
-                "features": "Up to 50 items,1 house,2 rooms,Basic search",
+                "price": "Free",
+                "desc": "For personal use and small organizations.",
+                "features": "50 Items,50 Vision AI 🤖,1 House,5 Rooms/house,5 Furniture/room,1 Photos/item,0 Collaborators/house",
+                "excluded": "Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
                 "button": "Start Free"
             },
             "plus": {
                 "name": "Plus",
                 "price": "$4.90/mo",
-                "desc": "For power users",
-                "features": "Up to 500 items,3 houses,15 rooms,Advanced search,Basic AI",
-                "button": "Subscribe Plus",
-                "popular": "MOST POPULAR"
+                "desc": "For those who need more space and resources.",
+                "features": "200 Items,200 Vision AI 🤖,3 Houses,15 Rooms/house,15 Furniture/room,1 Photos/item,2 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+                "button": "Subscribe Now",
+                "popular": "POPULAR"
             },
             "pro": {
                 "name": "Pro",
                 "price": "$9.90/mo",
-                "desc": "For professionals",
-                "features": "Unlimited items,Unlimited houses,Unlimited rooms,Full AI,Priority support",
-                "button": "Subscribe Pro"
+                "desc": "For those who need the most out of Tracka.",
+                "features": "2,000 Items,2,000 Vision AI 🤖,10 Houses,50 Rooms/house,50 Furniture/room,1 Photos/item,10 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+                "button": "Subscribe Now"
             }
         },
         "faq": {
