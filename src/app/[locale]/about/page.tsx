@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { Header } from '@/components/Header';
+import { LandingHeader } from '@/components/landing/LandingHeader';
 import { Footer } from '@/components/Footer';
 import { Package, Rocket, ArrowRight, Sparkles, Shield, Zap } from 'lucide-react';
 
@@ -15,6 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
     const t = await getTranslations('corporate');
+    const tt = await getTranslations('tracka');
 
     const footerLinks = [
         { label: t('footer.links.faq'), href: '/faq' },
@@ -33,8 +34,17 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     const tags = t('products.tracka.tags').split(',');
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
-            <Header />
+        <div className="min-h-screen text-white overflow-x-hidden" style={{
+            background: 'linear-gradient(180deg, #0a0a1a 0%, #0d0d24 20%, #0a0a1a 40%, #080816 100%)',
+        }}>
+            <LandingHeader
+                logoText="Tracka"
+                navHome={t('nav.home')}
+                navFeatures={tt('features.title')}
+                navPricing={tt('pricing.title')}
+                navAbout={t('brand')}
+                loginText={t('login')}
+            />
 
             {/* Hero */}
             <section className="relative min-h-[80vh] flex items-center justify-center px-4 pt-20">

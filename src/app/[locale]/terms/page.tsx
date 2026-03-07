@@ -1,11 +1,24 @@
-import { Header } from '@/components/Header';
+import { getTranslations } from 'next-intl/server';
+import { LandingHeader } from '@/components/landing/LandingHeader';
 
 export const metadata = { title: 'Termos de Uso | Soluções RKM' };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+    const t = await getTranslations('corporate');
+    const tt = await getTranslations('tracka');
+
     return (
-        <>
-            <Header />
+        <div className="min-h-screen text-white overflow-x-hidden" style={{
+            background: 'linear-gradient(180deg, #0a0a1a 0%, #0d0d24 20%, #0a0a1a 40%, #080816 100%)',
+        }}>
+            <LandingHeader
+                logoText="Tracka"
+                navHome={t('nav.home')}
+                navFeatures={tt('features.title')}
+                navPricing={tt('pricing.title')}
+                navAbout={t('brand')}
+                loginText={t('login')}
+            />
             <div className="pt-24 pb-16 px-4">
                 <div className="prose">
                     <h1>Termos de Uso</h1>
@@ -50,6 +63,6 @@ export default function TermsPage() {
                     <p><em>Foro: comarca de domicílio do consumidor.</em></p>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

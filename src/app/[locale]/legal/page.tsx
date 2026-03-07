@@ -1,11 +1,24 @@
-import { Header } from '@/components/Header';
+import { getTranslations } from 'next-intl/server';
+import { LandingHeader } from '@/components/landing/LandingHeader';
 
 export const metadata = { title: 'Avisos Legais | Soluções RKM' };
 
-export default function LegalPage() {
+export default async function LegalPage() {
+    const t = await getTranslations('corporate');
+    const tt = await getTranslations('tracka');
+
     return (
-        <>
-            <Header />
+        <div className="min-h-screen text-white overflow-x-hidden" style={{
+            background: 'linear-gradient(180deg, #0a0a1a 0%, #0d0d24 20%, #0a0a1a 40%, #080816 100%)',
+        }}>
+            <LandingHeader
+                logoText="Tracka"
+                navHome={t('nav.home')}
+                navFeatures={tt('features.title')}
+                navPricing={tt('pricing.title')}
+                navAbout={t('brand')}
+                loginText={t('login')}
+            />
             <div className="pt-24 pb-16 px-4">
                 <div className="prose">
                     <h1>Avisos Legais</h1>
@@ -31,6 +44,6 @@ export default function LegalPage() {
                     <p><em>Todos os termos, políticas e avisos legais estão sujeitos a alterações com antecedência mínima de 15 dias.</em></p>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

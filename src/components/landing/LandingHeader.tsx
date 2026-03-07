@@ -4,7 +4,10 @@
  *
  * Fixo no topo com glassmorphism. Inclui LanguageSwitcher.
  * Login aponta para tracka.solucoesrkm.com.
+ * O link "Início" faz scroll para o topo da página atual.
  */
+
+'use client';
 
 import { Link } from '@/i18n/navigation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -42,9 +45,9 @@ export function LandingHeader({ logoText, navHome, navFeatures, navPricing, navA
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-400">
-                        <NavLink href="/">{navHome}</NavLink>
-                        <NavLink href="#features">{navFeatures}</NavLink>
-                        <NavLink href="#pricing">{navPricing}</NavLink>
+                        <ScrollTopLink>{navHome}</ScrollTopLink>
+                        <NavLink href="/#features">{navFeatures}</NavLink>
+                        <NavLink href="/#pricing">{navPricing}</NavLink>
                         <NavLink href="/about">{navAbout}</NavLink>
                     </nav>
                 </div>
@@ -64,6 +67,19 @@ export function LandingHeader({ logoText, navHome, navFeatures, navPricing, navA
                 </div>
             </div>
         </header>
+    );
+}
+
+/** Link que faz scroll suave para o topo da página atual */
+function ScrollTopLink({ children }: { children: ReactNode }) {
+    return (
+        <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="hover:text-white transition-colors duration-200 relative group cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit text-sm"
+        >
+            {children}
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 group-hover:w-full transition-all duration-300" />
+        </button>
     );
 }
 

@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Header } from '@/components/Header';
+import { LandingHeader } from '@/components/landing/LandingHeader';
 import { Footer } from '@/components/Footer';
 import { Play, Info, Search, Truck, Smartphone, Shield, Code, Users, Zap, ChevronDown, Check, Star } from 'lucide-react';
 
@@ -53,8 +53,17 @@ export default async function TrackaPage({ params }: { params: Promise<{ locale:
     ];
 
     return (
-        <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden">
-            <Header />
+        <div className="min-h-screen text-white overflow-x-hidden" style={{
+            background: 'linear-gradient(180deg, #0a0a1a 0%, #0d0d24 20%, #0a0a1a 40%, #080816 100%)',
+        }}>
+            <LandingHeader
+                logoText="Tracka"
+                navHome={tc('nav.home')}
+                navFeatures={t('features.title')}
+                navPricing={t('pricing.title')}
+                navAbout={tc('brand')}
+                loginText={tc('login')}
+            />
 
             {/* Hero */}
             <section className="relative min-h-[80vh] flex items-center justify-start px-4 md:px-12 pt-20 pb-40" style={{ minHeight: 'max(75vh, 520px)' }}>
