@@ -1,0 +1,55 @@
+// ═══════════════════════════════════════════════════════════════════
+// Prisma Schema — Soluções RKM Corporate
+// Banco exclusivo para configs da landing page e admin SaaS.
+// ═══════════════════════════════════════════════════════════════════
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── User ────────────────────────────────────────────────────────
+// Tabela de usuários. No contexto corporativo, apenas employees
+// acessam o admin. Sem cadastro público — login via seeds/convite.
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  passwordHash String?
+  role         String    @default("VIEWER") // SUPERADMIN | EMPLOYEE
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  employee     Employee?
+}
+
+// ─── Employee ────────────────────────────────────────────────────
+// Permissões internas. Criados automaticamente para @solucoesrkm.com
+// ou manualmente via seed script.
+model Employee {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   @default("EDITOR") // ADMIN | EDITOR | VIEWER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── SiteSettings ────────────────────────────────────────────────
+// Key-value store para configs.
+// Keys usadas:
+//   - "landing_page_config"  → textos/seções/flags da landing
+//   - "landing_page_history" → histórico de alterações
+//   - "freshdesk_config"     → integração Freshworks
+//   - "freshdesk_history"    → histórico Freshdesk
+//   - "api_keys"             → chaves de API externas
+//   - "api_keys_history"     → histórico API Keys
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON string
+  updatedAt DateTime @updatedAt
+}

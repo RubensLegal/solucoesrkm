@@ -1,0 +1,121 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.25rem;
+    transition: color 150ms, background-color 150ms, border-color 150ms, transform 150ms;
+    cursor: pointer;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.button:active {
+    transform: scale(0.95);
+}
+
+/* ─── Variants ─── */
+.primary {
+    background-color: rgb(79, 70, 229);
+    color: white;
+}
+
+@media (hover: hover) {
+    .primary:hover {
+        filter: brightness(0.9);
+    }
+}
+
+.secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+@media (hover: hover) {
+    .secondary:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+}
+
+.outline {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: transparent;
+    color: white;
+}
+
+@media (hover: hover) {
+    .outline:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+.ghost {
+    background-color: transparent;
+    color: white;
+}
+
+@media (hover: hover) {
+    .ghost:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.destructive {
+    background-color: rgb(220, 38, 38);
+    color: white;
+}
+
+@media (hover: hover) {
+    .destructive:hover {
+        background-color: rgb(185, 28, 28);
+    }
+}
+
+/* ─── Sizes ─── */
+.sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.md {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+}
+
+.lg {
+    padding: 0.75rem 2.5rem;
+    font-size: 0.9rem;
+}
+
+.icon {
+    height: 2.5rem;
+    width: 2.5rem;
+    padding: 0;
+}
+
+/* ─── Spinner ─── */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-left-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
