@@ -85,20 +85,38 @@ export interface LandingPageConfig {
 /**
  * Busca config da landing no banco e faz merge com defaults.
  * Valores vazios (null, undefined, '', []) são ignorados — usa o default.
+ * 
+ * Prioridade: DB locale-specific → DB generic → defaults
  */
-export async function getLandingPageConfig(): Promise<LandingPageConfig> {
-    const settings = await getSiteSettings('landing_page_config');
-
-    if (!settings) return DEFAULT_LANDING_CONFIG;
+export async function getLandingPageConfig(locale?: string): Promise<LandingPageConfig> {
+    // Fetch both generic and locale-specific configs in parallel
+    const [genericSettings, localeSettings] = await Promise.all([
+        getSiteSettings('landing_page_config'),
+        locale ? getSiteSettings(`landing_page_config_${locale}`) : null,
+    ]);
 
     const merged: Record<string, any> = { ...DEFAULT_LANDING_CONFIG };
 
-    for (const [key, value] of Object.entries(settings)) {
-        if (value === null || value === undefined) continue;
-        if (typeof value === 'string' && value.trim() === '') continue;
-        if (Array.isArray(value) && value.length === 0) continue;
-        merged[key] = value;
+    // Layer 1: generic DB settings
+    if (genericSettings) {
+        for (const [key, value] of Object.entries(genericSettings)) {
+            if (value === null || value === undefined) continue;
+            if (typeof value === 'string' && value.trim() === '') continue;
+            if (Array.isArray(value) && value.length === 0) continue;
+            merged[key] = value;
+        }
+    }
+
+    // Layer 2: locale-specific DB settings (highest priority for text fields)
+    if (localeSettings) {
+        for (const [key, value] of Object.entries(localeSettings)) {
+            if (value === null || value === undefined) continue;
+            if (typeof value === 'string' && value.trim() === '') continue;
+            if (Array.isArray(value) && value.length === 0) continue;
+            merged[key] = value;
+        }
     }
 
     return merged as LandingPageConfig;
 }
+

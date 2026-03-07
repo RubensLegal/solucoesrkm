@@ -19,6 +19,23 @@ import { CollapsibleSection } from '@/components/admin/CollapsibleSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import Link from 'next/link';
 import { Settings, Globe, Key, Headset, Shield } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+
+/** Extract i18n text fields that map to landing page config */
+async function getI18nLandingDefaults(locale: string) {
+    const t = await getTranslations({ locale, namespace: 'tracka' });
+    const tc = await getTranslations({ locale, namespace: 'corporate' });
+    return {
+        heroSubtitle: t('hero.subtitle'),
+        ctaPrimaryText: t('hero.cta_primary'),
+        featuresTitle: t('features.title'),
+        techTitle: t('technology.title'),
+        footerCtaTitle: t('cta.title'),
+        footerCtaSubtitle: t('cta.subtitle'),
+        footerCtaButton: t('cta.button'),
+        footerContact: tc('footer.contact'),
+    };
+}
 
 export default async function AdminSettingsPage() {
     // ── Auth: employee-only ──
@@ -32,13 +49,15 @@ export default async function AdminSettingsPage() {
         redirect('/admin/login?callbackUrl=/admin/settings');
     }
 
-    // ── Fetch all configs in parallel ──
-    const [config, freshdeskConfig, landingHistory, freshdeskHistory, apiKeysHistory] = await Promise.all([
+    // ── Fetch all configs and i18n defaults in parallel ──
+    const [config, freshdeskConfig, landingHistory, freshdeskHistory, apiKeysHistory, i18nPt, i18nEn] = await Promise.all([
         getLandingPageConfig(),
         getFreshdeskConfig(),
         getSettingsHistory('landing_page_history'),
         getSettingsHistory('freshdesk_history'),
         getSettingsHistory('api_keys_history'),
+        getI18nLandingDefaults('pt'),
+        getI18nLandingDefaults('en'),
     ]);
 
     const isCanEdit = checkCanEdit(role);
@@ -67,9 +86,9 @@ export default async function AdminSettingsPage() {
                     </div>
                     <div className="flex items-center gap-3">
                         <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${role === 'SUPERADMIN' ? 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/20' :
-                                role === 'ADMIN' ? 'bg-red-500/15 text-red-400 ring-1 ring-red-500/20' :
-                                    role === 'EDITOR' ? 'bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/20' :
-                                        'bg-gray-500/15 text-gray-400 ring-1 ring-gray-500/20'
+                            role === 'ADMIN' ? 'bg-red-500/15 text-red-400 ring-1 ring-red-500/20' :
+                                role === 'EDITOR' ? 'bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/20' :
+                                    'bg-gray-500/15 text-gray-400 ring-1 ring-gray-500/20'
                             }`}>
                             {role}
                         </span>
@@ -112,7 +131,7 @@ export default async function AdminSettingsPage() {
                     icon={<Globe className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-teal-500 to-emerald-600"
                 >
-                    <SiteConfigForm initialData={config} canEdit={isCanEdit} history={landingHistory} />
+                    <SiteConfigForm initialData={config} canEdit={isCanEdit} history={landingHistory} i18nDefaults={{ pt: i18nPt, en: i18nEn }} />
                 </CollapsibleSection>
 
                 {/* API Keys */}

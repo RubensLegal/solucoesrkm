@@ -8,7 +8,7 @@
  */
 
 import { getLandingPageConfig } from '@/config/landing.config';
-import { getTranslations, getMessages } from 'next-intl/server';
+import { getTranslations, getMessages, getLocale } from 'next-intl/server';
 
 // Landing Components (Netflix-style)
 import { LandingHeader } from '@/components/landing/LandingHeader';
@@ -104,10 +104,11 @@ async function fetchPricing(t: any): Promise<PricingParams[]> {
 // ─── Page Component ───────────────────────────────────────────────
 
 export default async function TrackaLandingPage() {
+    const locale = await getLocale();
     const [t, tc, config] = await Promise.all([
         getTranslations('tracka'),
         getTranslations('corporate'),
-        getLandingPageConfig(),
+        getLandingPageConfig(locale),
     ]);
 
     const showFeatures = config.showFeatures !== false;

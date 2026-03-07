@@ -16,10 +16,10 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { LandingPageConfig } from '@/config/landing.config';
-import { Plus, Trash2, Eye, EyeOff, Save } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, Save, Languages } from 'lucide-react';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
@@ -49,10 +49,23 @@ const siteConfigSchema = z.object({
 
 type SiteConfigValues = z.infer<typeof siteConfigSchema>;
 
+/** i18n default values for a single locale */
+interface I18nTextDefaults {
+    heroSubtitle: string;
+    ctaPrimaryText: string;
+    featuresTitle: string;
+    techTitle: string;
+    footerCtaTitle: string;
+    footerCtaSubtitle: string;
+    footerCtaButton: string;
+    footerContact: string;
+}
+
 interface SiteConfigFormProps {
     initialData: LandingPageConfig;
     canEdit?: boolean;
     history?: SettingsHistoryEntry[];
+    i18nDefaults?: { pt: I18nTextDefaults; en: I18nTextDefaults };
 }
 
 /* ───────────────── Toggle Switch ────────────────── */
@@ -106,25 +119,71 @@ function SectionCard({ title, description, children, className = '' }: {
     );
 }
 
+/* ───────────────── Locale Tabs ──────────────────── */
+
+const LOCALES = [
+    { code: 'pt' as const, label: '🇧🇷 Português', flag: '🇧🇷' },
+    { code: 'en' as const, label: '🇺🇸 English', flag: '🇺🇸' },
+];
+
+function LocaleTabs({ activeLocale, onChange }: {
+    activeLocale: 'pt' | 'en'; onChange: (locale: 'pt' | 'en') => void;
+}) {
+    return (
+        <div className="flex items-center gap-2 p-1 rounded-lg bg-white/[0.03] border border-white/5 w-fit">
+            <Languages className="w-4 h-4 text-gray-500 ml-2" />
+            {LOCALES.map(({ code, label }) => (
+                <button
+                    key={code}
+                    type="button"
+                    onClick={() => onChange(code)}
+                    className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all
+                        ${activeLocale === code
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                            : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
+                        }`}
+                >
+                    {label}
+                </button>
+            ))}
+        </div>
+    );
+}
+
 /* ═══════════════════ MAIN FORM ══════════════════════ */
 
-export function SiteConfigForm({ initialData, canEdit = true, history = [] }: SiteConfigFormProps) {
+export function SiteConfigForm({ initialData, canEdit = true, history = [], i18nDefaults }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
+    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>('pt');
+
+    /** Get default value for a text field: i18n value for current locale */
+    function getDefault(field: keyof I18nTextDefaults): string {
+        if (i18nDefaults) {
+            return i18nDefaults[activeLocale][field] || '';
+        }
+        return '';
+    }
+
+    /** Text fields that are translatable */
+    const TEXT_FIELDS: (keyof I18nTextDefaults)[] = [
+        'heroSubtitle', 'ctaPrimaryText', 'featuresTitle', 'techTitle',
+        'footerCtaTitle', 'footerCtaSubtitle', 'footerCtaButton', 'footerContact',
+    ];
 
     const form = useForm<SiteConfigValues>({
         resolver: zodResolver(siteConfigSchema),
         defaultValues: {
             heroTitle: initialData?.heroTitle || '',
-            heroSubtitle: initialData?.heroSubtitle || '',
+            heroSubtitle: getDefault('heroSubtitle'),
             heroImage: initialData?.heroImage || '',
-            ctaPrimaryText: initialData?.ctaPrimaryText || '',
+            ctaPrimaryText: getDefault('ctaPrimaryText'),
             ctaPrimaryLink: initialData?.ctaPrimaryLink || '',
-            featuresTitle: initialData?.featuresTitle || '',
-            techTitle: initialData?.techTitle || '',
-            footerCtaTitle: initialData?.footerCtaTitle || '',
-            footerCtaSubtitle: initialData?.footerCtaSubtitle || '',
-            footerCtaButton: initialData?.footerCtaButton || '',
-            footerContact: initialData?.footerContact || '',
+            featuresTitle: getDefault('featuresTitle'),
+            techTitle: getDefault('techTitle'),
+            footerCtaTitle: getDefault('footerCtaTitle'),
+            footerCtaSubtitle: getDefault('footerCtaSubtitle'),
+            footerCtaButton: getDefault('footerCtaButton'),
+            footerContact: getDefault('footerContact'),
             showFeatures: initialData?.showFeatures ?? true,
             showTechnology: initialData?.showTechnology ?? true,
             showPricing: initialData?.showPricing ?? false,
@@ -140,12 +199,28 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
     const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({ control: form.control, name: 'footerLinks' });
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({ control: form.control, name: 'testimonials' });
 
+    /** When switching locale, update text fields with i18n defaults for that locale */
+    function handleLocaleChange(locale: 'pt' | 'en') {
+        if (!i18nDefaults) {
+            setActiveLocale(locale);
+            return;
+        }
+        // Save current values are discarded — load i18n defaults for new locale
+        const defaults = i18nDefaults[locale];
+        for (const field of TEXT_FIELDS) {
+            form.setValue(field, defaults[field] || '');
+        }
+        setActiveLocale(locale);
+    }
+
     function onSubmit(data: SiteConfigValues) {
         if (!canEdit) return;
         startTransition(async () => {
             try {
-                await updateSiteSettings('landing_page_config', data);
-                toast.success('Configurações salvas com sucesso!');
+                // Save with locale-specific key
+                const key = `landing_page_config_${activeLocale}`;
+                await updateSiteSettings(key, data);
+                toast.success(`Configurações salvas com sucesso! (${activeLocale.toUpperCase()})`);
             } catch (error) {
                 toast.error('Erro ao salvar configurações.');
                 console.error(error);
@@ -162,6 +237,15 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                 <fieldset disabled={!canEdit} className="group">
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
+                        {/* ═══ Locale Tabs ═══ */}
+                        <div className="mb-6 flex items-center justify-between">
+                            <LocaleTabs activeLocale={activeLocale} onChange={handleLocaleChange} />
+                            <p className="text-[10px] text-gray-500 max-w-xs text-right">
+                                Editando textos em <strong className="text-indigo-400">{activeLocale === 'pt' ? 'Português' : 'English'}</strong>.
+                                Alterne o idioma para editar as traduções separadamente.
+                            </p>
+                        </div>
+
                         <div className={gridClass}>
 
                             {/* ═══ Col 1: Hero + CTA ═══ */}
@@ -175,8 +259,8 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                                 )} />
                                 <FormField control={form.control} name="heroSubtitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Subtítulo</FormLabel>
-                                        <FormControl><Textarea placeholder="Descrição breve..." rows={3} {...field} /></FormControl>
+                                        <FormLabel>Subtítulo ({activeLocale.toUpperCase()})</FormLabel>
+                                        <FormControl><Textarea placeholder={getDefault('heroSubtitle')} rows={3} {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
@@ -190,8 +274,8 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                                 <div className="grid grid-cols-2 gap-3">
                                     <FormField control={form.control} name="ctaPrimaryText" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto Botão</FormLabel>
-                                            <FormControl><Input placeholder="Começar Agora" {...field} /></FormControl>
+                                            <FormLabel>Texto Botão ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Input placeholder={getDefault('ctaPrimaryText')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="ctaPrimaryLink" render={({ field }) => (
@@ -243,14 +327,14 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                                 <SectionCard title="📝 Títulos das Seções">
                                     <FormField control={form.control} name="featuresTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Funcionalidades</FormLabel>
-                                            <FormControl><Input placeholder="Principais Funcionalidades" {...field} /></FormControl>
+                                            <FormLabel>Funcionalidades ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Input placeholder={getDefault('featuresTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="techTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tecnologia</FormLabel>
-                                            <FormControl><Input placeholder="Tecnologia Soluções RKM" {...field} /></FormControl>
+                                            <FormLabel>Tecnologia ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Input placeholder={getDefault('techTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                 </SectionCard>
@@ -258,20 +342,20 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                                 <SectionCard title="📣 Chamada para Ação (Final)" description="Seção antes do rodapé">
                                     <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Título</FormLabel>
-                                            <FormControl><Input placeholder="Pronto para organizar sua casa?" {...field} /></FormControl>
+                                            <FormLabel>Título ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Input placeholder={getDefault('footerCtaTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Subtítulo</FormLabel>
-                                            <FormControl><Textarea placeholder="Junte-se a milhares de usuários..." rows={2} {...field} /></FormControl>
+                                            <FormLabel>Subtítulo ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Textarea placeholder={getDefault('footerCtaSubtitle')} rows={2} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto do Botão</FormLabel>
-                                            <FormControl><Input placeholder="Criar Conta Grátis" {...field} /></FormControl>
+                                            <FormLabel>Texto do Botão ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormControl><Input placeholder={getDefault('footerCtaButton')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                 </SectionCard>
@@ -342,8 +426,8 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                             <SectionCard title="🔗 Rodapé" description="Links e contato do rodapé" className="break-inside-avoid mb-6">
                                 <FormField control={form.control} name="footerContact" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Contato (WhatsApp)</FormLabel>
-                                        <FormControl><Input placeholder="Dúvida? Mande um WhatsApp..." {...field} /></FormControl>
+                                        <FormLabel>Contato ({activeLocale.toUpperCase()})</FormLabel>
+                                        <FormControl><Input placeholder={getDefault('footerContact')} {...field} /></FormControl>
                                     </FormItem>
                                 )} />
                                 <div className="space-y-2">
@@ -373,7 +457,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [] }: Si
                             <div className="sticky bottom-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/95 to-transparent pt-6 pb-4 mt-8 -mx-6 px-6">
                                 <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5">
                                     <Save className="w-4 h-4" />
-                                    {isPending ? 'Salvando...' : 'Salvar Configurações'}
+                                    {isPending ? 'Salvando...' : `Salvar (${activeLocale.toUpperCase()})`}
                                 </Button>
                             </div>
                         )}

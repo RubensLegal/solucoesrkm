@@ -54,6 +54,8 @@ const MAX_HISTORY_ENTRIES = 100;
 /** Mapeia key de config → key de histórico */
 const HISTORY_KEYS: Record<string, string> = {
     landing_page_config: 'landing_page_history',
+    landing_page_config_pt: 'landing_page_history',
+    landing_page_config_en: 'landing_page_history',
     freshdesk_config: 'freshdesk_history',
     api_keys: 'api_keys_history',
 };
@@ -138,7 +140,10 @@ function computeApiKeysDiff(
 /** Seleciona função de diff correta para cada key. */
 function computeDiffForKey(key: string, oldConfig: any, newConfig: any): SettingsChange[] {
     switch (key) {
-        case 'landing_page_config': return computeLandingDiff(oldConfig, newConfig);
+        case 'landing_page_config':
+        case 'landing_page_config_pt':
+        case 'landing_page_config_en':
+            return computeLandingDiff(oldConfig, newConfig);
         case 'freshdesk_config': return computeFreshdeskDiff(oldConfig, newConfig);
         case 'api_keys': return computeApiKeysDiff(oldConfig, newConfig);
         default: return diffFlat(key, oldConfig, newConfig);
