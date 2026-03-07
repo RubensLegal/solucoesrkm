@@ -167,6 +167,7 @@ export default async function TrackaLandingPage() {
                         subtitle={t('pricing.subtitle')}
                         trialText={t('pricing.trial')}
                         includedLabel={t('pricing.included_label')}
+                        popularLabel={t('pricing.plus.popular')}
                     />
                 )}
 

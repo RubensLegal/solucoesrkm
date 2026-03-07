@@ -19,9 +19,10 @@ interface PricingSectionProps {
     subtitle?: string;
     trialText?: string;
     includedLabel?: string;
+    popularLabel?: string;
 }
 
-export function PricingSection({ items, title, subtitle, trialText, includedLabel }: PricingSectionProps) {
+export function PricingSection({ items, title, subtitle, trialText, includedLabel, popularLabel }: PricingSectionProps) {
     if (!items || items.length === 0) return null;
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
@@ -85,7 +86,7 @@ export function PricingSection({ items, title, subtitle, trialText, includedLabe
                                             background: 'linear-gradient(135deg, #f59e0b, #f97316)',
                                         }}>
                                             <Crown className="w-3.5 h-3.5" />
-                                            Popular
+                                            {popularLabel || 'Popular'}
                                         </span>
                                     </div>
                                 </>
@@ -101,7 +102,7 @@ export function PricingSection({ items, title, subtitle, trialText, includedLabe
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent',
                                     } : {}}>{plan.price}</span>
-                                    {plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/mês') && !plan.price.includes('/mo') && <span className="text-gray-500">/mês</span>}
+                                    {plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/') && <span className="text-gray-500">/mês</span>}
                                 </div>
                             </div>
 
