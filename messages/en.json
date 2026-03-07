@@ -1,0 +1,141 @@
+{
+    "corporate": {
+        "brand": "Soluções RKM",
+        "tagline": "Technology that simplifies your life",
+        "description": "We develop smart applications to organize, manage, and simplify everyday life for people and businesses.",
+        "nav": {
+            "home": "Home",
+            "products": "Products",
+            "help": "Help"
+        },
+        "login": "Sign In",
+        "stats": {
+            "secure": "Secure",
+            "secure_desc": "LGPD compliant",
+            "fast": "Fast",
+            "fast_desc": "Cloud native",
+            "smart": "Smart",
+            "smart_desc": "AI powered"
+        },
+        "products": {
+            "title": "Our Products",
+            "subtitle": "Solutions built to solve real problems",
+            "learn_more": "Learn More",
+            "coming_soon": "Coming Soon",
+            "coming_soon_desc": "New products are being developed. Stay tuned for the latest news.",
+            "tracka": {
+                "name": "Tracka",
+                "active": "ACTIVE",
+                "planned": "PLANNED",
+                "desc": "Smart personal and business inventory management. Catalog, organize, and locate your belongings with AI.",
+                "tags": "Inventory,AI,Collaboration,PWA"
+            }
+        },
+        "footer": {
+            "rights": "© {year} Soluções RKM. All rights reserved.",
+            "contact": "Questions? Contact us: suporte@solucoesrkm.com",
+            "links": {
+                "faq": "FAQ",
+                "terms": "Terms of Use",
+                "privacy": "Privacy",
+                "cookies": "Cookies",
+                "legal": "Legal Notices"
+            }
+        }
+    },
+    "tracka": {
+        "hero": {
+            "subtitle": "Organize everything that matters. Catalog, locate, and manage your belongings with artificial intelligence.",
+            "badge_new": "NEW",
+            "badge_original": "ORIGINAL SOLUÇÕES RKM",
+            "cta_primary": "Start Free",
+            "cta_secondary": "Learn More"
+        },
+        "features": {
+            "title": "Why choose Tracka?",
+            "view_all": "View all",
+            "search": {
+                "title": "Smart Search",
+                "desc": "Find any item instantly with advanced filters."
+            },
+            "moving": {
+                "title": "Moving Management",
+                "desc": "Plan moves with visual selection and status control."
+            },
+            "multi_device": {
+                "title": "Multi-device",
+                "desc": "Access from any device. PWA with offline support."
+            },
+            "security": {
+                "title": "Total Security",
+                "desc": "Encrypted data in compliance with LGPD."
+            }
+        },
+        "technology": {
+            "title": "Cutting-Edge Technology",
+            "tech": {
+                "title": "Modern Stack",
+                "desc": "Next.js 15, React 19, TypeScript, Turso, Vercel Edge."
+            },
+            "user_focus": {
+                "title": "User Focus",
+                "desc": "Intuitive interface inspired by Netflix with premium design."
+            },
+            "innovation": {
+                "title": "AI Powered",
+                "desc": "Google Cloud Vision for automatic item recognition."
+            }
+        },
+        "pricing": {
+            "title": "Plans & Pricing",
+            "free": {
+                "name": "Free",
+                "price": "$0",
+                "desc": "To get started",
+                "features": "Up to 50 items,1 house,2 rooms,Basic search",
+                "button": "Start Free"
+            },
+            "plus": {
+                "name": "Plus",
+                "price": "$4.90/mo",
+                "desc": "For power users",
+                "features": "Up to 500 items,3 houses,15 rooms,Advanced search,Basic AI",
+                "button": "Subscribe Plus",
+                "popular": "MOST POPULAR"
+            },
+            "pro": {
+                "name": "Pro",
+                "price": "$9.90/mo",
+                "desc": "For professionals",
+                "features": "Unlimited items,Unlimited houses,Unlimited rooms,Full AI,Priority support",
+                "button": "Subscribe Pro"
+            }
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "items": [
+                {
+                    "question": "Is Tracka free?",
+                    "answer": "Yes! The Free plan is free forever."
+                },
+                {
+                    "question": "Can I cancel anytime?",
+                    "answer": "Yes, cancel anytime without penalty."
+                },
+                {
+                    "question": "Is my data safe?",
+                    "answer": "Yes, we use encryption and follow LGPD."
+                },
+                {
+                    "question": "Does it work on mobile?",
+                    "answer": "Yes! Tracka is a PWA that works on any device."
+                }
+            ]
+        },
+        "cta": {
+            "title": "Ready to organize your life?",
+            "subtitle": "Start for free and discover how Tracka can simplify your day.",
+            "button": "Start Now"
+        }
+    }
+}

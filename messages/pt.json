@@ -1,0 +1,141 @@
+{
+    "corporate": {
+        "brand": "Soluções RKM",
+        "tagline": "Tecnologia que simplifica sua vida",
+        "description": "Desenvolvemos aplicativos inteligentes para organizar, gerenciar e simplificar o dia a dia de pessoas e empresas.",
+        "nav": {
+            "home": "Início",
+            "products": "Produtos",
+            "help": "Ajuda"
+        },
+        "login": "Entrar",
+        "stats": {
+            "secure": "Seguro",
+            "secure_desc": "LGPD compliant",
+            "fast": "Rápido",
+            "fast_desc": "Cloud nativo",
+            "smart": "Inteligente",
+            "smart_desc": "IA integrada"
+        },
+        "products": {
+            "title": "Nossos Produtos",
+            "subtitle": "Soluções criadas para resolver problemas reais",
+            "learn_more": "Conhecer",
+            "coming_soon": "Em breve",
+            "coming_soon_desc": "Novos produtos estão sendo desenvolvidos. Fique atento para as próximas novidades.",
+            "tracka": {
+                "name": "Tracka",
+                "active": "ATIVO",
+                "planned": "PLANEJADO",
+                "desc": "Gestão inteligente de inventário pessoal e empresarial. Catalogue, organize e localize seus pertences com IA.",
+                "tags": "Inventário,IA,Colaboração,PWA"
+            }
+        },
+        "footer": {
+            "rights": "© {year} Soluções RKM. Todos os direitos reservados.",
+            "contact": "Dúvidas? Entre em contato: suporte@solucoesrkm.com",
+            "links": {
+                "faq": "FAQ",
+                "terms": "Termos de Uso",
+                "privacy": "Privacidade",
+                "cookies": "Cookies",
+                "legal": "Avisos Legais"
+            }
+        }
+    },
+    "tracka": {
+        "hero": {
+            "subtitle": "Organize tudo o que importa. Catalogue, localize e gerencie seus pertences com inteligência artificial.",
+            "badge_new": "NOVO",
+            "badge_original": "ORIGINAL SOLUÇÕES RKM",
+            "cta_primary": "Começar Grátis",
+            "cta_secondary": "Saiba Mais"
+        },
+        "features": {
+            "title": "Por que escolher o Tracka?",
+            "view_all": "Ver todos",
+            "search": {
+                "title": "Busca Inteligente",
+                "desc": "Encontre qualquer item instantaneamente com filtros avançados."
+            },
+            "moving": {
+                "title": "Gestão de Mudanças",
+                "desc": "Planeje mudanças com seleção visual e controle de status."
+            },
+            "multi_device": {
+                "title": "Multi-dispositivo",
+                "desc": "Acesse de qualquer dispositivo. PWA com suporte offline."
+            },
+            "security": {
+                "title": "Segurança Total",
+                "desc": "Dados criptografados e em conformidade com a LGPD."
+            }
+        },
+        "technology": {
+            "title": "Tecnologia de Ponta",
+            "tech": {
+                "title": "Stack Moderna",
+                "desc": "Next.js 15, React 19, TypeScript, Turso, Vercel Edge."
+            },
+            "user_focus": {
+                "title": "Foco no Usuário",
+                "desc": "Interface intuitiva inspirada na Netflix com design premium."
+            },
+            "innovation": {
+                "title": "IA Integrada",
+                "desc": "Google Cloud Vision para reconhecimento automático de itens."
+            }
+        },
+        "pricing": {
+            "title": "Planos e Preços",
+            "free": {
+                "name": "Free",
+                "price": "R$0",
+                "desc": "Para começar",
+                "features": "Até 50 itens,1 casa,2 cômodos,Busca básica",
+                "button": "Começar Grátis"
+            },
+            "plus": {
+                "name": "Plus",
+                "price": "R$9,90/mês",
+                "desc": "Para quem quer mais",
+                "features": "Até 500 itens,3 casas,15 cômodos,Busca avançada,IA básica",
+                "button": "Assinar Plus",
+                "popular": "MAIS POPULAR"
+            },
+            "pro": {
+                "name": "Pro",
+                "price": "R$19,90/mês",
+                "desc": "Para profissionais",
+                "features": "Itens ilimitados,Casas ilimitadas,Cômodos ilimitados,IA completa,Suporte prioritário",
+                "button": "Assinar Pro"
+            }
+        },
+        "faq": {
+            "title": "Perguntas Frequentes",
+            "items": [
+                {
+                    "question": "O Tracka é gratuito?",
+                    "answer": "Sim! O plano Free é gratuito para sempre."
+                },
+                {
+                    "question": "Posso cancelar a qualquer momento?",
+                    "answer": "Sim, cancele quando quiser sem multa."
+                },
+                {
+                    "question": "Meus dados estão seguros?",
+                    "answer": "Sim, usamos criptografia e seguimos a LGPD."
+                },
+                {
+                    "question": "Funciona no celular?",
+                    "answer": "Sim! O Tracka é um PWA que funciona em qualquer dispositivo."
+                }
+            ]
+        },
+        "cta": {
+            "title": "Pronto para organizar sua vida?",
+            "subtitle": "Comece gratuitamente e descubra como o Tracka pode simplificar seu dia a dia.",
+            "button": "Começar Agora"
+        }
+    }
+}
