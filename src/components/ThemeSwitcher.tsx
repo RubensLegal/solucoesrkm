@@ -1,7 +1,7 @@
 /**
  * @file ThemeSwitcher.tsx
  * @description Dropdown for switching between dark/light/system themes.
- * Theme-aware: adapts its own styling based on current theme.
+ * Watches html class to detect current applied theme.
  */
 
 'use client';
@@ -20,10 +20,18 @@ export function ThemeSwitcher() {
     const { theme, setTheme } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [isDarkPage, setIsDarkPage] = useState(true);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setMounted(true);
+        const check = () => {
+            setIsDarkPage(document.documentElement.classList.contains('dark'));
+        };
+        check();
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
@@ -39,9 +47,6 @@ export function ThemeSwitcher() {
     if (!mounted) return null;
 
     const CurrentIcon = themes.find(t => t.code === theme)?.icon || Monitor;
-
-    // Check if page is actually showing dark mode
-    const isDarkPage = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
     return (
         <div className="relative" ref={dropdownRef}>
