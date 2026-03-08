@@ -184,7 +184,7 @@ function AdminSubscriptions({ t }: { t: (key: string) => string }) {
     );
 }
 
-/** Guia de Configurações Admin — seções do painel, permissões por role. */
+/** Guia de Configurações Admin — painel admin, help-editor, Freshdesk sync, permissões, estratégia. */
 function AdminSettingsGuide({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -199,6 +199,20 @@ function AdminSettingsGuide({ t }: { t: (key: string) => string }) {
                     { label: '👥 Equipe', value: t('adminSettings.team') },
                 ]} />
             </HelpSection>
+            <HelpSection title={t('helpEditor.title')}>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('helpEditor.desc')}</p>
+                <StepList steps={[
+                    t('helpEditor.step1'), t('helpEditor.step2'), t('helpEditor.step3'),
+                    t('helpEditor.step4'), t('helpEditor.step5'), t('helpEditor.step6'),
+                ]} />
+            </HelpSection>
+            <HelpSection title={t('freshdeskSync.title')}>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('freshdeskSync.desc')}</p>
+                <StepList steps={[
+                    t('freshdeskSync.step1'), t('freshdeskSync.step2'),
+                    t('freshdeskSync.step3'), t('freshdeskSync.step4'),
+                ]} />
+            </HelpSection>
             <HelpSection title={t('permissions.title')}>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('permissions.desc')}</p>
                 <InfoTable rows={[
@@ -208,14 +222,11 @@ function AdminSettingsGuide({ t }: { t: (key: string) => string }) {
                     { label: '⚪ VIEWER', value: t('permissions.viewer') },
                 ]} />
             </HelpSection>
-            <HelpSection title={t('dashboardSettings.title')}>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('dashboardSettings.desc')}</p>
+            <HelpSection title={t('contentStrategy.title')}>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('contentStrategy.desc')}</p>
                 <InfoTable rows={[
-                    { label: '👤 Perfil', value: t('dashboardSettings.profile') },
-                    { label: '🎨 Tema', value: t('dashboardSettings.theme') },
-                    { label: '🌍 Idioma', value: t('dashboardSettings.language') },
-                    { label: '♿ Acessibilidade', value: t('dashboardSettings.accessibility') },
-                    { label: '📋 Plano Atual', value: t('dashboardSettings.plan') },
+                    { label: '🏢 Corporativo', value: t('contentStrategy.corporate') },
+                    { label: '📱 Tracka', value: t('contentStrategy.tracka') },
                 ]} />
             </HelpSection>
             <TipBox>{t('tip')}</TipBox>
@@ -241,6 +252,13 @@ function FreshdeskSync({ t }: { t: (key: string) => string }) {
             </HelpSection>
             <HelpSection title={t('mapping.title')}>
                 <p className="text-sm text-muted-foreground leading-relaxed">{t('mapping.desc')}</p>
+            </HelpSection>
+            <HelpSection title={t('api.title')}>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t('api.desc')}</p>
+                <InfoTable rows={[
+                    { label: '🔄 POST', value: t('api.post') },
+                    { label: '📊 GET', value: t('api.get') },
+                ]} />
             </HelpSection>
             <TipBox variant="warning">{t('warning')}</TipBox>
             <TipBox>{t('tip')}</TipBox>

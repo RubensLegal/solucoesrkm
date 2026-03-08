@@ -1092,81 +1092,91 @@
       },
       "adminSettingsGuide": {
         "title": "Settings Guide",
-        "subtitle": "Where to find each setting in admin and dashboard",
+        "subtitle": "How to administer the corporate system and help center",
         "content": {
-          "intro": "Tracka has two settings areas: the Admin panel (/admin/settings) for global system settings, and User Settings (/dashboard/settings) for personal preferences.",
+          "intro": "The Soluções RKM corporate site has an Admin panel (/admin/settings) for global configurations and a Help Editor (/admin/help-editor) for managing help content.",
           "adminSettings": {
             "title": "/admin/settings — Admin Panel",
-            "desc": "Accessible by SUPERADMIN, ADMIN, EDITOR and VIEWER (read-only). Controls global system settings:",
-            "landing": "Texts, sections, CTA, testimonials, FAQ and footer links for the landing page",
+            "desc": "Accessible by SUPERADMIN and ADMIN. Controls global settings:",
+            "landing": "Texts, colors, images and sections of the landing page",
             "apiKeys": "API keys for external services (Google Vision, Cloudinary, etc.)",
-            "freshdesk": "Support widget, live chat and Freshdesk/Freshchat settings",
-            "plans": "Limits, prices, features and popular plan (SUPERADMIN only) — automatically reflects on landing page",
-            "team": "Team management — visible only to SUPERADMIN and ADMIN. Editors and Viewers cannot see this button"
+            "freshdesk": "Support widget, tickets, Knowledge Base and chat — full Freshdesk configuration",
+            "plans": "Plan configuration, limits and pricing (SUPERADMIN only)",
+            "team": "Team management — add, remove and change member roles"
+          },
+          "helpEditor": {
+            "title": "/admin/help-editor — Help Editor",
+            "desc": "Tool for editing help topic content without requiring a deploy. Only SUPERADMIN and ADMIN have access.",
+            "step1": "Go to /admin/help-editor",
+            "step2": "Select a topic from the left sidebar",
+            "step3": "Edit content using Markdown (bold, lists, sections, blockquotes)",
+            "step4": "Use the preview button to toggle between editing and preview",
+            "step5": "Click \"Save\" — content is updated instantly on the help pages",
+            "step6": "To revert, click \"Restore Default\" — returns to original content"
+          },
+          "freshdeskSync": {
+            "title": "Sync Help with Freshdesk",
+            "desc": "After editing topics, sync with Freshdesk to keep the Knowledge Base updated:",
+            "step1": "Go to Admin → Freshdesk → Knowledge Base section",
+            "step2": "Click \"Sync KB\"",
+            "step3": "The system creates/updates Categories, Folders and Articles automatically",
+            "step4": "Public topics are visible to all; superadminOnly ones are set to \"Agents Only\""
           },
           "permissions": {
             "title": "Permissions by Role",
-            "desc": "Each company role (Employee) has different access levels in the admin panel:",
-            "superadmin": "Full access: site settings, plans and limits, team management, subscriptions and change history",
-            "admin": "Edits site settings and manages team (add/remove/change roles). Cannot edit plans",
-            "editor": "Edits site settings (landing, API keys, Freshdesk). Cannot see team management or plans",
-            "viewer": "View only. Cannot edit anything in the admin panel"
+            "desc": "Each role has different access levels:",
+            "superadmin": "Full access: manages settings, plans, team, help and Freshdesk",
+            "admin": "Manages site settings and edits help content. Cannot edit plans",
+            "editor": "Read-only access to admin panel. Cannot edit settings",
+            "viewer": "Blocked from admin panel. Read-only access to public help"
           },
-          "dashboardSettings": {
-            "title": "/dashboard/settings — User Settings",
-            "desc": "Accessible by any logged-in user. Personal preferences:",
-            "profile": "Name, email, address, ID, phone, WhatsApp",
-            "theme": "Light, dark or automatic (system) theme",
-            "language": "Interface language (pt-BR or en)",
-            "accessibility": "Font size, high contrast",
-            "plan": "Card showing current plan status (Free, Plus, Pro, Trial)"
+          "contentStrategy": {
+            "title": "Content Strategy",
+            "desc": "Help is split between two workspaces:",
+            "corporate": "solucoesrkm.com/help — corporate topics: plans, payment, admin settings, tech docs, Freshdesk",
+            "tracka": "Tracka (Controle das Coisas) — app-exclusive topics: features, how-to, usage tips"
           },
-          "dashboardSubPages": {
-            "title": "Dashboard Settings Sub-pages",
-            "desc": "Additional pages accessible via /dashboard/settings:",
-            "plans": "Plans and Limits configuration — same table as admin (SUPERADMIN only)"
-          },
-          "helpRoutes": {
-            "title": "Help Routes (/help)",
-            "desc": "The help system is accessible to all users:",
-            "index": "Index with all help categories and topics",
-            "topic": "Detailed content for each topic (e.g., /help/plans-limits)"
-          },
-          "tip": "Admins can access the admin panel via the ⚙ button in the sidebar. SUPERADMINs have exclusive access to Plans and Limits configuration. Only SUPERADMIN and ADMIN can manage the team."
+          "tip": "To add a new topic: create the component in [slug]/page.tsx, register in help-topics.ts and add translations in messages/pt.json and en.json."
         }
       },
       "freshdeskSync": {
         "title": "Sync Help → Freshdesk",
-        "subtitle": "Automatic synchronization of help topics with Freshdesk Knowledge Base",
+        "subtitle": "Automatic synchronization of help topics with the Freshdesk Knowledge Base",
         "content": {
-          "intro": "Tracka allows automatic synchronization of all internal Help topics with the Freshdesk Knowledge Base, maintaining a single source of truth.",
+          "intro": "Soluções RKM automatically syncs all corporate help topics with the Freshdesk Knowledge Base, maintaining a single source of truth and eliminating content duplication.",
           "howItWorks": {
             "title": "How it works",
-            "desc": "The sync reads all Help topics, converts to HTML and publishes to the KB via Freshdesk API v2.",
+            "desc": "The sync reads all corporate help topics, converts them to HTML and publishes to the Knowledge Base via Freshdesk API v2.",
             "step1": "Go to Admin → Freshdesk → Knowledge Base",
             "step2": "Click \"Sync KB\"",
-            "step3": "System creates/updates Categories, Folders and Articles in Freshdesk",
-            "step4": "Report shows results: items created, updated and errors"
+            "step3": "The system creates/updates Categories, Folders and Articles in Freshdesk",
+            "step4": "Topics edited via help-editor are converted from Markdown to HTML"
           },
           "visibility": {
             "title": "Visibility Control",
-            "desc": "Article visibility is set automatically based on topic permissions:",
+            "desc": "Article visibility is automatically set based on topic permissions:",
             "public": "Unrestricted topics — visible to all KB visitors",
-            "agents": "superadminOnly topics — visible only to Freshdesk agents (confidential company info)"
+            "agents": "superadminOnly topics — visible only to Freshdesk agents (internal information)"
           },
           "mapping": {
             "title": "Persistent Mapping",
             "desc": "The system maintains an internal mapping (slug → Freshdesk ID) stored in SiteSettings. This allows re-syncs to update existing articles instead of creating duplicates."
           },
-          "warning": "FRESHDESK_API_KEY and FRESHDESK_DOMAIN must be configured in environment variables before first sync.",
-          "tip": "After editing Help topics, click \"Sync KB\" to publish changes to Freshdesk automatically!"
+          "api": {
+            "title": "API Endpoints",
+            "desc": "Sync can be triggered via API (useful for automation):",
+            "post": "POST /api/admin/freshdesk-sync — runs full sync (SUPERADMIN only)",
+            "get": "GET /api/admin/freshdesk-sync — returns last sync status (ADMIN+)"
+          },
+          "warning": "You must configure FRESHDESK_API_KEY and FRESHDESK_DOMAIN in environment variables before the first sync.",
+          "tip": "After editing topics in help-editor, click \"Sync KB\" to publish changes to Freshdesk automatically!"
         }
       },
       "freshdeskKb": {
         "title": "Freshdesk — Customer Support",
         "subtitle": "Support module configuration: widget, tickets, Knowledge Base and chat",
         "content": {
-          "intro": "Tracka integrates with Freshworks to offer 4 customer support modules, all configurable from the admin panel.",
+          "intro": "Soluções RKM integrates with Freshworks to offer 4 customer support modules, all configurable from the admin panel.",
           "modules": {
             "title": "Available modules",
             "widget": {

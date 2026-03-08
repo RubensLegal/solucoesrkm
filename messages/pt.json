@@ -1088,81 +1088,91 @@
       },
       "adminSettingsGuide": {
         "title": "Guia de Configurações",
-        "subtitle": "Onde encontrar cada configuração no admin e no dashboard",
+        "subtitle": "Como administrar o sistema corporativo e o help center",
         "content": {
-          "intro": "O Tracka possui duas áreas de configurações: o painel Admin (/admin/settings) para configurações globais do sistema, e as Configurações do Usuário (/dashboard/settings) para preferências pessoais.",
+          "intro": "O site corporativo Soluções RKM possui um painel Admin (/admin/settings) para configurações globais e um Editor de Help (/admin/help-editor) para gerenciar o conteúdo de ajuda.",
           "adminSettings": {
             "title": "/admin/settings — Painel Admin",
-            "desc": "Acessível por SUPERADMIN, ADMIN, EDITOR e VIEWER (leitura). Controla as configurações globais do sistema:",
-            "landing": "Textos, seções, CTA, depoimentos, FAQ e links do rodapé da landing page",
+            "desc": "Acessível por SUPERADMIN e ADMIN. Controla as configurações globais:",
+            "landing": "Textos, cores, imagens e seções da landing page",
             "apiKeys": "Chaves de API para serviços externos (Google Vision, Cloudinary, etc.)",
-            "freshdesk": "Widget de suporte, chat ao vivo e configurações do Freshdesk/Freshchat",
-            "plans": "Limites, preços, features e plano popular (SUPERADMIN only) — reflete na landing page automaticamente",
-            "team": "Gestão de equipe — visível apenas para SUPERADMIN e ADMIN. Editores e Viewers não veem este botão"
+            "freshdesk": "Widget de suporte, tickets, Knowledge Base e chat — configuração completa do Freshdesk",
+            "plans": "Configuração de planos, limites e preços (SUPERADMIN only)",
+            "team": "Gestão de equipe — adicionar, remover e alterar roles dos membros"
+          },
+          "helpEditor": {
+            "title": "/admin/help-editor — Editor de Help",
+            "desc": "Ferramenta para editar o conteúdo dos tópicos de ajuda sem necessidade de deploy. Apenas SUPERADMIN e ADMIN têm acesso.",
+            "step1": "Acesse /admin/help-editor",
+            "step2": "Selecione o tópico na sidebar esquerda",
+            "step3": "Edite o conteúdo usando Markdown (negrito, listas, seções, blockquotes)",
+            "step4": "Use o botão de preview para alternar entre edição e visualização",
+            "step5": "Clique em \"Salvar\" — o conteúdo é atualizado instantaneamente no help",
+            "step6": "Para reverter, clique em \"Restaurar Padrão\" — volta ao conteúdo original"
+          },
+          "freshdeskSync": {
+            "title": "Sincronizar Help com Freshdesk",
+            "desc": "Após editar tópicos, sincronize com o Freshdesk para manter a Knowledge Base atualizada:",
+            "step1": "Acesse Admin → Freshdesk → seção Knowledge Base",
+            "step2": "Clique em \"Sincronizar KB\"",
+            "step3": "O sistema cria/atualiza Categorias, Pastas e Artigos automaticamente",
+            "step4": "Tópicos públicos ficam visíveis a todos; superadminOnly ficam como \"Agents Only\""
           },
           "permissions": {
             "title": "Permissões por Role",
-            "desc": "Cada role da empresa (Employee) tem diferentes níveis de acesso no painel admin:",
-            "superadmin": "Acesso total: configurações do site, planos e limites, gestão de equipe, assinaturas e histórico de alterações",
-            "admin": "Edita configurações do site e gerencia equipe (adicionar/remover/alterar roles). Não pode editar planos",
-            "editor": "Edita configurações do site (landing, API keys, Freshdesk). Não vê gestão de equipe nem planos",
-            "viewer": "Apenas visualização. Não pode editar nada no painel admin"
+            "desc": "Cada role tem diferentes níveis de acesso:",
+            "superadmin": "Acesso total: gerencia configurações, planos, equipe, help e Freshdesk",
+            "admin": "Gerencia configurações do site e edita conteúdo do help. Não pode editar planos",
+            "editor": "Acesso de leitura ao painel admin. Não edita configurações",
+            "viewer": "Bloqueado do painel admin. Apenas acesso de leitura ao help público"
           },
-          "dashboardSettings": {
-            "title": "/dashboard/settings — Configurações do Usuário",
-            "desc": "Acessível por qualquer usuário logado. Preferências pessoais:",
-            "profile": "Nome, e-mail, endereço, CPF, telefone, WhatsApp",
-            "theme": "Tema claro, escuro ou automático (sistema)",
-            "language": "Idioma da interface (pt-BR ou en)",
-            "accessibility": "Tamanho de fonte, alto contraste",
-            "plan": "Card com status do plano atual (Free, Plus, Pro, Trial)"
+          "contentStrategy": {
+            "title": "Estratégia de Conteúdo",
+            "desc": "O help está dividido entre dois workspaces:",
+            "corporate": "solucoesrkm.com/help — tópicos corporativos: planos, pagamento, configurações admin, docs técnicos, Freshdesk",
+            "tracka": "Tracka (Controle das Coisas) — tópicos exclusivos do aplicativo: funcionalidades, como usar, dicas de uso"
           },
-          "dashboardSubPages": {
-            "title": "Sub-páginas do Dashboard Settings",
-            "desc": "Páginas adicionais acessíveis via /dashboard/settings:",
-            "plans": "Configuração de Planos e Limites — mesma tabela do admin (SUPERADMIN only)"
-          },
-          "helpRoutes": {
-            "title": "Rotas de Ajuda (/help)",
-            "desc": "O sistema de ajuda é acessível por todos os usuários:",
-            "index": "Índice com todas as categorias e tópicos de ajuda",
-            "topic": "Conteúdo detalhado de cada tópico (ex: /help/plans-limits)"
-          },
-          "tip": "Admins podem acessar o painel admin pelo botão ⚙ na sidebar. SUPERADMINs têm acesso exclusivo à configuração de Planos e Limites. Apenas SUPERADMIN e ADMIN podem gerenciar a equipe."
+          "tip": "Para adicionar um novo tópico: crie o componente em [slug]/page.tsx, registre em help-topics.ts e adicione as traduções em messages/pt.json e en.json."
         }
       },
       "freshdeskSync": {
         "title": "Sync Help → Freshdesk",
         "subtitle": "Sincronização automática dos tópicos do help com a Knowledge Base do Freshdesk",
         "content": {
-          "intro": "O Tracka permite sincronizar automaticamente todos os tópicos do Help interno com a Knowledge Base do Freshdesk, mantendo uma única fonte de verdade e eliminando duplicação de conteúdo.",
+          "intro": "O Soluções RKM sincroniza automaticamente todos os tópicos do help corporativo com a Knowledge Base do Freshdesk, mantendo uma única fonte de verdade e eliminando duplicação de conteúdo.",
           "howItWorks": {
             "title": "Como funciona",
-            "desc": "O sync lê todos os tópicos do Help interno, converte em HTML e publica na Knowledge Base via API v2 do Freshdesk.",
+            "desc": "O sync lê todos os tópicos do help corporativo, converte em HTML e publica na Knowledge Base via API v2 do Freshdesk.",
             "step1": "Acesse Admin → Freshdesk → Knowledge Base",
             "step2": "Clique em \"Sincronizar KB\"",
             "step3": "O sistema cria/atualiza Categorias, Pastas e Artigos no Freshdesk",
-            "step4": "O relatório mostra o resultado: itens criados, atualizados e erros"
+            "step4": "Tópicos editados via help-editor são convertidos de Markdown para HTML"
           },
           "visibility": {
             "title": "Controle de Visibilidade",
             "desc": "A visibilidade dos artigos é definida automaticamente com base nas permissões do tópico:",
-            "public": "Tópicos sem restrição de permissão — visíveis a todos os visitantes da KB",
-            "agents": "Tópicos marcados como superadminOnly — visíveis apenas para agentes Freshdesk (informações sigilosas da empresa)"
+            "public": "Tópicos sem restrição — visíveis a todos os visitantes da KB",
+            "agents": "Tópicos superadminOnly — visíveis apenas para agentes Freshdesk (informações internas)"
           },
           "mapping": {
             "title": "Mapeamento Persistente",
             "desc": "O sistema mantém um mapeamento interno (slug → ID do Freshdesk) armazenado em SiteSettings. Isso permite que re-syncs atualizem artigos existentes ao invés de criar duplicatas."
           },
+          "api": {
+            "title": "Endpoints da API",
+            "desc": "O sync pode ser acionado via API (útil para automação):",
+            "post": "POST /api/admin/freshdesk-sync — executa sync completo (SUPERADMIN only)",
+            "get": "GET /api/admin/freshdesk-sync — retorna status do último sync (ADMIN+)"
+          },
           "warning": "É necessário configurar FRESHDESK_API_KEY e FRESHDESK_DOMAIN nas variáveis de ambiente antes do primeiro sync.",
-          "tip": "Após editar tópicos no Help interno, clique em \"Sincronizar KB\" para publicar as mudanças no Freshdesk automaticamente!"
+          "tip": "Após editar tópicos no help-editor, clique em \"Sincronizar KB\" para publicar as mudanças no Freshdesk automaticamente!"
         }
       },
       "freshdeskKb": {
         "title": "Freshdesk — Suporte ao Cliente",
         "subtitle": "Configuração dos módulos de suporte: widget, tickets, Knowledge Base e chat",
         "content": {
-          "intro": "O Tracka integra com o Freshworks para oferecer 4 módulos de suporte ao cliente, todos configuráveis pelo painel admin.",
+          "intro": "O Soluções RKM integra com o Freshworks para oferecer 4 módulos de suporte ao cliente, todos configuráveis pelo painel admin.",
           "modules": {
             "title": "Módulos disponíveis",
             "widget": {
