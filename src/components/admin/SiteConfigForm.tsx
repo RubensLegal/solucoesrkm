@@ -18,10 +18,10 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
-import { useTransition } from 'react';
+import { useState, useRef, useTransition } from 'react';
 import { toast } from 'sonner';
 import { LandingPageConfig } from '@/config/landing.config';
-import { Plus, Trash2, Eye, EyeOff, Save, Shield, ExternalLink, CreditCard } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, Save, Shield, ExternalLink, CreditCard, Loader2 } from 'lucide-react';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
@@ -116,9 +116,34 @@ function SectionCard({ title, description, children, className = '' }: {
 
 export function SiteConfigForm({ initialData, canEdit = true, history = [], appUrl = '' }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
+    const [isTranslating, setIsTranslating] = useState(false);
+    const [translationErrors, setTranslationErrors] = useState<Record<string, string>>({});
     const currentLocale = useLocale();
+    const otherLocale = currentLocale === 'pt' ? 'en' : 'pt';
     const t = useTranslations('admin.landing');
     const tp = useTranslations('admin.plans');
+
+    /** Track initial values to detect changes */
+    const initialRef = useRef({
+        heroTitle: initialData?.heroTitle || '',
+        heroSubtitle: initialData?.heroSubtitle || '',
+        ctaPrimaryText: initialData?.ctaPrimaryText || '',
+        featuresTitle: initialData?.featuresTitle || '',
+        techTitle: initialData?.techTitle || '',
+        footerCtaTitle: initialData?.footerCtaTitle || '',
+        footerCtaSubtitle: initialData?.footerCtaSubtitle || '',
+        footerCtaButton: initialData?.footerCtaButton || '',
+        footerContact: initialData?.footerContact || '',
+        testimonials: initialData?.testimonials || [],
+        faq: initialData?.faq || [],
+        footerLinks: initialData?.footerLinks || [],
+    });
+
+    const TEXT_FIELDS = [
+        'heroTitle', 'heroSubtitle', 'ctaPrimaryText',
+        'featuresTitle', 'techTitle',
+        'footerCtaTitle', 'footerCtaSubtitle', 'footerCtaButton', 'footerContact',
+    ] as const;
 
     const form = useForm<SiteConfigValues>({
         resolver: zodResolver(siteConfigSchema),
@@ -149,6 +174,98 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
     const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({ control: form.control, name: 'footerLinks' });
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({ control: form.control, name: 'testimonials' });
 
+    /** Auto-translate changed fields to the other locale */
+    async function autoTranslate(data: SiteConfigValues) {
+        const changedFields: Record<string, string> = {};
+        const changedArrays: Record<string, any[]> = {};
+
+        // Detect changed text fields
+        for (const field of TEXT_FIELDS) {
+            const initial = (initialRef.current as any)[field] || '';
+            const current = (data as any)[field] || '';
+            if (current && current !== initial) {
+                changedFields[field] = current;
+            }
+        }
+
+        // Detect changed arrays
+        if (JSON.stringify(data.testimonials) !== JSON.stringify(initialRef.current.testimonials)) {
+            changedArrays.testimonials = data.testimonials || [];
+        }
+        if (JSON.stringify(data.faq) !== JSON.stringify(initialRef.current.faq)) {
+            changedArrays.faq = data.faq || [];
+        }
+        if (JSON.stringify(data.footerLinks) !== JSON.stringify(initialRef.current.footerLinks)) {
+            changedArrays.footerLinks = data.footerLinks || [];
+        }
+
+        const hasChanges = Object.keys(changedFields).length > 0 || Object.keys(changedArrays).length > 0;
+        if (!hasChanges) return;
+
+        try {
+            setIsTranslating(true);
+            const res = await fetch('/api/admin/translate-fields', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fields: changedFields,
+                    arrays: changedArrays,
+                    fromLocale: currentLocale,
+                    toLocale: otherLocale,
+                }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok && result.success) {
+                // Collect any per-field errors
+                const newErrors: Record<string, string> = {};
+                let errorCount = 0;
+
+                if (result.results) {
+                    for (const [key, val] of Object.entries(result.results as Record<string, any>)) {
+                        if (val.error) {
+                            newErrors[key] = val.error;
+                            errorCount++;
+                        }
+                    }
+                }
+
+                if (result.arrayResults) {
+                    for (const [key, val] of Object.entries(result.arrayResults as Record<string, any>)) {
+                        if (val.errors?.length > 0) {
+                            newErrors[key] = val.errors.join('; ');
+                            errorCount++;
+                        }
+                    }
+                }
+
+                setTranslationErrors(newErrors);
+
+                const totalFields = Object.keys(changedFields).length + Object.keys(changedArrays).length;
+                if (errorCount === 0) {
+                    toast.success(`✓ ${otherLocale.toUpperCase()}: ${totalFields} field(s) translated`);
+                } else {
+                    toast.warning(`⚠ ${otherLocale.toUpperCase()}: ${totalFields - errorCount} translated, ${errorCount} failed`);
+                }
+
+                // Update initial ref so next save only detects new changes
+                for (const field of TEXT_FIELDS) {
+                    (initialRef.current as any)[field] = (data as any)[field] || '';
+                }
+                initialRef.current.testimonials = data.testimonials || [];
+                initialRef.current.faq = data.faq || [];
+                initialRef.current.footerLinks = data.footerLinks || [];
+            } else {
+                toast.error(result.error || 'Translation failed');
+            }
+        } catch {
+            toast.error('Translation service unreachable');
+        } finally {
+            setIsTranslating(false);
+        }
+    }
+
     function onSubmit(data: SiteConfigValues) {
         if (!canEdit) return;
         startTransition(async () => {
@@ -157,6 +274,9 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                 const key = `landing_page_config_${currentLocale}`;
                 await updateSiteSettings(key, data);
                 toast.success(t('save') + ' ✓');
+
+                // Auto-translate changed fields to other locale
+                autoTranslate(data);
             } catch (error) {
                 toast.error('Erro ao salvar configurações.');
                 console.error(error);
@@ -401,10 +521,28 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                         {/* ═══ Save Button ═══ */}
                         {canEdit && (
                             <div className="sticky bottom-0 bg-gradient-to-t from-white dark:from-[#0e0e0e] via-white/95 dark:via-[#0e0e0e]/95 to-transparent pt-6 pb-4 mt-8 -mx-6 px-6">
-                                <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5">
-                                    <Save className="w-4 h-4" />
-                                    {isPending ? t('saving') : t('save')}
-                                </Button>
+                                <div className="flex items-center gap-4 flex-wrap">
+                                    <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5">
+                                        <Save className="w-4 h-4" />
+                                        {isPending ? t('saving') : t('save')}
+                                    </Button>
+                                    {isTranslating && (
+                                        <span className="flex items-center gap-2 text-xs text-blue-500 animate-pulse">
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            Translating to {otherLocale.toUpperCase()}...
+                                        </span>
+                                    )}
+                                </div>
+                                {Object.keys(translationErrors).length > 0 && (
+                                    <div className="mt-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400">
+                                        <span className="font-semibold">⚠ Translation issues:</span>
+                                        <ul className="mt-1 space-y-0.5 pl-4 list-disc">
+                                            {Object.entries(translationErrors).map(([field, error]) => (
+                                                <li key={field}><span className="font-medium">{field}</span>: {error}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </form>
