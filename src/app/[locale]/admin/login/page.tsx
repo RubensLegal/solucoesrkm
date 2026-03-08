@@ -2,15 +2,15 @@
  * @file admin/login/page.tsx
  * @description Página de login para employees acessarem o admin SaaS.
  *
- * Design alinhado com o aplicativo Tracka — teal accent (#287D8B),
- * layout limpo e profissional, com dark mode consistente.
+ * Design replicado do Tracka login — light theme, card branco/claro,
+ * título com gradiente azul→roxo, botão teal (#287D8B).
  */
 
 'use client';
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Shield, Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -50,163 +50,199 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-12"
-            style={{
-                background: 'linear-gradient(135deg, #0c1220 0%, #111827 50%, #0f172a 100%)',
-            }}
-        >
-            {/* Subtle background pattern */}
-            <div className="fixed inset-0 opacity-[0.03]"
-                style={{
-                    backgroundImage: `radial-gradient(circle at 25px 25px, rgba(40, 125, 139, 0.4) 2px, transparent 0)`,
-                    backgroundSize: '50px 50px',
-                }}
-            />
-
-            <div className="relative w-full max-w-md space-y-8">
-                {/* Logo + Icon */}
-                <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6"
-                        style={{
-                            background: 'linear-gradient(135deg, rgba(40, 125, 139, 0.2), rgba(40, 125, 139, 0.05))',
-                            border: '1px solid rgba(40, 125, 139, 0.3)',
-                        }}
-                    >
-                        <Shield className="w-8 h-8" style={{ color: '#287D8B' }} />
-                    </div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">
+        <div style={{
+            display: 'flex',
+            minHeight: '100vh',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            background: '#f1f5f9',
+        }}>
+            {/* Card */}
+            <div style={{
+                width: '100%',
+                maxWidth: '400px',
+                background: '#ffffff',
+                borderRadius: '1rem',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)',
+                overflow: 'hidden',
+            }}>
+                {/* Header */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    padding: '2.5rem 2rem 0',
+                }}>
+                    {/* Brand title */}
+                    <h1 style={{
+                        fontSize: '2.5rem',
+                        fontWeight: 'bold',
+                        background: 'linear-gradient(to right, rgb(96, 165, 250), rgb(168, 85, 247))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        marginBottom: '0',
+                        lineHeight: '1.2',
+                        textAlign: 'center',
+                    }}>
                         Soluções RKM
                     </h1>
-                    <p className="text-sm mt-2" style={{ color: 'rgba(148, 163, 184, 0.8)' }}>
+                    <p style={{
+                        color: '#64748b',
+                        marginTop: '0.25rem',
+                        fontSize: '1rem',
+                        lineHeight: '1.2',
+                        textAlign: 'center',
+                    }}>
                         Painel Administrativo
+                    </p>
+
+                    {/* Login heading */}
+                    <h2 style={{
+                        textAlign: 'center',
+                        fontSize: '1.5rem',
+                        fontWeight: 'bold',
+                        color: '#0f172a',
+                        marginTop: '2.5rem',
+                    }}>
+                        Entrar
+                    </h2>
+                    <p style={{
+                        textAlign: 'center',
+                        color: '#287D8B',
+                        fontSize: '0.875rem',
+                        marginTop: '0.25rem',
+                    }}>
+                        Acesso restrito a employees
                     </p>
                 </div>
 
-                {/* Form Card */}
-                <form onSubmit={handleSubmit}
-                    className="p-8 rounded-2xl space-y-5"
-                    style={{
-                        background: 'rgba(15, 23, 42, 0.6)',
-                        border: '1px solid rgba(40, 125, 139, 0.15)',
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(40, 125, 139, 0.05)',
-                    }}
-                >
-                    {/* Email */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: 'rgba(203, 213, 225, 0.9)' }}>
-                            Email
-                        </label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                                style={{ color: 'rgba(148, 163, 184, 0.5)' }}
-                            />
+                {/* Form Content */}
+                <div style={{ padding: '1.5rem 2rem 2rem' }}>
+                    <form onSubmit={handleSubmit} style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                    }}>
+                        {/* Email */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label style={{ fontSize: '0.9rem', fontWeight: 500, color: '#0f172a' }}>Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 placeholder="admin@solucoesrkm.com"
                                 required
-                                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white placeholder:text-gray-500 focus:outline-none transition-all duration-200"
+                                autoComplete="username"
                                 style={{
-                                    background: 'rgba(15, 23, 42, 0.8)',
-                                    border: '1px solid rgba(40, 125, 139, 0.2)',
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '0.75rem',
+                                    border: '1px solid #e2e8f0',
+                                    fontSize: '0.875rem',
+                                    color: '#0f172a',
+                                    background: '#ffffff',
+                                    outline: 'none',
+                                    transition: 'border-color 0.2s, box-shadow 0.2s',
                                 }}
                                 onFocus={e => {
-                                    e.target.style.borderColor = 'rgba(40, 125, 139, 0.5)';
+                                    e.target.style.borderColor = '#287D8B';
                                     e.target.style.boxShadow = '0 0 0 3px rgba(40, 125, 139, 0.1)';
                                 }}
                                 onBlur={e => {
-                                    e.target.style.borderColor = 'rgba(40, 125, 139, 0.2)';
+                                    e.target.style.borderColor = '#e2e8f0';
                                     e.target.style.boxShadow = 'none';
                                 }}
                             />
                         </div>
-                    </div>
 
-                    {/* Password */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium" style={{ color: 'rgba(203, 213, 225, 0.9)' }}>
-                            Senha
-                        </label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                                style={{ color: 'rgba(148, 163, 184, 0.5)' }}
-                            />
+                        {/* Password */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label style={{ fontSize: '0.9rem', fontWeight: 500, color: '#0f172a' }}>Senha</label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
-                                placeholder="••••••••"
+                                placeholder="********"
                                 required
-                                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white placeholder:text-gray-500 focus:outline-none transition-all duration-200"
+                                autoComplete="current-password"
                                 style={{
-                                    background: 'rgba(15, 23, 42, 0.8)',
-                                    border: '1px solid rgba(40, 125, 139, 0.2)',
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '0.75rem',
+                                    border: '1px solid #e2e8f0',
+                                    fontSize: '0.875rem',
+                                    color: '#0f172a',
+                                    background: '#ffffff',
+                                    outline: 'none',
+                                    transition: 'border-color 0.2s, box-shadow 0.2s',
                                 }}
                                 onFocus={e => {
-                                    e.target.style.borderColor = 'rgba(40, 125, 139, 0.5)';
+                                    e.target.style.borderColor = '#287D8B';
                                     e.target.style.boxShadow = '0 0 0 3px rgba(40, 125, 139, 0.1)';
                                 }}
                                 onBlur={e => {
-                                    e.target.style.borderColor = 'rgba(40, 125, 139, 0.2)';
+                                    e.target.style.borderColor = '#e2e8f0';
                                     e.target.style.boxShadow = 'none';
                                 }}
                             />
                         </div>
-                    </div>
 
-                    {/* Error */}
-                    {error && (
-                        <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
+                        {/* Error */}
+                        {error && (
+                            <p style={{
+                                color: '#ef4444',
+                                fontSize: '0.9rem',
+                                padding: '0.75rem',
+                                background: '#fef2f2',
+                                borderRadius: '0.5rem',
+                                border: '1px solid #fecaca',
+                            }}>
+                                {error}
+                            </p>
+                        )}
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={loading}
                             style={{
-                                background: 'rgba(239, 68, 68, 0.08)',
-                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                color: '#f87171',
+                                marginTop: '0.5rem',
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: '0.75rem',
+                                border: 'none',
+                                fontSize: '0.9rem',
+                                fontWeight: 600,
+                                color: '#ffffff',
+                                background: '#287D8B',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                opacity: loading ? 0.7 : 1,
+                                transition: 'background 0.2s, opacity 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                            }}
+                            onMouseEnter={e => {
+                                if (!loading) (e.target as HTMLButtonElement).style.background = '#1e6873';
+                            }}
+                            onMouseLeave={e => {
+                                (e.target as HTMLButtonElement).style.background = '#287D8B';
                             }}
                         >
-                            <AlertCircle className="w-4 h-4 shrink-0" />
-                            {error}
-                        </div>
-                    )}
-
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
-                        style={{
-                            background: loading
-                                ? 'rgba(40, 125, 139, 0.6)'
-                                : 'linear-gradient(135deg, #287D8B, #1e6873)',
-                            boxShadow: loading ? 'none' : '0 4px 14px rgba(40, 125, 139, 0.25)',
-                        }}
-                        onMouseEnter={e => {
-                            if (!loading) {
-                                (e.target as HTMLButtonElement).style.boxShadow = '0 6px 20px rgba(40, 125, 139, 0.35)';
-                                (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
-                            }
-                        }}
-                        onMouseLeave={e => {
-                            (e.target as HTMLButtonElement).style.boxShadow = loading ? 'none' : '0 4px 14px rgba(40, 125, 139, 0.25)';
-                            (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-                        }}
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Entrando...
-                            </>
-                        ) : (
-                            'Entrar'
-                        )}
-                    </button>
-                </form>
-
-                {/* Footer */}
-                <p className="text-center text-xs" style={{ color: 'rgba(100, 116, 139, 0.6)' }}>
-                    Acesso restrito a employees Soluções RKM.
-                </p>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Entrando...
+                                </>
+                            ) : (
+                                'Entrar'
+                            )}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
