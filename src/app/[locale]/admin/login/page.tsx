@@ -4,13 +4,16 @@
  *
  * Design replicado do Tracka login — light theme, card branco/claro,
  * título com gradiente azul→roxo, botão teal (#287D8B).
+ * Inclui: Lembrar de mim, Esqueci minha senha, Criar cadastro (employees).
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -21,6 +24,24 @@ export default function AdminLoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Load remembered credentials on mount
+    useEffect(() => {
+        setMounted(true);
+        const storedEmail = localStorage.getItem('admin_rememberedEmail');
+        if (storedEmail) {
+            setEmail(storedEmail);
+            setRememberMe(true);
+        }
+        const storedPassword = localStorage.getItem('admin_rememberedPassword');
+        if (storedPassword) {
+            setPassword(storedPassword);
+        }
+    }, []);
+
+    if (!mounted) return null; // Avoid hydration mismatch
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,6 +58,14 @@ export default function AdminLoginPage() {
             const data = await res.json();
 
             if (res.ok) {
+                if (rememberMe) {
+                    localStorage.setItem('admin_rememberedEmail', email);
+                    localStorage.setItem('admin_rememberedPassword', password);
+                } else {
+                    localStorage.removeItem('admin_rememberedEmail');
+                    localStorage.removeItem('admin_rememberedPassword');
+                }
+
                 router.push(callbackUrl);
                 router.refresh();
             } else {
@@ -47,6 +76,28 @@ export default function AdminLoginPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const inputStyle: React.CSSProperties = {
+        width: '100%',
+        padding: '0.75rem 1rem',
+        borderRadius: '0.75rem',
+        border: '1px solid #e2e8f0',
+        fontSize: '0.875rem',
+        color: '#0f172a',
+        background: '#ffffff',
+        outline: 'none',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+    };
+
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.target.style.borderColor = '#287D8B';
+        e.target.style.boxShadow = '0 0 0 3px rgba(40, 125, 139, 0.1)';
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.target.style.borderColor = '#e2e8f0';
+        e.target.style.boxShadow = 'none';
     };
 
     return (
@@ -75,7 +126,6 @@ export default function AdminLoginPage() {
                     alignItems: 'center',
                     padding: '2.5rem 2rem 0',
                 }}>
-                    {/* Brand title */}
                     <h1 style={{
                         fontSize: '2.5rem',
                         fontWeight: 'bold',
@@ -98,7 +148,6 @@ export default function AdminLoginPage() {
                         Painel Administrativo
                     </p>
 
-                    {/* Login heading */}
                     <h2 style={{
                         textAlign: 'center',
                         fontSize: '1.5rem',
@@ -118,7 +167,7 @@ export default function AdminLoginPage() {
                     </p>
                 </div>
 
-                {/* Form Content */}
+                {/* Form */}
                 <div style={{ padding: '1.5rem 2rem 2rem' }}>
                     <form onSubmit={handleSubmit} style={{
                         display: 'flex',
@@ -135,25 +184,10 @@ export default function AdminLoginPage() {
                                 placeholder="admin@solucoesrkm.com"
                                 required
                                 autoComplete="username"
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem 1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #e2e8f0',
-                                    fontSize: '0.875rem',
-                                    color: '#0f172a',
-                                    background: '#ffffff',
-                                    outline: 'none',
-                                    transition: 'border-color 0.2s, box-shadow 0.2s',
-                                }}
-                                onFocus={e => {
-                                    e.target.style.borderColor = '#287D8B';
-                                    e.target.style.boxShadow = '0 0 0 3px rgba(40, 125, 139, 0.1)';
-                                }}
-                                onBlur={e => {
-                                    e.target.style.borderColor = '#e2e8f0';
-                                    e.target.style.boxShadow = 'none';
-                                }}
+                                style={inputStyle}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                suppressHydrationWarning
                             />
                         </div>
 
@@ -167,26 +201,39 @@ export default function AdminLoginPage() {
                                 placeholder="********"
                                 required
                                 autoComplete="current-password"
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem 1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #e2e8f0',
-                                    fontSize: '0.875rem',
-                                    color: '#0f172a',
-                                    background: '#ffffff',
-                                    outline: 'none',
-                                    transition: 'border-color 0.2s, box-shadow 0.2s',
-                                }}
-                                onFocus={e => {
-                                    e.target.style.borderColor = '#287D8B';
-                                    e.target.style.boxShadow = '0 0 0 3px rgba(40, 125, 139, 0.1)';
-                                }}
-                                onBlur={e => {
-                                    e.target.style.borderColor = '#e2e8f0';
-                                    e.target.style.boxShadow = 'none';
-                                }}
+                                style={inputStyle}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                suppressHydrationWarning
                             />
+                        </div>
+
+                        {/* Remember me + Forgot password */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                checked={rememberMe}
+                                onChange={e => setRememberMe(e.target.checked)}
+                                style={{ width: '1rem', height: '1rem', accentColor: '#287D8B' }}
+                            />
+                            <label htmlFor="rememberMe" style={{ fontSize: '0.9rem', color: '#374151' }}>
+                                Lembrar de mim
+                            </label>
+
+                            <a
+                                href={`${APP_URL}/pt/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ''}`}
+                                style={{
+                                    fontSize: '0.9rem',
+                                    color: '#287D8B',
+                                    marginLeft: 'auto',
+                                    textDecoration: 'none',
+                                }}
+                                onMouseEnter={e => (e.target as HTMLAnchorElement).style.textDecoration = 'underline'}
+                                onMouseLeave={e => (e.target as HTMLAnchorElement).style.textDecoration = 'none'}
+                            >
+                                Esqueci minha senha
+                            </a>
                         </div>
 
                         {/* Error */}
@@ -203,7 +250,7 @@ export default function AdminLoginPage() {
                             </p>
                         )}
 
-                        {/* Submit Button */}
+                        {/* Submit */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -241,6 +288,46 @@ export default function AdminLoginPage() {
                                 'Entrar'
                             )}
                         </button>
+
+                        {/* Register section */}
+                        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                            <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: '#64748b' }}>
+                                Ainda não possui conta?
+                            </p>
+                            <a
+                                href={`${APP_URL}/pt/register`}
+                                style={{
+                                    display: 'block',
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '0.75rem',
+                                    border: '2px solid #287D8B',
+                                    background: 'transparent',
+                                    color: '#287D8B',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 700,
+                                    textDecoration: 'none',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    boxSizing: 'border-box',
+                                }}
+                                onMouseEnter={e => {
+                                    const el = e.target as HTMLAnchorElement;
+                                    el.style.background = '#287D8B';
+                                    el.style.color = '#ffffff';
+                                }}
+                                onMouseLeave={e => {
+                                    const el = e.target as HTMLAnchorElement;
+                                    el.style.background = 'transparent';
+                                    el.style.color = '#287D8B';
+                                }}
+                            >
+                                Criar Cadastro Agora
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
