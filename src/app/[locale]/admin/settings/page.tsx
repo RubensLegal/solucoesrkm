@@ -53,7 +53,7 @@ export default async function AdminSettingsPage() {
     let plansConfig: PlansConfig | null = null;
     try {
         const res = await fetch(`${APP_URL}/api/plan-config`, {
-            next: { revalidate: 3600 },
+            next: { revalidate: 0 },
         });
         if (res.ok) {
             plansConfig = await res.json();
