@@ -869,7 +869,15 @@
           "corporate": "solucoesrkm.com/help — tópicos corporativos: planos, pagamento, configurações admin, docs técnicos, Freshdesk",
           "tracka": "Tracka (Controle das Coisas) — tópicos exclusivos do aplicativo: funcionalidades, como usar, dicas de uso"
         },
-        "tip": "Para adicionar um novo tópico: crie o componente em [slug]/page.tsx, registre em help-topics.ts e adicione as traduções em messages/pt.json e en.json."
+        "fileStructure": {
+          "title": "Estrutura de Arquivos i18n",
+          "desc": "As traduções são separadas em dois grupos para manter os JSONs organizados:",
+          "ui": "messages/pt.json e messages/en.json — traduções da UI (admin, landing, componentes). ~310 linhas.",
+          "help": "messages/help/pt.json e messages/help/en.json — conteúdo extenso dos tópicos de help. ~1200 linhas.",
+          "merge": "O merge é feito automaticamente em src/i18n/request.ts — a chave 'help' é carregada do arquivo separado e injetada no objeto de mensagens.",
+          "why": "Essa separação reduz ~80% do tamanho dos JSONs principais. Mesma estratégia usada no Tracka."
+        },
+        "tip": "Para adicionar um novo tópico: registre em help-topics.ts e adicione as traduções em messages/help/pt.json e messages/help/en.json (conteúdo do help) — NÃO nos JSONs principais."
       }
     },
     "freshdeskSync": {
