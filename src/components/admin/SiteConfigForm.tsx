@@ -107,7 +107,7 @@ function SectionCard({ title, description, children, className = '' }: {
     title: string; description?: string; children: React.ReactNode; className?: string;
 }) {
     return (
-        <Card className={`bg-white dark:bg-[#161616] border-gray-200 dark:border-white/5 shadow-sm dark:shadow-lg dark:shadow-black/20 overflow-hidden ${className}`}>
+        <Card className={`border-gray-200 dark:border-white/5 shadow-sm dark:shadow-lg dark:shadow-black/20 overflow-hidden ${className}`}>
             <CardHeader className="pb-4">
                 <CardTitle className="text-base font-semibold text-gray-900 dark:text-white">{title}</CardTitle>
                 {description && <CardDescription className="text-xs text-gray-500">{description}</CardDescription>}
@@ -130,7 +130,7 @@ function LocaleTabs({ activeLocale, onChange }: {
     activeLocale: 'pt' | 'en'; onChange: (locale: 'pt' | 'en') => void;
 }) {
     return (
-        <div className="flex items-center gap-2 p-1 rounded-lg bg-white/[0.03] border border-white/5 w-fit">
+        <div className="flex items-center gap-2 p-1 rounded-lg bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 w-fit">
             <Languages className="w-4 h-4 text-gray-500 ml-2" />
             {LOCALES.map(({ code, label }) => (
                 <button
@@ -140,7 +140,7 @@ function LocaleTabs({ activeLocale, onChange }: {
                     className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all
                         ${activeLocale === code
                             ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                            : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/[0.05]'
                         }`}
                 >
                     {label}
@@ -379,7 +379,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                             )} />
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-white/10" onClick={() => appendTestimonial({ name: '', role: '', content: '' })}>
+                                    <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendTestimonial({ name: '', role: '', content: '' })}>
                                         <Plus className="w-4 h-4 mr-2" /> Adicionar Depoimento
                                     </Button>
                                 </SectionCard>
