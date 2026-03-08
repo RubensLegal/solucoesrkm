@@ -295,34 +295,34 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
 
                             {/* ═══ Col 2: Visibilidade + Títulos + Footer CTA ═══ */}
                             <div className="space-y-6 break-inside-avoid mb-6">
-                                <SectionCard title="👁️ Visibilidade" description={t('sections')}>
+                                <SectionCard title={t('visibility')} description={t('sections')}>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <ToggleSwitch
-                                            label="Funcionalidades"
+                                            label={t('toggleFeatures')}
                                             checked={form.watch('showFeatures') ?? true}
                                             onChange={(v) => form.setValue('showFeatures', v)}
                                             disabled={!canEdit}
                                         />
                                         <ToggleSwitch
-                                            label="Tecnologia"
+                                            label={t('toggleTechnology')}
                                             checked={form.watch('showTechnology') ?? true}
                                             onChange={(v) => form.setValue('showTechnology', v)}
                                             disabled={!canEdit}
                                         />
                                         <ToggleSwitch
-                                            label="Depoimentos"
+                                            label={t('toggleTestimonials')}
                                             checked={form.watch('showTestimonials') ?? false}
                                             onChange={(v) => form.setValue('showTestimonials', v)}
                                             disabled={!canEdit}
                                         />
                                         <ToggleSwitch
-                                            label="Preços"
+                                            label={t('togglePricing')}
                                             checked={form.watch('showPricing') ?? false}
                                             onChange={(v) => form.setValue('showPricing', v)}
                                             disabled={!canEdit}
                                         />
                                         <ToggleSwitch
-                                            label="FAQ"
+                                            label={t('toggleFaq')}
                                             checked={form.watch('showFaq') ?? true}
                                             onChange={(v) => form.setValue('showFaq', v)}
                                             disabled={!canEdit}

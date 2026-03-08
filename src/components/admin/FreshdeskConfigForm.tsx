@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -153,6 +154,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
     const [config, setConfig] = useState<FreshdeskConfig>(initialData);
     const [syncing, setSyncing] = useState(false);
     const [syncResult, setSyncResult] = useState<{ success: boolean; created: number; updated: number; errors: string[]; details: string[] } | null>(null);
+    const t = useTranslations('admin.freshdesk');
 
     /** Sync Help → Freshdesk KB */
     const handleSyncKB = async () => {
@@ -205,7 +207,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
             try {
                 const result = await updateSiteSettings('freshdesk_config', config);
                 if (result.success) {
-                    toast.success('Configurações do Freshdesk salvas!');
+                    toast.success(t('saveFreshdesk') + ' ✓');
                 } else {
                     toast.error(result.error || 'Erro ao salvar.');
                 }
@@ -221,8 +223,8 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
 
                 {/* ── Domínio Global ── */}
                 <FieldGroup
-                    label="Domínio Freshworks"
-                    hint="Seu domínio Freshworks (obtido no painel admin do Freshdesk)"
+                    label={t('domain')}
+                    hint={t('domainHint')}
                 >
                     <Input
                         value={config.domain}
@@ -236,16 +238,16 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
 
                 {/* ── 1. Widget de Suporte ── */}
                 <ModuleSection
-                    title="Widget de Suporte"
-                    description="Bolha flutuante para contato e FAQ"
+                    title={t('widget')}
+                    description={t('widgetDesc')}
                     icon={<Globe className="w-4.5 h-4.5" />}
                     enabled={config.widgetEnabled}
                     onToggle={v => set('widgetEnabled', v)}
                     disabled={!canEdit}
                 >
                     <FieldGroup
-                        label="Widget ID"
-                        hint="Cole o ID numérico ou o script de deploy — o ID será extraído automaticamente"
+                        label={t('widgetId')}
+                        hint={t('widgetIdHint')}
                     >
                         <Input
                             value={config.widgetId}
@@ -256,18 +258,18 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                     </FieldGroup>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <FieldGroup label="Posição">
+                        <FieldGroup label={t('position')}>
                             <select
                                 value={config.widgetPosition}
                                 onChange={e => set('widgetPosition', e.target.value as 'left' | 'right')}
                                 disabled={!canEdit}
                                 className="w-full rounded-md border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a1a1a] text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                             >
-                                <option value="right">Direita</option>
-                                <option value="left">Esquerda</option>
+                                <option value="right">{t('positionRight')}</option>
+                                <option value="left">{t('positionLeft')}</option>
                             </select>
                         </FieldGroup>
-                        <FieldGroup label="Offset (px)">
+                        <FieldGroup label={t('offset')}>
                             <Input
                                 type="number"
                                 value={config.widgetOffset}
@@ -280,7 +282,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                     </div>
 
                     <ToggleSwitch
-                        label="Identificar usuário logado automaticamente"
+                        label={t('autoIdentify')}
                         checked={config.widgetAuthEnabled}
                         onChange={v => set('widgetAuthEnabled', v)}
                         disabled={!canEdit}
@@ -289,16 +291,16 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
 
                 {/* ── 2. Portal de Tickets ── */}
                 <ModuleSection
-                    title="Portal de Tickets"
-                    description="Página dedicada para criar e acompanhar tickets"
+                    title={t('tickets')}
+                    description={t('ticketsDesc')}
                     icon={<Ticket className="w-4.5 h-4.5" />}
                     enabled={config.ticketsEnabled}
                     onToggle={v => set('ticketsEnabled', v)}
                     disabled={!canEdit}
                 >
                     <FieldGroup
-                        label="URL do Portal de Tickets"
-                        hint="Ex: https://seudominio.freshdesk.com/support/tickets"
+                        label={t('ticketsUrl')}
+                        hint={t('ticketsUrlHint')}
                     >
                         <Input
                             value={config.ticketsUrl}
@@ -311,16 +313,16 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
 
                 {/* ── 3. Knowledge Base ── */}
                 <ModuleSection
-                    title="Knowledge Base"
-                    description="Base de conhecimento e artigos de ajuda"
+                    title={t('kb')}
+                    description={t('kbDesc')}
                     icon={<BookOpen className="w-4.5 h-4.5" />}
                     enabled={config.kbEnabled}
                     onToggle={v => set('kbEnabled', v)}
                     disabled={!canEdit}
                 >
                     <FieldGroup
-                        label="URL da Knowledge Base"
-                        hint="Ex: https://seudominio.freshdesk.com/support/solutions"
+                        label={t('kbUrl')}
+                        hint={t('kbUrlHint')}
                     >
                         <Input
                             value={config.kbUrl}
@@ -336,11 +338,10 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                             <div>
                                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
                                     <RefreshCw className="w-3.5 h-3.5" />
-                                    Sincronizar Help → Freshdesk
+                                    {t('syncTitle')}
                                 </h5>
                                 <p className="text-[11px] text-gray-500 mt-0.5">
-                                    Publica os tópicos do Help interno como artigos na KB do Freshdesk.
-                                    Tópicos públicos ficam visíveis a todos. Tópicos admin ficam <Lock className="w-3 h-3 inline" /> restritos a agentes.
+                                    {t('syncDesc')}
                                 </p>
                             </div>
                             <Button
@@ -350,9 +351,9 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                                 className="gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-xs px-4 py-2"
                             >
                                 {syncing ? (
-                                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sincronizando...</>
+                                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t('syncing')}</>
                                 ) : (
-                                    <><RefreshCw className="w-3.5 h-3.5" /> Sincronizar KB</>
+                                    <><RefreshCw className="w-3.5 h-3.5" /> {t('syncButton')}</>
                                 )}
                             </Button>
                         </div>
@@ -365,11 +366,11 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                                 }`}>
                                 <div className="flex items-center gap-2 font-semibold">
                                     {syncResult.success
-                                        ? <><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Sync concluído</>
-                                        : <><XCircle className="w-3.5 h-3.5 text-red-400" /> Sync com erros</>
+                                        ? <><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> {t('syncDone')}</>
+                                        : <><XCircle className="w-3.5 h-3.5 text-red-400" /> {t('syncError')}</>
                                     }
                                     <span className="text-gray-400 font-normal">
-                                        — {syncResult.created} criados, {syncResult.updated} atualizados
+                                        — {syncResult.created} {t('syncCreated')}, {syncResult.updated} {t('syncUpdated')}
                                     </span>
                                 </div>
                                 {syncResult.details?.length > 0 && (
@@ -393,16 +394,16 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
 
                 {/* ── 4. Freshchat ── */}
                 <ModuleSection
-                    title="Freshchat"
-                    description="Chat em tempo real com a equipe de suporte"
+                    title={t('chat')}
+                    description={t('chatDesc')}
                     icon={<MessageCircle className="w-4.5 h-4.5" />}
                     enabled={config.chatEnabled}
                     onToggle={v => set('chatEnabled', v)}
                     disabled={!canEdit}
                 >
                     <FieldGroup
-                        label="Chat Token"
-                        hint="Cole o token UUID ou o script de deploy — o token será extraído automaticamente"
+                        label={t('chatToken')}
+                        hint={t('chatTokenHint')}
                     >
                         <Input
                             value={config.chatToken}
@@ -413,7 +414,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                     </FieldGroup>
 
                     <ToggleSwitch
-                        label="Identificar usuário logado automaticamente"
+                        label={t('autoIdentify')}
                         checked={config.chatAuthEnabled}
                         onChange={v => set('chatAuthEnabled', v)}
                         disabled={!canEdit}
@@ -430,7 +431,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                             className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-6 py-2.5"
                         >
                             <Save className="w-4 h-4" />
-                            {isPending ? 'Salvando...' : 'Salvar Freshdesk'}
+                            {isPending ? t('saving') : t('saveFreshdesk')}
                         </Button>
                     </div>
                 )}
