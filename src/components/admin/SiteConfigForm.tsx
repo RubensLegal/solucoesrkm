@@ -210,11 +210,14 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
             setActiveLocale(locale);
             return;
         }
-        // Save current values are discarded — load i18n defaults for new locale
+        // Load i18n defaults for new locale into form fields
         const defaults = i18nDefaults[locale];
+        const currentValues = form.getValues();
+        const newValues = { ...currentValues };
         for (const field of TEXT_FIELDS) {
-            form.setValue(field, defaults[field] || '');
+            newValues[field] = defaults[field] || '';
         }
+        form.reset(newValues);
         setActiveLocale(locale);
     }
 
