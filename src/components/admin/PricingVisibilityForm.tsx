@@ -6,22 +6,18 @@
  * aparecem na landing page da empresa. READ-ONLY dos dados do Tracka;
  * apenas salva visibilidade em SiteSettings (key: pricing_visibility).
  *
- * Fluxo:
- * 1. Fetch planos do Tracka (GET /api/public/plans)
- * 2. Exibe grid: colunas = planos, linhas = features
- * 3. Cada coluna e cada feature tem checkbox de visibilidade
- * 4. Salva { hiddenPlans: string[], hiddenFeatures: Record<string, string[]> }
+ * Os planos são passados como prop (fetch ocorre server-side no page.tsx).
  */
 
-import { useState, useEffect, useTransition } from 'react';
-import { Check, Eye, EyeOff, Loader2, RefreshCw, Save, AlertTriangle } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { Check, Eye, EyeOff, Loader2, Save, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
 import { toast } from 'sonner';
 
 /* ─── Types ─────────────────────────────────────────────────── */
 
-interface PlanFromApi {
+export interface PlanFromApi {
     name: string;
     price: string;
     description: string;
@@ -38,7 +34,7 @@ export interface PricingVisibilityConfig {
 }
 
 interface Props {
-    appUrl: string;
+    plans: PlanFromApi[];
     canEdit?: boolean;
     initialVisibility?: PricingVisibilityConfig | null;
 }
@@ -52,41 +48,14 @@ const EMPTY_VISIBILITY: PricingVisibilityConfig = {
 
 /* ═══════════════════ COMPONENT ═══════════════════════════════ */
 
-export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibility }: Props) {
+export function PricingVisibilityForm({ plans, canEdit = true, initialVisibility }: Props) {
     const [isPending, startTransition] = useTransition();
-
-    // Plans fetched from Tracka API
-    const [plans, setPlans] = useState<PlanFromApi[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [fetchError, setFetchError] = useState('');
 
     // Visibility state (what's hidden)
     const [visibility, setVisibility] = useState<PricingVisibilityConfig>(
         initialVisibility || EMPTY_VISIBILITY
     );
     const [dirty, setDirty] = useState(false);
-
-    /* ── Fetch plans from Tracka ── */
-    useEffect(() => {
-        fetchPlans();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const fetchPlans = async () => {
-        try {
-            setLoading(true);
-            setFetchError('');
-            const res = await fetch(`${appUrl}/api/public/plans`);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            setPlans(data.plans || []);
-        } catch (err) {
-            console.error('[PricingVisibility] Fetch error:', err);
-            setFetchError('Não foi possível carregar os planos do Tracka.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     /* ── Toggle plan visibility ── */
     const togglePlan = (planName: string) => {
@@ -141,35 +110,15 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
     const hiddenFeatureCount = Object.values(visibility.hiddenFeatures)
         .reduce((acc, arr) => acc + arr.length, 0);
 
-    /* ── Loading state ── */
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center py-12 gap-3 text-gray-400">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="text-sm">Carregando planos do Tracka...</span>
-            </div>
-        );
-    }
-
-    /* ── Error state ── */
-    if (fetchError) {
-        return (
-            <div className="py-8 text-center space-y-4">
-                <div className="flex items-center justify-center gap-2 text-amber-400">
-                    <AlertTriangle className="w-5 h-5" />
-                    <span className="text-sm font-medium">{fetchError}</span>
-                </div>
-                <Button variant="ghost" onClick={fetchPlans} className="gap-2 text-sm text-gray-400 hover:text-white">
-                    <RefreshCw className="w-4 h-4" /> Tentar novamente
-                </Button>
-            </div>
-        );
-    }
-
+    /* ── Empty state ── */
     if (plans.length === 0) {
         return (
-            <div className="py-8 text-center text-gray-500 text-sm">
-                Nenhum plano encontrado na API do Tracka.
+            <div className="py-8 text-center space-y-2">
+                <div className="flex items-center justify-center gap-2 text-amber-400">
+                    <AlertTriangle className="w-5 h-5" />
+                    <span className="text-sm font-medium">Não foi possível carregar os planos do Tracka.</span>
+                </div>
+                <p className="text-xs text-gray-500">Verifique se o Tracka está acessível e recarregue a página.</p>
             </div>
         );
     }
@@ -194,14 +143,6 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        onClick={fetchPlans}
-                        disabled={loading}
-                        className="gap-1.5 text-xs text-gray-400 hover:text-white"
-                    >
-                        <RefreshCw className="w-3.5 h-3.5" /> Recarregar
-                    </Button>
                     {dirty && canEdit && (
                         <Button
                             onClick={handleSave}
@@ -247,7 +188,7 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
                                                 {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                                                 {plan.name}
                                             </button>
-                                            {/* Price (read-only) */}
+                                            {/* Price */}
                                             <span className="text-[11px] text-gray-500 font-normal">{plan.price}</span>
                                             {plan.isPopular && (
                                                 <span className="text-[10px] text-amber-400 font-medium">★ Popular</span>
@@ -262,7 +203,7 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
                     <tbody>
                         {allFeatures.map((feature, idx) => (
                             <tr key={idx} className="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                                <td className="py-2.5 px-4 text-gray-700 dark:text-gray-300 text-xs border-b border-gray-100 dark:border-white/5">
+                                <td className="py-2.5 px-4 text-gray-700 dark:text-gray-300 text-xs font-medium border-b border-gray-100 dark:border-white/5 whitespace-nowrap">
                                     {feature}
                                 </td>
                                 {plans.map(plan => {
@@ -271,44 +212,57 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
                                     const isExcluded = plan.excludedFeatures?.includes(feature);
                                     const featureVisible = isFeatureVisible(plan.name, feature);
 
-                                    // Feature doesn't exist in this plan at all
+                                    // Feature doesn't exist in this plan
                                     if (!hasFeature && !isExcluded) {
                                         return (
                                             <td key={plan.name} className="py-2.5 px-4 text-center border-b border-gray-100 dark:border-white/5">
-                                                <span className="text-gray-300 dark:text-gray-700">—</span>
+                                                <span className="text-gray-300 dark:text-gray-700 text-xs">—</span>
                                             </td>
                                         );
                                     }
 
-                                    // Excluded feature (❌ by design, always hidden)
+                                    // Excluded feature (❌ — not available in this plan)
                                     if (isExcluded) {
                                         return (
-                                            <td key={plan.name} className={`py-2.5 px-4 text-center border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
-                                                <div className="flex items-center justify-center">
-                                                    <span className="text-red-400/50 text-xs">✕</span>
+                                            <td key={plan.name} className={`py-2.5 px-3 border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-4 h-4 rounded flex items-center justify-center bg-red-500/10 shrink-0">
+                                                        <span className="text-red-400/60 text-[10px]">✕</span>
+                                                    </span>
+                                                    <span className="text-xs text-gray-400 line-through">{feature}</span>
                                                 </div>
                                             </td>
                                         );
                                     }
 
-                                    // Included feature — toggleable
+                                    // Included feature with checkbox + text
                                     return (
-                                        <td key={plan.name} className={`py-2.5 px-4 text-center border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
+                                        <td key={plan.name} className={`py-2.5 px-3 border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
                                             <button
                                                 onClick={() => toggleFeature(plan.name, feature)}
                                                 disabled={!canEdit || !planVisible}
                                                 className={`
-                                                    w-6 h-6 rounded-md flex items-center justify-center mx-auto transition-all
-                                                    ${featureVisible && planVisible
-                                                        ? 'bg-emerald-500/20 ring-1 ring-emerald-500/30 hover:bg-emerald-500/30'
-                                                        : 'bg-gray-200/50 dark:bg-white/5 ring-1 ring-gray-300 dark:ring-white/10 hover:bg-gray-300/50 dark:hover:bg-white/10'
-                                                    }
-                                                    ${!canEdit || !planVisible ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                                    flex items-center gap-2 w-full text-left rounded-md px-1.5 py-1 transition-all
+                                                    ${!canEdit || !planVisible ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5'}
                                                 `}
                                             >
-                                                {featureVisible && planVisible && (
-                                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                )}
+                                                <span className={`
+                                                    w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all
+                                                    ${featureVisible && planVisible
+                                                        ? 'bg-emerald-500/20 ring-1 ring-emerald-500/40'
+                                                        : 'bg-gray-200/50 dark:bg-white/5 ring-1 ring-gray-300 dark:ring-white/10'
+                                                    }
+                                                `}>
+                                                    {featureVisible && planVisible && (
+                                                        <Check className="w-3 h-3 text-emerald-400" />
+                                                    )}
+                                                </span>
+                                                <span className={`text-xs leading-tight ${featureVisible && planVisible
+                                                    ? 'text-gray-700 dark:text-gray-300'
+                                                    : 'text-gray-400 dark:text-gray-600 line-through'
+                                                    }`}>
+                                                    {feature}
+                                                </span>
                                             </button>
                                         </td>
                                     );
@@ -322,7 +276,7 @@ export function PricingVisibilityForm({ appUrl, canEdit = true, initialVisibilit
             {/* ── Info ── */}
             <p className="text-[11px] text-gray-400 leading-relaxed">
                 💡 Esta configuração <strong>não altera os planos no Tracka</strong> — apenas controla o que é exibido
-                na landing page para fins de marketing. Os dados reais vêm de <code className="text-teal-400">{appUrl}/api/public/plans</code>.
+                na landing page para fins de marketing. Os dados vêm da API do Tracka.
             </p>
         </div>
     );
