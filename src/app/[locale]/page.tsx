@@ -9,6 +9,7 @@
 
 import { getLandingPageConfig } from '@/config/landing.config';
 import { getTranslations, getMessages, getLocale } from 'next-intl/server';
+import { getSiteSettings } from '@/actions/site-settings.actions';
 
 // Landing Components (Netflix-style)
 import { LandingHeader } from '@/components/landing/LandingHeader';
@@ -41,43 +42,86 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 // ─── Pricing Fetcher ──────────────────────────────────────────────
 
-/** Busca planos — sempre usa traduções i18n para textos visíveis. */
-async function fetchPricing(t: any): Promise<PricingParams[]> {
-    const freeExcluded = (() => {
-        try { return t.has('pricing.free.excluded') ? t('pricing.free.excluded').split(',') : []; }
-        catch { return []; }
-    })();
+interface PricingVisibility {
+    hiddenPlans: string[];
+    hiddenFeatures: Record<string, string[]>;
+}
 
-    return [
-        {
-            name: t('pricing.free.name'),
-            price: t('pricing.free.price'),
-            description: t('pricing.free.desc'),
-            features: t('pricing.free.features').split(','),
-            excludedFeatures: freeExcluded,
-            isPopular: false,
-            buttonText: t('pricing.free.button'),
-            buttonLink: '/register',
-        },
-        {
-            name: t('pricing.plus.name'),
-            price: t('pricing.plus.price'),
-            description: t('pricing.plus.desc'),
-            features: t('pricing.plus.features').split(','),
-            isPopular: true,
-            buttonText: t('pricing.plus.button'),
-            buttonLink: '/register?plan=plus',
-        },
-        {
-            name: t('pricing.pro.name'),
-            price: t('pricing.pro.price'),
-            description: t('pricing.pro.desc'),
-            features: t('pricing.pro.features').split(','),
-            isPopular: false,
-            buttonText: t('pricing.pro.button'),
-            buttonLink: '/register?plan=pro',
-        },
-    ];
+/**
+ * Busca planos da API pública do Tracka.
+ * Aplica filtro de visibilidade (pricing_visibility do admin).
+ * Fallback: usa traduções i18n se a API falhar.
+ */
+async function fetchPricing(t: any): Promise<PricingParams[]> {
+    const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
+    const visibility: PricingVisibility | null = await getSiteSettings('pricing_visibility');
+
+    // Tenta buscar da API do Tracka
+    let plans: PricingParams[] = [];
+    try {
+        const res = await fetch(`${APP_URL}/api/public/plans`, {
+            next: { revalidate: 3600 }, // ISR 1h
+        });
+        if (res.ok) {
+            const data = await res.json();
+            plans = data.plans || [];
+        }
+    } catch {
+        // Silently fall through to i18n fallback
+    }
+
+    // Fallback: i18n (se API falhar ou retornar vazio)
+    if (plans.length === 0) {
+        const freeExcluded = (() => {
+            try { return t.has('pricing.free.excluded') ? t('pricing.free.excluded').split(',') : []; }
+            catch { return []; }
+        })();
+
+        plans = [
+            {
+                name: t('pricing.free.name'),
+                price: t('pricing.free.price'),
+                description: t('pricing.free.desc'),
+                features: t('pricing.free.features').split(','),
+                excludedFeatures: freeExcluded,
+                isPopular: false,
+                buttonText: t('pricing.free.button'),
+                buttonLink: '/register',
+            },
+            {
+                name: t('pricing.plus.name'),
+                price: t('pricing.plus.price'),
+                description: t('pricing.plus.desc'),
+                features: t('pricing.plus.features').split(','),
+                isPopular: true,
+                buttonText: t('pricing.plus.button'),
+                buttonLink: '/register?plan=plus',
+            },
+            {
+                name: t('pricing.pro.name'),
+                price: t('pricing.pro.price'),
+                description: t('pricing.pro.desc'),
+                features: t('pricing.pro.features').split(','),
+                isPopular: false,
+                buttonText: t('pricing.pro.button'),
+                buttonLink: '/register?plan=pro',
+            },
+        ];
+    }
+
+    // Aplicar filtro de visibilidade (marketing)
+    if (visibility) {
+        // Ocultar planos inteiros
+        plans = plans.filter(p => !visibility.hiddenPlans.includes(p.name));
+
+        // Ocultar features individuais
+        plans = plans.map(p => ({
+            ...p,
+            features: p.features.filter(f => !(visibility.hiddenFeatures[p.name] || []).includes(f)),
+        }));
+    }
+
+    return plans;
 }
 
 // ─── Page Component ───────────────────────────────────────────────

@@ -12,12 +12,13 @@ import { SiteConfigForm } from '@/components/admin/SiteConfigForm';
 import { redirect } from 'next/navigation';
 import { getLandingPageConfig } from '@/config/landing.config';
 import { getFreshdeskConfig } from '@/config/freshdesk.config';
-import { getSettingsHistory } from '@/actions/site-settings.actions';
+import { getSettingsHistory, getSiteSettings } from '@/actions/site-settings.actions';
 import { FreshdeskConfigForm } from '@/components/admin/FreshdeskConfigForm';
 import { ApiKeysForm } from '@/components/admin/ApiKeysForm';
+import { PricingVisibilityForm } from '@/components/admin/PricingVisibilityForm';
 import { CollapsibleSection } from '@/components/admin/CollapsibleSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Settings, Globe, Key, Headset, Shield } from 'lucide-react';
+import { Settings, Globe, Key, Headset, Shield, LayoutList } from 'lucide-react';
 import { getTranslations, getLocale } from 'next-intl/server';
 import { AdminTopBarClient } from '@/components/admin/AdminTopBarClient';
 
@@ -35,9 +36,10 @@ export default async function AdminSettingsPage() {
 
     // ── Fetch current locale + configs ──
     const locale = await getLocale();
-    const [config, freshdeskConfig, landingHistory, freshdeskHistory, apiKeysHistory] = await Promise.all([
+    const [config, freshdeskConfig, pricingVisibility, landingHistory, freshdeskHistory, apiKeysHistory] = await Promise.all([
         getLandingPageConfig(locale),
         getFreshdeskConfig(),
+        getSiteSettings('pricing_visibility'),
         getSettingsHistory('landing_page_history'),
         getSettingsHistory('freshdesk_history'),
         getSettingsHistory('api_keys_history'),
@@ -124,6 +126,16 @@ export default async function AdminSettingsPage() {
                     iconBg="bg-gradient-to-br from-teal-500 to-emerald-600"
                 >
                     <SiteConfigForm initialData={config} canEdit={isCanEdit} history={landingHistory} appUrl={APP_URL} />
+                </CollapsibleSection>
+
+                {/* Pricing Visibility */}
+                <CollapsibleSection
+                    title="Visibilidade dos Planos"
+                    subtitle="Controle quais planos e features aparecem na landing page"
+                    icon={<LayoutList className="w-4 h-4 text-white" />}
+                    iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
+                >
+                    <PricingVisibilityForm appUrl={APP_URL} canEdit={isCanEdit} initialVisibility={pricingVisibility} />
                 </CollapsibleSection>
 
                 {/* API Keys */}

@@ -58,6 +58,7 @@ const HISTORY_KEYS: Record<string, string> = {
     landing_page_config_en: 'landing_page_history',
     freshdesk_config: 'freshdesk_history',
     api_keys: 'api_keys_history',
+    pricing_visibility: 'pricing_visibility_history',
 };
 
 // ═══════════════════════════════════════════════════════════════════
