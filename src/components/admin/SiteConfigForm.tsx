@@ -64,7 +64,7 @@ interface I18nTextDefaults {
 }
 
 interface SiteConfigFormProps {
-    initialData: LandingPageConfig;
+    initialData: { pt: LandingPageConfig; en: LandingPageConfig };
     canEdit?: boolean;
     history?: SettingsHistoryEntry[];
     i18nDefaults?: { pt: I18nTextDefaults; en: I18nTextDefaults };
@@ -158,67 +158,50 @@ function LocaleTabs({ activeLocale, onChange }: {
 export function SiteConfigForm({ initialData, canEdit = true, history = [], i18nDefaults, appUrl = '' }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
     const currentLocale = useLocale();
-    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>(currentLocale === 'en' ? 'en' : 'pt');
+    const startLocale = currentLocale === 'en' ? 'en' : 'pt';
+    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>(startLocale);
     const t = useTranslations('admin.landing');
     const tp = useTranslations('admin.plans');
 
-    /** Get default value for a text field: i18n value for current locale */
-    function getDefault(field: keyof I18nTextDefaults): string {
-        if (i18nDefaults) {
-            return i18nDefaults[activeLocale][field] || '';
-        }
-        return '';
+    /** Build form values from a config + i18n defaults for a given locale */
+    function buildFormValues(locale: 'pt' | 'en'): SiteConfigValues {
+        const cfg = initialData[locale];
+        const defaults = i18nDefaults?.[locale];
+        return {
+            heroTitle: cfg?.heroTitle || '',
+            heroSubtitle: defaults?.heroSubtitle || cfg?.heroSubtitle || '',
+            heroImage: cfg?.heroImage || '',
+            ctaPrimaryText: defaults?.ctaPrimaryText || cfg?.ctaPrimaryText || '',
+            ctaPrimaryLink: cfg?.ctaPrimaryLink || '',
+            featuresTitle: defaults?.featuresTitle || cfg?.featuresTitle || '',
+            techTitle: defaults?.techTitle || cfg?.techTitle || '',
+            footerCtaTitle: defaults?.footerCtaTitle || cfg?.footerCtaTitle || '',
+            footerCtaSubtitle: defaults?.footerCtaSubtitle || cfg?.footerCtaSubtitle || '',
+            footerCtaButton: defaults?.footerCtaButton || cfg?.footerCtaButton || '',
+            footerContact: defaults?.footerContact || cfg?.footerContact || '',
+            showFeatures: cfg?.showFeatures ?? true,
+            showTechnology: cfg?.showTechnology ?? true,
+            showPricing: cfg?.showPricing ?? false,
+            showTestimonials: cfg?.showTestimonials ?? false,
+            showFaq: cfg?.showFaq ?? true,
+            faq: cfg?.faq || [],
+            footerLinks: cfg?.footerLinks || [],
+            testimonials: cfg?.testimonials || [],
+        };
     }
-
-    /** Text fields that are translatable */
-    const TEXT_FIELDS: (keyof I18nTextDefaults)[] = [
-        'heroSubtitle', 'ctaPrimaryText', 'featuresTitle', 'techTitle',
-        'footerCtaTitle', 'footerCtaSubtitle', 'footerCtaButton', 'footerContact',
-    ];
 
     const form = useForm<SiteConfigValues>({
         resolver: zodResolver(siteConfigSchema),
-        defaultValues: {
-            heroTitle: initialData?.heroTitle || '',
-            heroSubtitle: getDefault('heroSubtitle'),
-            heroImage: initialData?.heroImage || '',
-            ctaPrimaryText: getDefault('ctaPrimaryText'),
-            ctaPrimaryLink: initialData?.ctaPrimaryLink || '',
-            featuresTitle: getDefault('featuresTitle'),
-            techTitle: getDefault('techTitle'),
-            footerCtaTitle: getDefault('footerCtaTitle'),
-            footerCtaSubtitle: getDefault('footerCtaSubtitle'),
-            footerCtaButton: getDefault('footerCtaButton'),
-            footerContact: getDefault('footerContact'),
-            showFeatures: initialData?.showFeatures ?? true,
-            showTechnology: initialData?.showTechnology ?? true,
-            showPricing: initialData?.showPricing ?? false,
-            showTestimonials: initialData?.showTestimonials ?? false,
-            showFaq: initialData?.showFaq ?? true,
-            faq: initialData?.faq || [],
-            footerLinks: initialData?.footerLinks || [],
-            testimonials: initialData?.testimonials || [],
-        },
+        defaultValues: buildFormValues(startLocale),
     });
 
     const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({ control: form.control, name: 'faq' });
     const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({ control: form.control, name: 'footerLinks' });
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({ control: form.control, name: 'testimonials' });
 
-    /** When switching locale, update text fields with i18n defaults for that locale */
+    /** When switching locale, reset entire form with that locale's values */
     function handleLocaleChange(locale: 'pt' | 'en') {
-        if (!i18nDefaults) {
-            setActiveLocale(locale);
-            return;
-        }
-        // Load i18n defaults for new locale into form fields
-        const defaults = i18nDefaults[locale];
-        const currentValues = form.getValues();
-        const newValues = { ...currentValues };
-        for (const field of TEXT_FIELDS) {
-            newValues[field] = defaults[field] || '';
-        }
-        form.reset(newValues);
+        form.reset(buildFormValues(locale));
         setActiveLocale(locale);
     }
 
@@ -266,7 +249,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <FormField control={form.control} name="heroSubtitle" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{t('heroSubtitle')}</FormLabel>
-                                        <FormControl><Textarea placeholder={getDefault('heroSubtitle')} rows={3} {...field} /></FormControl>
+                                        <FormControl><Textarea rows={3} {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
@@ -281,7 +264,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     <FormField control={form.control} name="ctaPrimaryText" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('ctaPrimaryText')}</FormLabel>
-                                            <FormControl><Input placeholder={getDefault('ctaPrimaryText')} {...field} /></FormControl>
+                                            <FormControl><Input {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="ctaPrimaryLink" render={({ field }) => (
@@ -334,13 +317,13 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     <FormField control={form.control} name="featuresTitle" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('features')}</FormLabel>
-                                            <FormControl><Input placeholder={getDefault('featuresTitle')} {...field} /></FormControl>
+                                            <FormControl><Input {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="techTitle" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('technology')}</FormLabel>
-                                            <FormControl><Input placeholder={getDefault('techTitle')} {...field} /></FormControl>
+                                            <FormControl><Input {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                 </SectionCard>
@@ -349,19 +332,19 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('ctaTitle')}</FormLabel>
-                                            <FormControl><Input placeholder={getDefault('footerCtaTitle')} {...field} /></FormControl>
+                                            <FormControl><Input {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('ctaSubtitle')}</FormLabel>
-                                            <FormControl><Textarea placeholder={getDefault('footerCtaSubtitle')} rows={2} {...field} /></FormControl>
+                                            <FormControl><Textarea rows={2} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>{t('ctaButton')}</FormLabel>
-                                            <FormControl><Input placeholder={getDefault('footerCtaButton')} {...field} /></FormControl>
+                                            <FormControl><Input {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                 </SectionCard>
@@ -451,7 +434,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <FormField control={form.control} name="footerContact" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{t('footerContact')}</FormLabel>
-                                        <FormControl><Input placeholder={getDefault('footerContact')} {...field} /></FormControl>
+                                        <FormControl><Input {...field} /></FormControl>
                                     </FormItem>
                                 )} />
                                 <div className="space-y-2">

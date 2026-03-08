@@ -50,8 +50,9 @@ export default async function AdminSettingsPage() {
     }
 
     // ── Fetch all configs and i18n defaults in parallel ──
-    const [config, freshdeskConfig, landingHistory, freshdeskHistory, apiKeysHistory, i18nPt, i18nEn] = await Promise.all([
-        getLandingPageConfig(),
+    const [configPt, configEn, freshdeskConfig, landingHistory, freshdeskHistory, apiKeysHistory, i18nPt, i18nEn] = await Promise.all([
+        getLandingPageConfig('pt'),
+        getLandingPageConfig('en'),
         getFreshdeskConfig(),
         getSettingsHistory('landing_page_history'),
         getSettingsHistory('freshdesk_history'),
@@ -140,7 +141,7 @@ export default async function AdminSettingsPage() {
                     icon={<Globe className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-teal-500 to-emerald-600"
                 >
-                    <SiteConfigForm initialData={config} canEdit={isCanEdit} history={landingHistory} i18nDefaults={{ pt: i18nPt, en: i18nEn }} appUrl={APP_URL} />
+                    <SiteConfigForm initialData={{ pt: configPt, en: configEn }} canEdit={isCanEdit} history={landingHistory} i18nDefaults={{ pt: i18nPt, en: i18nEn }} appUrl={APP_URL} />
                 </CollapsibleSection>
 
                 {/* API Keys */}
