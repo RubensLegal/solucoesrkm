@@ -18,10 +18,10 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { LandingPageConfig } from '@/config/landing.config';
-import { Plus, Trash2, Eye, EyeOff, Save, Languages, Shield, ExternalLink, CreditCard } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, Save, Shield, ExternalLink, CreditCard } from 'lucide-react';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
@@ -51,23 +51,12 @@ const siteConfigSchema = z.object({
 
 type SiteConfigValues = z.infer<typeof siteConfigSchema>;
 
-/** i18n default values for a single locale */
-interface I18nTextDefaults {
-    heroSubtitle: string;
-    ctaPrimaryText: string;
-    featuresTitle: string;
-    techTitle: string;
-    footerCtaTitle: string;
-    footerCtaSubtitle: string;
-    footerCtaButton: string;
-    footerContact: string;
-}
+
 
 interface SiteConfigFormProps {
-    initialData: { pt: LandingPageConfig; en: LandingPageConfig };
+    initialData: LandingPageConfig;
     canEdit?: boolean;
     history?: SettingsHistoryEntry[];
-    i18nDefaults?: { pt: I18nTextDefaults; en: I18nTextDefaults };
     appUrl?: string;
 }
 
@@ -122,95 +111,50 @@ function SectionCard({ title, description, children, className = '' }: {
     );
 }
 
-/* ───────────────── Locale Tabs ──────────────────── */
-
-const LOCALES = [
-    { code: 'pt' as const, label: '🇧🇷 Português', flag: '🇧🇷' },
-    { code: 'en' as const, label: '🇺🇸 English', flag: '🇺🇸' },
-];
-
-function LocaleTabs({ activeLocale, onChange }: {
-    activeLocale: 'pt' | 'en'; onChange: (locale: 'pt' | 'en') => void;
-}) {
-    return (
-        <div className="flex items-center gap-2 p-1 rounded-lg bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 w-fit">
-            <Languages className="w-4 h-4 text-gray-500 ml-2" />
-            {LOCALES.map(({ code, label }) => (
-                <button
-                    key={code}
-                    type="button"
-                    onClick={() => onChange(code)}
-                    className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all
-                        ${activeLocale === code
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/[0.05]'
-                        }`}
-                >
-                    {label}
-                </button>
-            ))}
-        </div>
-    );
-}
 
 /* ═══════════════════ MAIN FORM ══════════════════════ */
 
-export function SiteConfigForm({ initialData, canEdit = true, history = [], i18nDefaults, appUrl = '' }: SiteConfigFormProps) {
+export function SiteConfigForm({ initialData, canEdit = true, history = [], appUrl = '' }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
     const currentLocale = useLocale();
-    const startLocale = currentLocale === 'en' ? 'en' : 'pt';
-    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>(startLocale);
     const t = useTranslations('admin.landing');
     const tp = useTranslations('admin.plans');
 
-    /** Build form values from a config + i18n defaults for a given locale */
-    function buildFormValues(locale: 'pt' | 'en'): SiteConfigValues {
-        const cfg = initialData[locale];
-        const defaults = i18nDefaults?.[locale];
-        return {
-            heroTitle: cfg?.heroTitle || '',
-            heroSubtitle: defaults?.heroSubtitle || cfg?.heroSubtitle || '',
-            heroImage: cfg?.heroImage || '',
-            ctaPrimaryText: defaults?.ctaPrimaryText || cfg?.ctaPrimaryText || '',
-            ctaPrimaryLink: cfg?.ctaPrimaryLink || '',
-            featuresTitle: defaults?.featuresTitle || cfg?.featuresTitle || '',
-            techTitle: defaults?.techTitle || cfg?.techTitle || '',
-            footerCtaTitle: defaults?.footerCtaTitle || cfg?.footerCtaTitle || '',
-            footerCtaSubtitle: defaults?.footerCtaSubtitle || cfg?.footerCtaSubtitle || '',
-            footerCtaButton: defaults?.footerCtaButton || cfg?.footerCtaButton || '',
-            footerContact: defaults?.footerContact || cfg?.footerContact || '',
-            showFeatures: cfg?.showFeatures ?? true,
-            showTechnology: cfg?.showTechnology ?? true,
-            showPricing: cfg?.showPricing ?? false,
-            showTestimonials: cfg?.showTestimonials ?? false,
-            showFaq: cfg?.showFaq ?? true,
-            faq: cfg?.faq || [],
-            footerLinks: cfg?.footerLinks || [],
-            testimonials: cfg?.testimonials || [],
-        };
-    }
-
     const form = useForm<SiteConfigValues>({
         resolver: zodResolver(siteConfigSchema),
-        defaultValues: buildFormValues(startLocale),
+        defaultValues: {
+            heroTitle: initialData?.heroTitle || '',
+            heroSubtitle: initialData?.heroSubtitle || '',
+            heroImage: initialData?.heroImage || '',
+            ctaPrimaryText: initialData?.ctaPrimaryText || '',
+            ctaPrimaryLink: initialData?.ctaPrimaryLink || '',
+            featuresTitle: initialData?.featuresTitle || '',
+            techTitle: initialData?.techTitle || '',
+            footerCtaTitle: initialData?.footerCtaTitle || '',
+            footerCtaSubtitle: initialData?.footerCtaSubtitle || '',
+            footerCtaButton: initialData?.footerCtaButton || '',
+            footerContact: initialData?.footerContact || '',
+            showFeatures: initialData?.showFeatures ?? true,
+            showTechnology: initialData?.showTechnology ?? true,
+            showPricing: initialData?.showPricing ?? false,
+            showTestimonials: initialData?.showTestimonials ?? false,
+            showFaq: initialData?.showFaq ?? true,
+            faq: initialData?.faq || [],
+            footerLinks: initialData?.footerLinks || [],
+            testimonials: initialData?.testimonials || [],
+        },
     });
 
     const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({ control: form.control, name: 'faq' });
     const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({ control: form.control, name: 'footerLinks' });
     const { fields: testimonialFields, append: appendTestimonial, remove: removeTestimonial } = useFieldArray({ control: form.control, name: 'testimonials' });
 
-    /** When switching locale, reset entire form with that locale's values */
-    function handleLocaleChange(locale: 'pt' | 'en') {
-        form.reset(buildFormValues(locale));
-        setActiveLocale(locale);
-    }
-
     function onSubmit(data: SiteConfigValues) {
         if (!canEdit) return;
         startTransition(async () => {
             try {
                 // Save with locale-specific key
-                const key = `landing_page_config_${activeLocale}`;
+                const key = `landing_page_config_${currentLocale}`;
                 await updateSiteSettings(key, data);
                 toast.success(t('save') + ' ✓');
             } catch (error) {
@@ -229,11 +173,6 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                 <fieldset disabled={!canEdit} className="group">
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
-
-                        {/* ═══ Locale Tabs ═══ */}
-                        <div className="mb-6">
-                            <LocaleTabs activeLocale={activeLocale} onChange={handleLocaleChange} />
-                        </div>
 
                         <div className={gridClass}>
 
