@@ -201,7 +201,7 @@
         "plans": {
             "title": "Planos e Preços",
             "subtitle": "Configuração dos planos de assinatura.",
-            "info": "A configuração de planos e preços é feita diretamente na página de configuração do aplicativo Tracka.",
+            "info": "A configuração de planos e preços é feita diretamente na página de configuração do aplicativo.",
             "infoDetail": "Apenas o {role} tem acesso a essa configuração. As alterações feitas lá são refletidas automaticamente tanto no app quanto na landing page.",
             "superAdmin": "Super Admin",
             "openConfig": "Abrir Configuração no Tracka"
