@@ -246,7 +246,10 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
 
-                        {/* ═══ Locale indicator (no visible tabs) ═══ */}
+                        {/* ═══ Locale Tabs ═══ */}
+                        <div className="mb-6">
+                            <LocaleTabs activeLocale={activeLocale} onChange={handleLocaleChange} />
+                        </div>
 
                         <div className={gridClass}>
 
