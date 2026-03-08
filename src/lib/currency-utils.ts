@@ -53,20 +53,30 @@ const DEFAULT_CURRENCY: CurrencyInfo = { code: 'USD', symbol: '$', name: 'US Dol
 
 /**
  * Detects the user's likely currency from browser locale.
- * Uses navigator.language to identify the region.
+ * Uses navigator.languages to identify the region.
+ * 
+ * Rule: If pt-BR is in the languages list, the user is Brazilian
+ * and should see USD (since prices are natively in BRL).
+ * Other currencies (GBP, EUR, etc.) are only detected when the user
+ * is genuinely from another country.
  */
 export function detectCurrency(): CurrencyInfo {
     if (typeof window === 'undefined') return DEFAULT_CURRENCY;
 
     try {
-        // Try navigator.language first (e.g., "en-US", "en-GB", "pt-BR")
         const languages = navigator.languages || [navigator.language];
 
+        // If any language is pt-BR, user is Brazilian → always USD
+        const isBrazilian = languages.some(lang =>
+            lang.toLowerCase().startsWith('pt-br') || lang.toLowerCase() === 'pt'
+        );
+        if (isBrazilian) return DEFAULT_CURRENCY;
+
+        // For non-Brazilian users, detect currency from region
         for (const lang of languages) {
             const parts = lang.split('-');
             if (parts.length >= 2) {
                 const region = parts[parts.length - 1].toUpperCase();
-                if (region === 'BR') continue; // Skip BRL — BRL users see PT locale
                 if (LOCALE_CURRENCY_MAP[region]) {
                     return LOCALE_CURRENCY_MAP[region];
                 }
