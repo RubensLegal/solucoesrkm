@@ -26,7 +26,7 @@ export function Breadcrumb({ items, containerClasses }: BreadcrumbProps) {
                     return (
                         <React.Fragment key={index}>
                             <li className="flex items-center text-gray-500"><ChevronRight className="w-4 h-4" /></li>
-                            <li>{isLast ? <span className="font-medium text-white">{item.label}</span> : <Link href={item.href || '#'} className="text-gray-400 hover:text-purple-400">{item.label}</Link>}</li>
+                            <li>{isLast ? <span className="font-medium text-gray-900 dark:text-white">{item.label}</span> : <Link href={item.href || '#'} className="text-gray-400 hover:text-purple-400">{item.label}</Link>}</li>
                         </React.Fragment>
                     );
                 })}

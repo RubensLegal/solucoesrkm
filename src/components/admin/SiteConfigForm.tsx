@@ -76,8 +76,8 @@ function ToggleSwitch({ label, checked, onChange, disabled }: {
     return (
         <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer select-none
             ${checked
-                ? 'border-emerald-500/30 bg-emerald-500/5'
-                : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.04]'}
+                ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5'
+                : 'border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/[0.02] hover:bg-gray-100 dark:hover:bg-white/[0.04]'}
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
             <button
@@ -87,14 +87,14 @@ function ToggleSwitch({ label, checked, onChange, disabled }: {
                 disabled={disabled}
                 onClick={() => !disabled && onChange(!checked)}
                 className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0
-                    ${checked ? 'bg-emerald-500' : 'bg-white/10'}`}
+                    ${checked ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-white/10'}`}
             >
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow-sm
                     ${checked ? 'translate-x-5' : 'translate-x-0'}`}
                 />
             </button>
-            <span className="text-sm text-gray-300 flex items-center gap-1.5">
-                {checked ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-gray-500" />}
+            <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                {checked ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />}
                 {label}
             </span>
         </label>
@@ -107,9 +107,9 @@ function SectionCard({ title, description, children, className = '' }: {
     title: string; description?: string; children: React.ReactNode; className?: string;
 }) {
     return (
-        <Card className={`bg-[#161616] border-white/5 shadow-lg shadow-black/20 overflow-hidden ${className}`}>
+        <Card className={`bg-white dark:bg-[#161616] border-gray-200 dark:border-white/5 shadow-sm dark:shadow-lg dark:shadow-black/20 overflow-hidden ${className}`}>
             <CardHeader className="pb-4">
-                <CardTitle className="text-base font-semibold text-white">{title}</CardTitle>
+                <CardTitle className="text-base font-semibold text-gray-900 dark:text-white">{title}</CardTitle>
                 {description && <CardDescription className="text-xs text-gray-500">{description}</CardDescription>}
             </CardHeader>
             <CardContent className="space-y-4">

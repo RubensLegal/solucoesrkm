@@ -3,21 +3,35 @@
     min-height: 3rem;
     width: 100%;
     border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background-color: transparent;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
-    color: #e5e5e5;
+    color: #1e293b;
     transition: all 0.2s;
 }
 
+:global(.dark) .input {
+    border-color: rgba(255, 255, 255, 0.15);
+    background-color: transparent;
+    color: #e5e5e5;
+}
+
 .input::placeholder {
+    color: #94a3b8;
+}
+
+:global(.dark) .input::placeholder {
     color: #666;
 }
 
 .input:focus-visible {
     outline: none;
     border-color: rgb(99, 102, 241);
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgb(99, 102, 241);
+}
+
+:global(.dark) .input:focus-visible {
     box-shadow: 0 0 0 2px #0e0e0e, 0 0 0 4px rgb(99, 102, 241);
 }
 

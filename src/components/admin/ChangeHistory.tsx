@@ -61,12 +61,12 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
     };
 
     return (
-        <div className="mt-6 border border-white/10 rounded-xl overflow-hidden">
+        <div className="mt-6 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
             {/* Header colapsável */}
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-[#1a1a1a] hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-[#1a1a1a] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
             >
                 <div className="flex items-center gap-2">
                     <History className="w-5 h-5 text-blue-400" />
@@ -84,7 +84,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
 
             {/* Conteúdo colapsável */}
             {isOpen && (
-                <div className="px-4 pb-4 pt-2 border-t border-white/10">
+                <div className="px-4 pb-4 pt-2 border-t border-gray-200 dark:border-white/10">
                     {entries.length === 0 ? (
                         <p className="text-xs text-gray-500 text-center py-4">
                             Nenhuma alteração registrada. O histórico aparecerá após a primeira atualização.
@@ -112,7 +112,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                                 {filtered.map((entry, idx) => (
                                     <div
                                         key={idx}
-                                        className="border border-white/10 rounded-lg bg-[#1a1a1a]/50 hover:bg-[#1a1a1a] transition-colors"
+                                        className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-[#1a1a1a]/50 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
                                     >
                                         <button
                                             type="button"
@@ -135,7 +135,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                                             <div className="px-3 pb-2">
                                                 <table className="w-full text-xs">
                                                     <thead>
-                                                        <tr className="text-gray-500 border-b border-white/10">
+                                                        <tr className="text-gray-500 border-b border-gray-200 dark:border-white/10">
                                                             <th className="text-left py-1 font-medium">Seção</th>
                                                             <th className="text-left py-1 font-medium">Campo</th>
                                                             <th className="text-center py-1 font-medium">Antes</th>
@@ -144,7 +144,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                                                     </thead>
                                                     <tbody>
                                                         {entry.changes.map((change, ci) => (
-                                                            <tr key={ci} className="border-b border-white/5 last:border-0">
+                                                            <tr key={ci} className="border-b border-gray-100 dark:border-white/5 last:border-0">
                                                                 <td className="py-1">
                                                                     {sectionEmojis[change.section] || ''} {change.section}
                                                                 </td>

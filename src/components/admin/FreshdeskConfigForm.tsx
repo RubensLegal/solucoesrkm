@@ -39,8 +39,8 @@ function ToggleSwitch({ label, checked, onChange, disabled, icon }: {
     return (
         <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer select-none
             ${checked
-                ? 'border-emerald-500/30 bg-emerald-500/5'
-                : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.04]'}
+                ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5'
+                : 'border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/[0.02] hover:bg-gray-100 dark:hover:bg-white/[0.04]'}
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
             <button
@@ -50,13 +50,13 @@ function ToggleSwitch({ label, checked, onChange, disabled, icon }: {
                 disabled={disabled}
                 onClick={() => !disabled && onChange(!checked)}
                 className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0
-                    ${checked ? 'bg-emerald-500' : 'bg-white/10'}`}
+                    ${checked ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-white/10'}`}
             >
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow-sm
                     ${checked ? 'translate-x-5' : 'translate-x-0'}`}
                 />
             </button>
-            <span className="text-sm text-gray-300 flex items-center gap-1.5">
+            <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                 {icon || (checked
                     ? <Eye className="w-3.5 h-3.5 text-emerald-400" />
                     : <EyeOff className="w-3.5 h-3.5 text-gray-500" />
@@ -74,7 +74,7 @@ function FieldGroup({ label, hint, children }: {
 }) {
     return (
         <div className="space-y-1.5">
-            <label className="text-sm font-medium text-white">{label}</label>
+            <label className="text-sm font-medium text-gray-900 dark:text-white">{label}</label>
             {children}
             {hint && <p className="text-xs text-gray-500">{hint}</p>}
         </div>
@@ -97,19 +97,19 @@ function ModuleSection({ title, description, icon, enabled, onToggle, disabled, 
     return (
         <div className={`border rounded-xl overflow-hidden transition-all ${enabled
             ? 'border-emerald-500/20 bg-emerald-500/[0.02]'
-            : 'border-white/5 bg-white/[0.01]'}`}
+            : 'border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/[0.01]'}`}
         >
             {/* Header */}
             <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${enabled
                         ? 'bg-emerald-500/15 text-emerald-400'
-                        : 'bg-white/5 text-gray-500'}`}
+                        : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500'}`}
                     >
                         {icon}
                     </div>
                     <div>
-                        <h4 className="text-sm font-semibold text-white">{title}</h4>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h4>
                         <p className="text-[11px] text-gray-500">{description}</p>
                     </div>
                 </div>
@@ -123,7 +123,7 @@ function ModuleSection({ title, description, icon, enabled, onToggle, disabled, 
                     <button
                         type="button"
                         onClick={() => setExpanded(!expanded)}
-                        className="p-1.5 rounded-md hover:bg-white/5 text-gray-400 transition-colors"
+                        className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 transition-colors"
                     >
                         {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
@@ -132,7 +132,7 @@ function ModuleSection({ title, description, icon, enabled, onToggle, disabled, 
 
             {/* Content (colapsável) */}
             {expanded && (
-                <div className="px-4 pb-4 space-y-4 border-t border-white/5 pt-4">
+                <div className="px-4 pb-4 space-y-4 border-t border-gray-100 dark:border-white/5 pt-4">
                     {children}
                 </div>
             )}
@@ -232,7 +232,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                     />
                 </FieldGroup>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-gray-200 dark:border-white/5" />
 
                 {/* ── 1. Widget de Suporte ── */}
                 <ModuleSection
@@ -261,7 +261,7 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                                 value={config.widgetPosition}
                                 onChange={e => set('widgetPosition', e.target.value as 'left' | 'right')}
                                 disabled={!canEdit}
-                                className="w-full rounded-md border border-white/10 bg-[#1a1a1a] text-sm text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                                className="w-full rounded-md border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1a1a1a] text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                             >
                                 <option value="right">Direita</option>
                                 <option value="left">Esquerda</option>
@@ -331,10 +331,10 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                     </FieldGroup>
 
                     {/* Sync Help → Freshdesk KB */}
-                    <div className="border-t border-white/5 pt-4 space-y-3">
+                    <div className="border-t border-gray-100 dark:border-white/5 pt-4 space-y-3">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h5 className="text-sm font-semibold text-white flex items-center gap-1.5">
+                                <h5 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
                                     <RefreshCw className="w-3.5 h-3.5" />
                                     Sincronizar Help → Freshdesk
                                 </h5>
@@ -360,8 +360,8 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                         {/* Resultado do Sync */}
                         {syncResult && (
                             <div className={`p-3 rounded-lg border text-xs space-y-2 ${syncResult.success
-                                    ? 'border-emerald-500/20 bg-emerald-500/5'
-                                    : 'border-red-500/20 bg-red-500/5'
+                                ? 'border-emerald-500/20 bg-emerald-500/5'
+                                : 'border-red-500/20 bg-red-500/5'
                                 }`}>
                                 <div className="flex items-center gap-2 font-semibold">
                                     {syncResult.success

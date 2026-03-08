@@ -61,7 +61,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
         <>
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-white">
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">
                         Google Places API Key
                     </label>
                     <div className="relative">
@@ -75,7 +75,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
                         <button
                             type="button"
                             onClick={() => setShowKey(!showKey)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-white"
                         >
                             {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
