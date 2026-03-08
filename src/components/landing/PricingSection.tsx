@@ -30,28 +30,25 @@ export function PricingSection({
     items, locale = 'pt', title, subtitle, trialText,
     includedLabel, popularLabel
 }: PricingSectionProps) {
+    const [mounted, setMounted] = useState(false);
     const [currency, setCurrency] = useState<CurrencyInfo>({ code: 'USD', symbol: '$', name: 'US Dollar' });
-    const [exchangeRate, setExchangeRate] = useState<number>(() => {
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('exchange_rate_USD_BRL');
-            if (cached) return parseFloat(cached);
-        }
-        return 5.70;
-    });
+    const [exchangeRate, setExchangeRate] = useState<number>(5.70);
     const [rateLoaded, setRateLoaded] = useState(false);
 
     const BRL_PRICES: Record<string, number> = { plus: 9.90, pro: 19.90 };
 
     const toLocal = (brl: number) => convertFromBRL(brl, exchangeRate);
 
-    // Detect currency and fetch rate (EN only)
+    // Mark as mounted (client-only) and detect currency
     useEffect(() => {
+        setMounted(true);
+
         if (locale !== 'en') return;
 
         const detected = detectCurrency();
         setCurrency(detected);
 
-        // Try cached rate first
+        // Load cached rate
         const cacheKey = getCacheKey(detected.code);
         const cached = localStorage.getItem(cacheKey);
         if (cached) setExchangeRate(parseFloat(cached));
@@ -111,7 +108,7 @@ export function PricingSection({
                     {items.map((plan, index) => {
                         const planKey = getPlanKey(plan.name);
                         const brlPrice = planKey ? BRL_PRICES[planKey] : null;
-                        const showConverted = locale === 'en' && brlPrice;
+                        const showConverted = mounted && locale === 'en' && brlPrice;
 
                         return (
                             <div
@@ -224,7 +221,7 @@ export function PricingSection({
                 </div>
 
                 {/* Currency disclaimer (EN only) */}
-                {locale === 'en' && (
+                {mounted && locale === 'en' && (
                     <div className="mt-10 max-w-3xl mx-auto">
                         <div className="flex items-start gap-3 p-4 rounded-xl" style={{
                             background: 'rgba(245, 158, 11, 0.08)',
