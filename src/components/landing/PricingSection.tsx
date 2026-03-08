@@ -4,8 +4,8 @@
  *
  * Exibe planos vindos da API pública do Tracka ou de defaults.
  * Botões de compra redirecionam para tracka.solucoesrkm.com/register.
- * Suporta features incluídas (✓) e excluídas (✗).
- * Em EN, converte preços BRL→USD com câmbio ao vivo via AwesomeAPI.
+ * Em EN, detecta a moeda local do visitante e converte BRL→moeda local
+ * com câmbio ao vivo via AwesomeAPI.
  */
 
 'use client';
@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { Check, X, Crown, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PricingParams } from '@/config/landing.config';
+import { detectCurrency, fetchExchangeRate, convertFromBRL, getCacheKey, type CurrencyInfo } from '@/lib/currency-utils';
 
 interface PricingSectionProps {
     items: PricingParams[];
@@ -23,41 +24,46 @@ interface PricingSectionProps {
     trialText?: string;
     includedLabel?: string;
     popularLabel?: string;
-    currencyRateLabel?: string;
-    currencyDisclaimerLabel?: string;
 }
 
 export function PricingSection({
     items, locale = 'pt', title, subtitle, trialText,
-    includedLabel, popularLabel, currencyRateLabel, currencyDisclaimerLabel
+    includedLabel, popularLabel
 }: PricingSectionProps) {
+    const [currency, setCurrency] = useState<CurrencyInfo>({ code: 'USD', symbol: '$', name: 'US Dollar' });
     const [exchangeRate, setExchangeRate] = useState<number>(() => {
         if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('usd_brl_rate');
+            const cached = localStorage.getItem('exchange_rate_USD_BRL');
             if (cached) return parseFloat(cached);
         }
         return 5.70;
     });
     const [rateLoaded, setRateLoaded] = useState(false);
 
-    // BRL prices for conversion
     const BRL_PRICES: Record<string, number> = { plus: 9.90, pro: 19.90 };
 
-    const toUSD = (brl: number) => (brl / exchangeRate).toFixed(2);
+    const toLocal = (brl: number) => convertFromBRL(brl, exchangeRate);
 
-    // Fetch live exchange rate (EN only)
+    // Detect currency and fetch rate (EN only)
     useEffect(() => {
         if (locale !== 'en') return;
-        fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL')
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-                if (data?.USDBRL?.bid) {
-                    const rate = parseFloat(data.USDBRL.bid);
+
+        const detected = detectCurrency();
+        setCurrency(detected);
+
+        // Try cached rate first
+        const cacheKey = getCacheKey(detected.code);
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) setExchangeRate(parseFloat(cached));
+
+        // Fetch live rate
+        fetchExchangeRate(detected.code)
+            .then(rate => {
+                if (rate) {
                     setExchangeRate(rate);
-                    localStorage.setItem('usd_brl_rate', rate.toString());
+                    localStorage.setItem(cacheKey, rate.toString());
                 }
             })
-            .catch(() => { /* uses cached rate */ })
             .finally(() => setRateLoaded(true));
     }, [locale]);
 
@@ -65,7 +71,6 @@ export function PricingSection({
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
-    // Map plan names to keys for price lookup
     const getPlanKey = (name: string) => {
         const lower = name.toLowerCase();
         if (lower === 'plus') return 'plus';
@@ -106,7 +111,7 @@ export function PricingSection({
                     {items.map((plan, index) => {
                         const planKey = getPlanKey(plan.name);
                         const brlPrice = planKey ? BRL_PRICES[planKey] : null;
-                        const showUsd = locale === 'en' && brlPrice;
+                        const showConverted = locale === 'en' && brlPrice;
 
                         return (
                             <div
@@ -147,14 +152,14 @@ export function PricingSection({
                                 <div className="mb-6 relative z-10">
                                     <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
                                     <p className="text-gray-500 text-sm mb-4">{plan.description}</p>
-                                    <div className="flex items-baseline gap-1">
-                                        {showUsd ? (
+                                    <div className="flex items-baseline gap-1 flex-wrap">
+                                        {showConverted ? (
                                             <>
                                                 <span className="text-4xl font-bold" style={plan.isPopular ? {
                                                     background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
                                                     WebkitBackgroundClip: 'text',
                                                     WebkitTextFillColor: 'transparent',
-                                                } : {}}>~${toUSD(brlPrice)}</span>
+                                                } : {}}>~{currency.symbol}{toLocal(brlPrice)}</span>
                                                 <span className="text-gray-500">/mo</span>
                                                 <span className="text-xs text-gray-600 ml-1">
                                                     (R$ {brlPrice.toFixed(2).replace('.', ',')})
@@ -194,7 +199,7 @@ export function PricingSection({
                                     </p>
                                 </div>
 
-                                {/* Included features */}
+                                {/* Features */}
                                 <div className="flex-1 space-y-3 relative z-10">
                                     {plan.features.map((feature, idx) => (
                                         <div key={idx} className="flex items-start gap-3">
@@ -204,8 +209,6 @@ export function PricingSection({
                                             <span className="text-sm text-gray-300">{feature}</span>
                                         </div>
                                     ))}
-
-                                    {/* Excluded features */}
                                     {plan.excludedFeatures && plan.excludedFeatures.length > 0 && plan.excludedFeatures.map((feature, idx) => (
                                         <div key={`excl-${idx}`} className="flex items-start gap-3">
                                             <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 bg-red-500/10">
@@ -230,13 +233,14 @@ export function PricingSection({
                             <span className="text-lg shrink-0 mt-0.5">💱</span>
                             <div className="space-y-1">
                                 <p className="text-xs font-semibold text-amber-400">
-                                    {currencyRateLabel || `Reference rate: 1 USD ≈ ${exchangeRate.toFixed(2)} BRL`}
+                                    Reference rate: 1 {currency.code} ≈ {exchangeRate.toFixed(2)} BRL
                                     {rateLoaded && (
                                         <span className="ml-1 font-normal text-amber-500/70">(live)</span>
                                     )}
                                 </p>
                                 <p className="text-xs text-amber-500/60 leading-relaxed">
-                                    {currencyDisclaimerLabel || `Prices shown in USD are approximate, based on a reference rate of 1 USD ≈ ${exchangeRate.toFixed(2)} BRL. The final amount will be automatically calculated in BRL at the current exchange rate at the time of payment.`}
+                                    Prices shown in {currency.code} are approximate, based on a reference rate of 1 {currency.code} ≈ {exchangeRate.toFixed(2)} BRL.
+                                    The final amount will be automatically calculated in {currency.code} at the current exchange rate at the time of payment.
                                 </p>
                             </div>
                         </div>
