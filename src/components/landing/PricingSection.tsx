@@ -5,27 +5,73 @@
  * Exibe planos vindos da API pública do Tracka ou de defaults.
  * Botões de compra redirecionam para tracka.solucoesrkm.com/register.
  * Suporta features incluídas (✓) e excluídas (✗).
+ * Em EN, converte preços BRL→USD com câmbio ao vivo via AwesomeAPI.
  */
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Check, X, Crown, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PricingParams } from '@/config/landing.config';
 
 interface PricingSectionProps {
     items: PricingParams[];
+    locale?: string;
     title?: string;
     subtitle?: string;
     trialText?: string;
     includedLabel?: string;
     popularLabel?: string;
+    currencyRateLabel?: string;
+    currencyDisclaimerLabel?: string;
 }
 
-export function PricingSection({ items, title, subtitle, trialText, includedLabel, popularLabel }: PricingSectionProps) {
+export function PricingSection({
+    items, locale = 'pt', title, subtitle, trialText,
+    includedLabel, popularLabel, currencyRateLabel, currencyDisclaimerLabel
+}: PricingSectionProps) {
+    const [exchangeRate, setExchangeRate] = useState<number>(() => {
+        if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('usd_brl_rate');
+            if (cached) return parseFloat(cached);
+        }
+        return 5.70;
+    });
+    const [rateLoaded, setRateLoaded] = useState(false);
+
+    // BRL prices for conversion
+    const BRL_PRICES: Record<string, number> = { plus: 9.90, pro: 19.90 };
+
+    const toUSD = (brl: number) => (brl / exchangeRate).toFixed(2);
+
+    // Fetch live exchange rate (EN only)
+    useEffect(() => {
+        if (locale !== 'en') return;
+        fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.USDBRL?.bid) {
+                    const rate = parseFloat(data.USDBRL.bid);
+                    setExchangeRate(rate);
+                    localStorage.setItem('usd_brl_rate', rate.toString());
+                }
+            })
+            .catch(() => { /* uses cached rate */ })
+            .finally(() => setRateLoaded(true));
+    }, [locale]);
+
     if (!items || items.length === 0) return null;
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
+
+    // Map plan names to keys for price lookup
+    const getPlanKey = (name: string) => {
+        const lower = name.toLowerCase();
+        if (lower === 'plus') return 'plus';
+        if (lower === 'pro') return 'pro';
+        return null;
+    };
 
     return (
         <section id="pricing" className="py-24 text-white">
@@ -57,100 +103,145 @@ export function PricingSection({ items, title, subtitle, trialText, includedLabe
 
                 {/* Cards grid */}
                 <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    {items.map((plan, index) => (
-                        <div
-                            key={index}
-                            className={`relative rounded-2xl p-8 flex flex-col transition-all duration-500 hover:-translate-y-2 ${plan.isPopular
-                                ? 'hover:shadow-2xl hover:shadow-indigo-500/20'
-                                : 'hover:shadow-xl hover:shadow-white/5'
-                                }`}
-                            style={{
-                                background: plan.isPopular
-                                    ? 'linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(20, 20, 50, 0.95))'
-                                    : 'linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(15, 15, 25, 0.9))',
-                                border: plan.isPopular
-                                    ? '1px solid rgba(99, 102, 241, 0.4)'
-                                    : '1px solid rgba(255, 255, 255, 0.08)',
-                            }}
-                        >
-                            {/* Popular badge */}
-                            {plan.isPopular && (
-                                <>
-                                    <div className="absolute -inset-px rounded-2xl pointer-events-none" style={{
-                                        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.1))',
-                                        filter: 'blur(1px)',
-                                        zIndex: 0,
-                                    }} />
-                                    <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-3 z-10">
-                                        <span className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-lg" style={{
-                                            background: 'linear-gradient(135deg, #f59e0b, #f97316)',
-                                        }}>
-                                            <Crown className="w-3.5 h-3.5" />
-                                            {popularLabel || 'Popular'}
-                                        </span>
-                                    </div>
-                                </>
-                            )}
+                    {items.map((plan, index) => {
+                        const planKey = getPlanKey(plan.name);
+                        const brlPrice = planKey ? BRL_PRICES[planKey] : null;
+                        const showUsd = locale === 'en' && brlPrice;
 
-                            {/* Plan name + price */}
-                            <div className="mb-6 relative z-10">
-                                <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
-                                <p className="text-gray-500 text-sm mb-4">{plan.description}</p>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-4xl font-bold" style={plan.isPopular ? {
-                                        background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                    } : {}}>{plan.price}</span>
-                                    {plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/') && <span className="text-gray-500">/mês</span>}
+                        return (
+                            <div
+                                key={index}
+                                className={`relative rounded-2xl p-8 flex flex-col transition-all duration-500 hover:-translate-y-2 ${plan.isPopular
+                                    ? 'hover:shadow-2xl hover:shadow-indigo-500/20'
+                                    : 'hover:shadow-xl hover:shadow-white/5'
+                                    }`}
+                                style={{
+                                    background: plan.isPopular
+                                        ? 'linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(20, 20, 50, 0.95))'
+                                        : 'linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(15, 15, 25, 0.9))',
+                                    border: plan.isPopular
+                                        ? '1px solid rgba(99, 102, 241, 0.4)'
+                                        : '1px solid rgba(255, 255, 255, 0.08)',
+                                }}
+                            >
+                                {/* Popular badge */}
+                                {plan.isPopular && (
+                                    <>
+                                        <div className="absolute -inset-px rounded-2xl pointer-events-none" style={{
+                                            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.1))',
+                                            filter: 'blur(1px)',
+                                            zIndex: 0,
+                                        }} />
+                                        <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-3 z-10">
+                                            <span className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-lg" style={{
+                                                background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                            }}>
+                                                <Crown className="w-3.5 h-3.5" />
+                                                {popularLabel || 'Popular'}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Plan name + price */}
+                                <div className="mb-6 relative z-10">
+                                    <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
+                                    <p className="text-gray-500 text-sm mb-4">{plan.description}</p>
+                                    <div className="flex items-baseline gap-1">
+                                        {showUsd ? (
+                                            <>
+                                                <span className="text-4xl font-bold" style={plan.isPopular ? {
+                                                    background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
+                                                    WebkitBackgroundClip: 'text',
+                                                    WebkitTextFillColor: 'transparent',
+                                                } : {}}>~${toUSD(brlPrice)}</span>
+                                                <span className="text-gray-500">/mo</span>
+                                                <span className="text-xs text-gray-600 ml-1">
+                                                    (R$ {brlPrice.toFixed(2).replace('.', ',')})
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="text-4xl font-bold" style={plan.isPopular ? {
+                                                    background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
+                                                    WebkitBackgroundClip: 'text',
+                                                    WebkitTextFillColor: 'transparent',
+                                                } : {}}>{plan.price}</span>
+                                                {plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/') && <span className="text-gray-500">/mês</span>}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* CTA button */}
+                                <div className="relative z-10 mb-8">
+                                    <Button
+                                        variant={plan.isPopular ? 'primary' : 'secondary'}
+                                        className={`w-full ${plan.isPopular ? '' : 'border-white/10 hover:bg-white/5'}`}
+                                        style={plan.isPopular ? {
+                                            background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                        } : {}}
+                                        href={`${appUrl}${plan.buttonLink}`}
+                                    >
+                                        {plan.buttonText}
+                                    </Button>
+                                </div>
+
+                                {/* Divider */}
+                                <div className="relative z-10 border-t border-white/10 pt-6 mb-2">
+                                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                        {includedLabel || "What's included"}
+                                    </p>
+                                </div>
+
+                                {/* Included features */}
+                                <div className="flex-1 space-y-3 relative z-10">
+                                    {plan.features.map((feature, idx) => (
+                                        <div key={idx} className="flex items-start gap-3">
+                                            <div className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 ${plan.isPopular ? 'bg-indigo-500/20' : 'bg-emerald-500/15'}`}>
+                                                <Check className={`w-3.5 h-3.5 ${plan.isPopular ? 'text-indigo-400' : 'text-emerald-400'}`} />
+                                            </div>
+                                            <span className="text-sm text-gray-300">{feature}</span>
+                                        </div>
+                                    ))}
+
+                                    {/* Excluded features */}
+                                    {plan.excludedFeatures && plan.excludedFeatures.length > 0 && plan.excludedFeatures.map((feature, idx) => (
+                                        <div key={`excl-${idx}`} className="flex items-start gap-3">
+                                            <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 bg-red-500/10">
+                                                <X className="w-3.5 h-3.5 text-red-400/60" />
+                                            </div>
+                                            <span className="text-sm text-gray-600 line-through">{feature}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
+                        );
+                    })}
+                </div>
 
-                            {/* CTA button */}
-                            <div className="relative z-10 mb-8">
-                                <Button
-                                    variant={plan.isPopular ? 'primary' : 'secondary'}
-                                    className={`w-full ${plan.isPopular ? '' : 'border-white/10 hover:bg-white/5'}`}
-                                    style={plan.isPopular ? {
-                                        background: 'linear-gradient(135deg, #f59e0b, #f97316)',
-                                    } : {}}
-                                    href={`${appUrl}${plan.buttonLink}`}
-                                >
-                                    {plan.buttonText}
-                                </Button>
-                            </div>
-
-                            {/* Divider */}
-                            <div className="relative z-10 border-t border-white/10 pt-6 mb-2">
-                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                                    {includedLabel || "What's included"}
+                {/* Currency disclaimer (EN only) */}
+                {locale === 'en' && (
+                    <div className="mt-10 max-w-3xl mx-auto">
+                        <div className="flex items-start gap-3 p-4 rounded-xl" style={{
+                            background: 'rgba(245, 158, 11, 0.08)',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                        }}>
+                            <span className="text-lg shrink-0 mt-0.5">💱</span>
+                            <div className="space-y-1">
+                                <p className="text-xs font-semibold text-amber-400">
+                                    {currencyRateLabel || `Reference rate: 1 USD ≈ ${exchangeRate.toFixed(2)} BRL`}
+                                    {rateLoaded && (
+                                        <span className="ml-1 font-normal text-amber-500/70">(live)</span>
+                                    )}
+                                </p>
+                                <p className="text-xs text-amber-500/60 leading-relaxed">
+                                    {currencyDisclaimerLabel || `Prices shown in USD are approximate, based on a reference rate of 1 USD ≈ ${exchangeRate.toFixed(2)} BRL. The final amount will be automatically calculated in BRL at the current exchange rate at the time of payment.`}
                                 </p>
                             </div>
-
-                            {/* Included features */}
-                            <div className="flex-1 space-y-3 relative z-10">
-                                {plan.features.map((feature, idx) => (
-                                    <div key={idx} className="flex items-start gap-3">
-                                        <div className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 ${plan.isPopular ? 'bg-indigo-500/20' : 'bg-emerald-500/15'}`}>
-                                            <Check className={`w-3.5 h-3.5 ${plan.isPopular ? 'text-indigo-400' : 'text-emerald-400'}`} />
-                                        </div>
-                                        <span className="text-sm text-gray-300">{feature}</span>
-                                    </div>
-                                ))}
-
-                                {/* Excluded features */}
-                                {plan.excludedFeatures && plan.excludedFeatures.length > 0 && plan.excludedFeatures.map((feature, idx) => (
-                                    <div key={`excl-${idx}`} className="flex items-start gap-3">
-                                        <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 bg-red-500/10">
-                                            <X className="w-3.5 h-3.5 text-red-400/60" />
-                                        </div>
-                                        <span className="text-sm text-gray-600 line-through">{feature}</span>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                )}
             </div>
         </section>
     );

@@ -163,6 +163,7 @@ export default async function TrackaLandingPage() {
                 {config.showPricing !== false && pricingItems.length > 0 && (
                     <PricingSection
                         items={pricingItems}
+                        locale={locale}
                         title={t('pricing.title')}
                         subtitle={t('pricing.subtitle')}
                         trialText={t('pricing.trial')}
