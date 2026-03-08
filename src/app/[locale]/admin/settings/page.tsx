@@ -4,7 +4,7 @@
  *
  * Acesso: employees only (via getSystemRole)
  * Seções: Landing Page, Freshdesk, API Keys, Planos (info-only)
- * Includes: LanguageSwitcher + ThemeSwitcher in top bar
+ * Theme-responsive: supports dark/light/system via ThemeProvider
  */
 
 import { getSession, getSystemRole, canEdit as checkCanEdit } from '@/lib/auth';
@@ -64,9 +64,9 @@ export default async function AdminSettingsPage() {
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
     return (
-        <div className="min-h-screen bg-[#0e0e0e] text-white">
+        <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0e0e0e] dark:text-white transition-colors duration-300">
             {/* ─── Top Bar ─── */}
-            <div className="border-b border-white/5 bg-[#141414]/80 backdrop-blur-xl sticky top-0 z-50">
+            <div className="border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#141414]/80 backdrop-blur-xl sticky top-0 z-50 transition-colors">
                 <div className="max-w-[1800px] mx-auto px-6 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -74,11 +74,11 @@ export default async function AdminSettingsPage() {
                                 <Settings className="w-4 h-4 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-sm font-bold tracking-wide leading-none">Soluções RKM</h1>
-                                <p className="text-[10px] text-gray-400 leading-tight">Painel Admin — Corporativo</p>
+                                <h1 className="text-sm font-bold tracking-wide leading-none text-gray-900 dark:text-white">Soluções RKM</h1>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Painel Admin — Corporativo</p>
                             </div>
                         </div>
-                        <div className="hidden sm:block h-6 w-px bg-white/10" />
+                        <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-white/10" />
                         <Breadcrumb items={[
                             { label: 'Home', href: '/' },
                             { label: 'Admin' },
@@ -89,7 +89,7 @@ export default async function AdminSettingsPage() {
                         {/* Language + Theme switchers (client component) */}
                         <AdminTopBarClient />
 
-                        <div className="hidden sm:block h-6 w-px bg-white/10 mx-1" />
+                        <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-white/10 mx-1" />
 
                         <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${role === 'SUPERADMIN' ? 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/20' :
                             role === 'ADMIN' ? 'bg-red-500/15 text-red-400 ring-1 ring-red-500/20' :
@@ -115,7 +115,7 @@ export default async function AdminSettingsPage() {
                             <Globe className="w-5 h-5 text-blue-400" />
                             <h2 className="text-2xl font-bold">Configurações</h2>
                         </div>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                             Configure textos, seções, integrações e APIs do site corporativo.
                         </p>
                     </div>
@@ -147,25 +147,22 @@ export default async function AdminSettingsPage() {
                     icon={<CreditCard className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
                 >
-                    <div className="p-6 rounded-xl" style={{
-                        background: 'rgba(245, 158, 11, 0.06)',
-                        border: '1px solid rgba(245, 158, 11, 0.15)',
-                    }}>
+                    <div className="p-6 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
                         <div className="flex items-start gap-3">
-                            <Shield className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                            <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
                             <div className="space-y-2">
-                                <p className="text-sm text-gray-200 font-medium">
+                                <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
                                     A configuração de planos e preços é feita diretamente na página de configuração do aplicativo Tracka.
                                 </p>
-                                <p className="text-xs text-gray-400">
-                                    Apenas o <span className="text-amber-400 font-semibold">Super Admin</span> tem acesso a essa configuração.
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    Apenas o <span className="text-amber-600 dark:text-amber-400 font-semibold">Super Admin</span> tem acesso a essa configuração.
                                     As alterações feitas lá são refletidas automaticamente tanto no app quanto na landing page.
                                 </p>
                                 <a
                                     href={`${APP_URL}/pt/admin/settings`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 transition-colors mt-2"
+                                    className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
                                 >
                                     <ExternalLink className="w-3.5 h-3.5" />
                                     Abrir Configuração no Tracka

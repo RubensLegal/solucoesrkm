@@ -237,14 +237,8 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                 <fieldset disabled={!canEdit} className="group">
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                        {/* ═══ Locale Tabs ═══ */}
-                        <div className="mb-6 flex items-center justify-between">
-                            <LocaleTabs activeLocale={activeLocale} onChange={handleLocaleChange} />
-                            <p className="text-[10px] text-gray-500 max-w-xs text-right">
-                                Editando textos em <strong className="text-indigo-400">{activeLocale === 'pt' ? 'Português' : 'English'}</strong>.
-                                Alterne o idioma para editar as traduções separadamente.
-                            </p>
-                        </div>
+
+                        {/* ═══ Locale indicator (no visible tabs) ═══ */}
 
                         <div className={gridClass}>
 

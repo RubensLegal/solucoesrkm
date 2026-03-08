@@ -1,7 +1,7 @@
 /**
  * @file LanguageSwitcher.tsx
  * @description Globe icon dropdown for switching between PT/EN locales.
- * Adapted from Tracka app's LanguageSwitcher.
+ * Uses direct URL manipulation for reliable locale switching.
  */
 
 'use client';
@@ -9,7 +9,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Globe, Check } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/i18n/navigation';
+import { usePathname } from 'next/navigation';
 
 const languages = [
     { code: 'pt', label: 'Português', flag: '🇧🇷' },
@@ -22,13 +22,16 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = 'light' }: LanguageSwitcherProps) {
     const locale = useLocale();
-    const router = useRouter();
-    const pathname = usePathname();
+    const pathname = usePathname(); // full pathname including locale prefix
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const switchLanguage = (newLocale: string) => {
-        router.replace(pathname, { locale: newLocale });
+        // Replace locale prefix in the URL path
+        // pathname is like /pt/admin/settings → replace /pt/ with /en/
+        const pathWithoutLocale = pathname.replace(/^\/(pt|en)/, '');
+        const newPath = `/${newLocale}${pathWithoutLocale || '/'}`;
+        window.location.href = newPath;
         setIsOpen(false);
     };
 
