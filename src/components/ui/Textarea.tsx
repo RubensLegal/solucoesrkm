@@ -1,6 +1,6 @@
 /**
  * @file Textarea.tsx
- * @description Textarea component — versão standalone para admin do solucoesrkm.
+ * @description Textarea component — theme-responsive for admin do solucoesrkm.
  */
 
 import { TextareaHTMLAttributes, forwardRef } from 'react';
@@ -13,8 +13,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
             ref={ref}
             className={cn(
-                'w-full rounded-lg border border-white/15 bg-transparent px-4 py-3 text-sm text-gray-200',
-                'placeholder:text-gray-600 focus:outline-none focus:border-indigo-500',
+                'w-full rounded-lg border border-gray-200 dark:border-white/15 bg-white dark:bg-transparent px-4 py-3 text-sm text-gray-900 dark:text-gray-200',
+                'placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-indigo-500',
                 'focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-50',
                 'resize-y min-h-[80px] transition-all',
                 className

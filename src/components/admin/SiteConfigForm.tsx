@@ -359,7 +359,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                             <div className="space-y-6 break-inside-avoid mb-6">
                                 <SectionCard title="💬 Depoimentos" description="Feedbacks exibidos na Landing">
                                     {testimonialFields.map((item, index) => (
-                                        <div key={item.id} className="border border-white/5 p-4 rounded-lg bg-white/[0.02] space-y-3">
+                                        <div key={item.id} className="border border-gray-200 dark:border-white/5 p-4 rounded-lg bg-gray-50 dark:bg-white/[0.02] space-y-3">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-xs font-medium text-gray-400">#{index + 1}</span>
                                                 <Button type="button" variant="ghost" size="icon" onClick={() => removeTestimonial(index)}>
@@ -397,7 +397,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                             {/* ═══ FAQ ═══ */}
                             <SectionCard title="❓ Perguntas Frequentes (FAQ)" description="Perguntas exibidas na Landing" className="break-inside-avoid mb-6">
                                 {faqFields.map((item, index) => (
-                                    <div key={item.id} className="flex gap-3 items-start border border-white/5 p-3 rounded-lg bg-white/[0.02]">
+                                    <div key={item.id} className="flex gap-3 items-start border border-gray-200 dark:border-white/5 p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
                                         <div className="flex-1 space-y-2">
                                             <FormField control={form.control} name={`faq.${index}.question`} render={({ field }) => (
                                                 <FormItem><FormControl><Input placeholder="Pergunta" {...field} /></FormControl></FormItem>
@@ -411,7 +411,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                         </Button>
                                     </div>
                                 ))}
-                                <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-white/10" onClick={() => appendFaq({ question: '', answer: '' })}>
+                                <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendFaq({ question: '', answer: '' })}>
                                     <Plus className="w-4 h-4 mr-2" /> Adicionar Pergunta
                                 </Button>
                             </SectionCard>
@@ -439,7 +439,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                             </Button>
                                         </div>
                                     ))}
-                                    <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-white/10" onClick={() => appendLink({ label: '', href: '' })}>
+                                    <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendLink({ label: '', href: '' })}>
                                         <Plus className="w-4 h-4 mr-2" /> Adicionar Link
                                     </Button>
                                 </div>
