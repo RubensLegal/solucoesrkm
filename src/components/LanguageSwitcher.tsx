@@ -1,7 +1,9 @@
 /**
  * @file LanguageSwitcher.tsx
- * @description Seletor de idioma pt/en com dropdown dropdown.
+ * @description Seletor de idioma pt/en com dropdown.
  * Troca a locale via next-intl router.
+ * O botão Globe mantém text-white para o header escuro.
+ * O dropdown usa cores sólidas do tema para funcionar em qualquer fundo.
  */
 
 'use client';
@@ -53,21 +55,21 @@ export function LanguageSwitcher() {
             </Button>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 min-w-[180px] bg-white/20 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl py-2 px-2 z-50">
+                <div className="absolute right-0 top-full mt-2 min-w-[200px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl py-2 px-2 z-50">
                     {LANGUAGES.map(lang => (
                         <button
                             key={lang.code}
                             onClick={() => switchLanguage(lang.code)}
                             className={`w-full text-left px-3 py-2.5 text-sm flex items-center justify-between gap-3 rounded-xl transition-colors ${locale === lang.code
-                                    ? 'text-white font-semibold bg-white/20'
-                                    : 'text-white/70 hover:text-white hover:bg-white/20'
+                                ? 'text-gray-900 dark:text-white font-semibold bg-purple-50 dark:bg-purple-900/30'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                                 }`}
                         >
                             <span className="flex items-center gap-2.5 whitespace-nowrap">
-                                <span className="text-base leading-none">{lang.flag}</span>
+                                <span className="text-lg leading-none">{lang.flag}</span>
                                 <span>{lang.label}</span>
                             </span>
-                            {locale === lang.code && <Check size={14} className="shrink-0" />}
+                            {locale === lang.code && <Check size={14} className="shrink-0 text-purple-600 dark:text-purple-400" />}
                         </button>
                     ))}
                 </div>
