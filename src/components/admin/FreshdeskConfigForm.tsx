@@ -152,28 +152,34 @@ interface FreshdeskConfigFormProps {
 export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] }: FreshdeskConfigFormProps) {
     const [isPending, startTransition] = useTransition();
     const [config, setConfig] = useState<FreshdeskConfig>(initialData);
-    const [syncing, setSyncing] = useState(false);
-    const [syncResult, setSyncResult] = useState<{ success: boolean; created: number; updated: number; errors: string[]; details: string[] } | null>(null);
+    const [linksCopied, setLinksCopied] = useState(false);
     const t = useTranslations('admin.freshdesk');
 
-    /** Sync Help → Freshdesk KB */
-    const handleSyncKB = async () => {
-        try {
-            setSyncing(true);
-            setSyncResult(null);
-            const res = await fetch('/api/admin/freshdesk-sync', { method: 'POST' });
-            const data = await res.json();
-            setSyncResult(data);
-            if (data.success) {
-                toast.success(`KB sincronizada: ${data.created} criados, ${data.updated} atualizados`);
-            } else {
-                toast.error(`Sync com erros: ${data.errors?.length || 0} falhas`);
-            }
-        } catch {
-            toast.error('Erro ao sincronizar com Freshdesk');
-        } finally {
-            setSyncing(false);
-        }
+    /** Copia links de todos os tópicos do help para o clipboard */
+    const copyHelpLinks = async () => {
+        const links = [
+            '💰 Negócios',
+            '• Planos e Limites → https://solucoesrkm.com/pt/help/plans-limits',
+            '• Segurança de Pagamento → https://solucoesrkm.com/pt/help/payment-security',
+            '• Fluxo de Assinatura → https://solucoesrkm.com/pt/help/subscription-flow',
+            '• Gestão de Assinaturas → https://solucoesrkm.com/pt/help/admin-subscriptions',
+            '• Guia de Configurações → https://solucoesrkm.com/pt/help/admin-settings-guide',
+            '• Sync Freshdesk → https://solucoesrkm.com/pt/help/freshdesk-sync',
+            '• Freshdesk KB → https://solucoesrkm.com/pt/help/freshdesk-kb',
+            '',
+            '🔧 Técnico',
+            '• Documentação Técnica → https://solucoesrkm.com/pt/help/tech-docs',
+            '• Setup Dev → https://solucoesrkm.com/pt/help/dev-setup',
+            '• Banco de Dados → https://solucoesrkm.com/pt/help/dev-database',
+            '• Referência API → https://solucoesrkm.com/pt/help/dev-api',
+            '• Deploy → https://solucoesrkm.com/pt/help/dev-deploy',
+            '• Tradução Automática → https://solucoesrkm.com/pt/help/auto-translation',
+        ].join('\n');
+
+        await navigator.clipboard.writeText(links);
+        setLinksCopied(true);
+        toast.success('Links copiados!');
+        setTimeout(() => setLinksCopied(false), 3000);
     };
 
     /** Helper para atualizar um campo */
@@ -332,63 +338,37 @@ export function FreshdeskConfigForm({ initialData, canEdit = true, history = [] 
                         />
                     </FieldGroup>
 
-                    {/* Sync Help → Freshdesk KB */}
+                    {/* Links do Help — para copiar ao Freshdesk KB */}
                     <div className="border-t border-gray-100 dark:border-white/5 pt-4 space-y-3">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h5 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-1.5">
-                                    <RefreshCw className="w-3.5 h-3.5" />
+                                    <Globe className="w-3.5 h-3.5" />
                                     {t('syncTitle')}
                                 </h5>
                                 <p className="text-[11px] text-gray-500 mt-0.5">
-                                    {t('syncDesc')}
+                                    Copie os links dos tópicos do help para criar artigos no Freshdesk KB
                                 </p>
                             </div>
                             <Button
                                 type="button"
-                                onClick={handleSyncKB}
-                                disabled={syncing || !canEdit}
+                                onClick={copyHelpLinks}
                                 className="gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-xs px-4 py-2"
                             >
-                                {syncing ? (
-                                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t('syncing')}</>
+                                {linksCopied ? (
+                                    <><CheckCircle className="w-3.5 h-3.5" /> Copiado!</>
                                 ) : (
-                                    <><RefreshCw className="w-3.5 h-3.5" /> {t('syncButton')}</>
+                                    <><Globe className="w-3.5 h-3.5" /> Copiar Links</>
                                 )}
                             </Button>
                         </div>
-
-                        {/* Resultado do Sync */}
-                        {syncResult && (
-                            <div className={`p-3 rounded-lg border text-xs space-y-2 ${syncResult.success
-                                ? 'border-emerald-500/20 bg-emerald-500/5'
-                                : 'border-red-500/20 bg-red-500/5'
-                                }`}>
-                                <div className="flex items-center gap-2 font-semibold">
-                                    {syncResult.success
-                                        ? <><CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> {t('syncDone')}</>
-                                        : <><XCircle className="w-3.5 h-3.5 text-red-400" /> {t('syncError')}</>
-                                    }
-                                    <span className="text-gray-400 font-normal">
-                                        — {syncResult.created} {t('syncCreated')}, {syncResult.updated} {t('syncUpdated')}
-                                    </span>
-                                </div>
-                                {syncResult.details?.length > 0 && (
-                                    <div className="pl-5 space-y-0.5 text-gray-400">
-                                        {syncResult.details.map((d, i) => (
-                                            <div key={i}>{d}</div>
-                                        ))}
-                                    </div>
-                                )}
-                                {syncResult.errors?.length > 0 && (
-                                    <div className="pl-5 space-y-0.5 text-red-400">
-                                        {syncResult.errors.map((e, i) => (
-                                            <div key={i}>❌ {e}</div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <p className="text-[11px] text-gray-400 leading-relaxed">
+                            💡 Fonte única de verdade: crie artigos no Freshdesk com links diretos para{' '}
+                            <a href="https://solucoesrkm.com/pt/help" target="_blank" rel="noopener" className="text-teal-400 hover:underline">
+                                solucoesrkm.com/help
+                            </a>
+                            . Assim, ao editar no help-editor, o conteúdo atualiza automaticamente.
+                        </p>
                     </div>
                 </ModuleSection>
 
