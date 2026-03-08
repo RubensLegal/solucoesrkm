@@ -18,9 +18,10 @@ import { ApiKeysForm } from '@/components/admin/ApiKeysForm';
 import { PricingVisibilityForm, type PlansConfig } from '@/components/admin/PricingVisibilityForm';
 import { CollapsibleSection } from '@/components/admin/CollapsibleSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Settings, Globe, Key, Headset, Shield, LayoutList, CreditCard, ExternalLink } from 'lucide-react';
+import { Settings, Globe, Key, Headset, Shield, LayoutList, CreditCard, ExternalLink, RefreshCw } from 'lucide-react';
 import { getTranslations, getLocale } from 'next-intl/server';
 import { AdminTopBarClient } from '@/components/admin/AdminTopBarClient';
+import { FreshdeskSyncButton } from '@/components/admin/FreshdeskSyncButton';
 
 export default async function AdminSettingsPage() {
     // ── Auth: employee-only ──
@@ -204,6 +205,18 @@ export default async function AdminSettingsPage() {
                 >
                     <FreshdeskConfigForm initialData={freshdeskConfig} canEdit={isCanEdit} history={freshdeskHistory} />
                 </CollapsibleSection>
+
+                {/* Freshdesk KB Sync — Corporativo */}
+                {(role === 'SUPERADMIN' || role === 'ADMIN') && (
+                    <CollapsibleSection
+                        title="Freshdesk KB — Sync Corporativo"
+                        subtitle="Sincronize FAQ, Termos, Privacidade, Legal e Cookies com a Knowledge Base."
+                        icon={<RefreshCw className="w-4 h-4 text-white" />}
+                        iconBg="bg-gradient-to-br from-emerald-500 to-teal-600"
+                    >
+                        <FreshdeskSyncButton />
+                    </CollapsibleSection>
+                )}
             </div>
         </div>
     );

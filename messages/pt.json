@@ -1138,6 +1138,15 @@
             "plans": "Configuração de planos, limites e preços (SUPERADMIN only)",
             "team": "Gestão de equipe — adicionar, remover e alterar roles dos membros"
           },
+          "planVisibility": {
+            "title": "Visibilidade dos Planos (Marketing)",
+            "desc": "A seção 'Visibilidade dos Planos' em /admin/settings permite controlar quais planos e features aparecem na landing page da empresa, sem alterar a configuração real dos planos no Tracka.",
+            "howItWorks": "Os dados são buscados da API do Tracka (/api/plan-config) a cada carregamento da página (revalidate: 0 — sempre fresco). O grid exibe todos os planos com seus limites numéricos, features booleanas, notificações e suporte — exatamente como estão configurados no Tracka.",
+            "checkboxes": "Cada checkbox no grid controla apenas a VISIBILIDADE na landing page. Ocultar um plano ou feature aqui não altera nada no Tracka — é apenas para marketing.",
+            "storage": "As preferências de visibilidade são salvas na tabela SiteSettings como JSON (key: pricing_visibility), contendo hiddenPlans (array de plan keys) e hiddenFeatures (map de plan key → array de feature keys).",
+            "history": "Todas as alterações de visibilidade são registradas no Change History, acessível na própria seção.",
+            "tip": "Se os planos não carregarem, verifique se o Tracka (NEXT_PUBLIC_APP_URL) está acessível. A API /api/plan-config precisa estar disponível para o servidor Next.js do site corporativo."
+          },
           "helpEditor": {
             "title": "/admin/help-editor — Editor de Help",
             "desc": "Ferramenta para editar o conteúdo dos tópicos de ajuda sem necessidade de deploy. Apenas SUPERADMIN e ADMIN têm acesso.",
