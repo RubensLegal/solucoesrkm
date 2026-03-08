@@ -1,318 +1,1965 @@
 {
-    "corporate": {
-        "brand": "Soluções RKM",
-        "tagline": "Technology that simplifies your life",
-        "description": "We develop smart applications to organize, manage, and simplify everyday life for people and businesses.",
-        "nav": {
-            "home": "Home",
-            "products": "Products",
-            "help": "Help"
-        },
-        "login": "Sign In",
-        "stats": {
-            "secure": "Secure",
-            "secure_desc": "LGPD compliant",
-            "fast": "Fast",
-            "fast_desc": "Cloud native",
-            "smart": "Smart",
-            "smart_desc": "AI powered"
-        },
-        "products": {
-            "title": "Our Products",
-            "subtitle": "Solutions built to solve real problems",
-            "learn_more": "Learn More",
-            "coming_soon": "Coming Soon",
-            "coming_soon_desc": "New products are being developed. Stay tuned for the latest news.",
-            "tracka": {
-                "name": "Tracka",
-                "active": "ACTIVE",
-                "planned": "PLANNED",
-                "desc": "Smart personal and business inventory management. Catalog, organize, and locate your belongings with AI.",
-                "tags": "Inventory,AI,Collaboration,PWA"
-            }
-        },
-        "footer": {
-            "rights": "© {year} Soluções RKM. All rights reserved.",
-            "contact": "Questions? Contact us: suporte@solucoesrkm.com",
-            "links": {
-                "faq": "FAQ",
-                "terms": "Terms of Use",
-                "privacy": "Privacy",
-                "cookies": "Cookies",
-                "legal": "Legal Notices"
-            }
-        }
+  "corporate": {
+    "brand": "Soluções RKM",
+    "tagline": "Technology that simplifies your life",
+    "description": "We develop smart applications to organize, manage, and simplify everyday life for people and businesses.",
+    "nav": {
+      "home": "Home",
+      "products": "Products",
+      "help": "Help"
     },
-    "tracka": {
-        "hero": {
-            "subtitle": "Organize everything that matters. Catalog, locate, and manage your belongings with artificial intelligence.",
-            "badge_new": "NEW",
-            "badge_original": "ORIGINAL SOLUÇÕES RKM",
-            "cta_primary": "Start Free",
-            "cta_secondary": "Learn More"
+    "login": "Sign In",
+    "stats": {
+      "secure": "Secure",
+      "secure_desc": "LGPD compliant",
+      "fast": "Fast",
+      "fast_desc": "Cloud native",
+      "smart": "Smart",
+      "smart_desc": "AI powered"
+    },
+    "products": {
+      "title": "Our Products",
+      "subtitle": "Solutions built to solve real problems",
+      "learn_more": "Learn More",
+      "coming_soon": "Coming Soon",
+      "coming_soon_desc": "New products are being developed. Stay tuned for the latest news.",
+      "tracka": {
+        "name": "Tracka",
+        "active": "ACTIVE",
+        "planned": "PLANNED",
+        "desc": "Smart personal and business inventory management. Catalog, organize, and locate your belongings with AI.",
+        "tags": "Inventory,AI,Collaboration,PWA"
+      }
+    },
+    "footer": {
+      "rights": "© {year} Soluções RKM. All rights reserved.",
+      "contact": "Questions? Contact us: suporte@solucoesrkm.com",
+      "links": {
+        "faq": "FAQ",
+        "terms": "Terms of Use",
+        "privacy": "Privacy",
+        "cookies": "Cookies",
+        "legal": "Legal Notices"
+      }
+    }
+  },
+  "tracka": {
+    "hero": {
+      "subtitle": "Organize everything that matters. Catalog, locate, and manage your belongings with artificial intelligence.",
+      "badge_new": "NEW",
+      "badge_original": "ORIGINAL SOLUÇÕES RKM",
+      "cta_primary": "Start Free",
+      "cta_secondary": "Learn More"
+    },
+    "features": {
+      "title": "Why choose Tracka?",
+      "view_all": "View all",
+      "search": {
+        "title": "Smart Search",
+        "desc": "Find any item instantly with advanced filters."
+      },
+      "moving": {
+        "title": "Moving Management",
+        "desc": "Plan moves with visual selection and status control."
+      },
+      "multi_device": {
+        "title": "Multi-device",
+        "desc": "Access from any device. PWA with offline support."
+      },
+      "security": {
+        "title": "Total Security",
+        "desc": "Encrypted data in compliance with LGPD."
+      }
+    },
+    "technology": {
+      "title": "Cutting-Edge Technology",
+      "tech": {
+        "title": "Modern Stack",
+        "desc": "Next.js 15, React 19, TypeScript, Turso, Vercel Edge."
+      },
+      "user_focus": {
+        "title": "User Focus",
+        "desc": "Intuitive interface inspired by Netflix with premium design."
+      },
+      "innovation": {
+        "title": "AI Powered",
+        "desc": "Google Cloud Vision for automatic item recognition."
+      }
+    },
+    "pricing": {
+      "title": "Plans & Pricing",
+      "subtitle": "Choose the ideal plan for your needs.",
+      "trial": "✨ 15-day free trial with all features on sign up!",
+      "included_label": "WHAT'S INCLUDED",
+      "free": {
+        "name": "Free",
+        "price": "Free",
+        "desc": "For personal use and small organizations.",
+        "features": "50 Items,50 Vision AI 🤖,1 House,5 Rooms/house,5 Furniture/room,1 Photos/item,0 Collaborators/house",
+        "excluded": "Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+        "button": "Start Free"
+      },
+      "plus": {
+        "name": "Plus",
+        "price": "R$ 9,90",
+        "priceMonthly": "/mo",
+        "priceBrl": 9.9,
+        "desc": "For those who need more space and resources.",
+        "features": "200 Items,600 Vision AI 🤖,3 Houses,15 Rooms/house,15 Furniture/room,3 Photos/item,2 Collaborators/house,Usage history,Ranking (most used),Data export,Consolidation/Moving",
+        "button": "Subscribe Now",
+        "popular": "POPULAR"
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "R$ 19,90",
+        "priceMonthly": "/mo",
+        "priceBrl": 19.9,
+        "desc": "For those who need the most out of Tracka.",
+        "features": "2000 Items,10000 Vision AI 🤖,10 Houses,50 Rooms/house,50 Furniture/room,5 Photos/item,10 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+        "button": "Subscribe Now"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "question": "Is Tracka free?",
+          "answer": "Yes! The Free plan is free forever."
         },
-        "features": {
-            "title": "Why choose Tracka?",
-            "view_all": "View all",
-            "search": {
-                "title": "Smart Search",
-                "desc": "Find any item instantly with advanced filters."
+        {
+          "question": "Can I cancel anytime?",
+          "answer": "Yes, cancel anytime without penalty."
+        },
+        {
+          "question": "Is my data safe?",
+          "answer": "Yes, we use encryption and follow LGPD."
+        },
+        {
+          "question": "Does it work on mobile?",
+          "answer": "Yes! Tracka is a PWA that works on any device."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to organize your life?",
+      "subtitle": "Start for free and discover how Tracka can simplify your day.",
+      "button": "Start Now"
+    }
+  },
+  "admin": {
+    "topbar": {
+      "title": "Soluções RKM",
+      "subtitle": "Admin Panel — Corporate",
+      "readonly": "Read-only"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "admin": "Admin",
+      "settings": "Settings"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Configure texts, sections, integrations, and APIs for the corporate site.",
+      "editMode": "Edit Mode"
+    },
+    "landing": {
+      "title": "Landing Page",
+      "subtitle": "Configure texts, sections, testimonials, and links for the Tracka public page.",
+      "hero": "🎬 Hero (Main)",
+      "heroDesc": "Landing Page main section",
+      "heroTitle": "Main Title",
+      "heroSubtitle": "Subtitle",
+      "heroImageUrl": "Background Image URL",
+      "ctaPrimaryText": "Button Text",
+      "ctaPrimaryLink": "Button Link",
+      "sections": "Control which sections are displayed",
+      "visibility": "👁️ Visibility",
+      "toggleFeatures": "Features",
+      "toggleTechnology": "Technology",
+      "toggleTestimonials": "Testimonials",
+      "togglePricing": "Pricing",
+      "toggleFaq": "FAQ",
+      "sectionTitles": "📝 Section Titles",
+      "features": "Features",
+      "technology": "Technology",
+      "testimonials": "💬 Testimonials",
+      "testimonialsDesc": "Feedbacks displayed on the Landing",
+      "name": "Name",
+      "role": "Role",
+      "comment": "Comment",
+      "addTestimonial": "Add Testimonial",
+      "faq": "❓ Frequently Asked Questions (FAQ)",
+      "faqDesc": "Questions displayed on the Landing",
+      "question": "Question",
+      "answer": "Answer",
+      "addQuestion": "Add Question",
+      "cta": "📣 Call to Action (Final)",
+      "ctaDesc": "Section before footer",
+      "ctaTitle": "Title",
+      "ctaSubtitle": "Subtitle",
+      "ctaButton": "Button Text",
+      "footer": "🔗 Footer",
+      "footerDesc": "Footer links and contact",
+      "footerContact": "Contact",
+      "footerLinks": "Footer Links",
+      "linkLabel": "Text",
+      "linkHref": "URL / Route",
+      "addLink": "Add Link",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "plans": {
+      "title": "Plans & Pricing",
+      "subtitle": "Subscription plan settings.",
+      "info": "Plans and pricing are configured directly on the app settings page.",
+      "infoDetail": "Only the {role} has access to this configuration. Changes made there are automatically reflected on both the app and the landing page.",
+      "superAdmin": "Super Admin",
+      "openConfig": "Open Tracka Configuration"
+    },
+    "apiKeys": {
+      "title": "Integrations / API Keys",
+      "subtitle": "Configure API keys for external services.",
+      "googlePlaces": "Google Places API Key",
+      "googlePlacesHint": "Optional. Used as fallback for international address lookup when Nominatim (OpenStreetMap) returns no results.",
+      "saveKey": "Save API Key",
+      "saving": "Saving..."
+    },
+    "freshdesk": {
+      "title": "Freshdesk — Customer Support",
+      "subtitle": "Configure Freshworks support modules.",
+      "domain": "Freshworks Domain",
+      "domainHint": "Your Freshworks domain (obtained from the Freshdesk admin panel)",
+      "widget": "Support Widget",
+      "widgetDesc": "Floating bubble for contact and FAQ",
+      "widgetId": "Widget ID",
+      "widgetIdHint": "Paste the numeric ID or deployment script — the ID will be extracted automatically",
+      "position": "Position",
+      "positionRight": "Right",
+      "positionLeft": "Left",
+      "offset": "Offset (px)",
+      "autoIdentify": "Automatically identify logged-in users",
+      "tickets": "Ticket Portal",
+      "ticketsDesc": "Dedicated page for creating and tracking tickets",
+      "ticketsUrl": "Ticket Portal URL",
+      "ticketsUrlHint": "E.g.: https://yourdomain.freshdesk.com/support/tickets",
+      "kb": "Knowledge Base",
+      "kbDesc": "Knowledge base and help articles",
+      "kbUrl": "Knowledge Base URL",
+      "kbUrlHint": "E.g.: https://yourdomain.freshdesk.com/support/solutions",
+      "syncTitle": "Sync Help → Freshdesk",
+      "syncDesc": "Publishes internal Help topics as articles in the Freshdesk KB. Public topics are visible to all. Admin topics are restricted to agents.",
+      "syncButton": "Sync KB",
+      "syncing": "Syncing...",
+      "syncDone": "Sync completed",
+      "syncError": "Sync with errors",
+      "syncCreated": "created",
+      "syncUpdated": "updated",
+      "chat": "Freshchat",
+      "chatDesc": "Real-time chat with the support team",
+      "chatToken": "Chat Token",
+      "chatTokenHint": "Paste the UUID token or deployment script — the token will be extracted automatically",
+      "saveFreshdesk": "Save Freshdesk",
+      "saving": "Saving..."
+    },
+    "history": {
+      "title": "Change History",
+      "filter": "Filter by section, field, or user...",
+      "noEntries": "No changes recorded. History will appear after the first update.",
+      "noResults": "No results for the filter.",
+      "changes": "change",
+      "changesPlural": "changes",
+      "section": "Section",
+      "field": "Field",
+      "before": "Before",
+      "after": "After"
+    }
+  },
+  "help": {
+    "title": "How to Use Tracka",
+    "subtitle": "Learn how to use all app features",
+    "requiresInternet": "📶 Works in any browser with internet access",
+    "backToSettings": "Back to Settings",
+    "comingSoon": "Content coming soon...",
+    "categories": {
+      "organization": "Organization",
+      "features": "Features",
+      "collaboration": "Collaboration",
+      "account": "Account & Security",
+      "general": "General",
+      "technical": "Technical (Dev)",
+      "business": "Plans & Subscriptions",
+      "legal": "Legal & Compliance"
+    },
+    "topics": {
+      "organizingItems": {
+        "title": "How to Organize your Items",
+        "subtitle": "Understand the House → Room → Furniture → Item hierarchy",
+        "content": {
+          "intro": "Tracka uses a simple hierarchy to organize your belongings: House → Room → Furniture → Item. Think of it as a tree where each level contains the next.",
+          "hierarchy": {
+            "title": "Organization Hierarchy",
+            "house": {
+              "icon": "🏠",
+              "name": "House",
+              "desc": "The main location (house, apartment, office)"
             },
-            "moving": {
-                "title": "Moving Management",
-                "desc": "Plan moves with visual selection and status control."
+            "room": {
+              "icon": "🚪",
+              "name": "Room",
+              "desc": "Each division within the house (bedroom, kitchen, living room)"
             },
-            "multi_device": {
-                "title": "Multi-device",
-                "desc": "Access from any device. PWA with offline support."
+            "furniture": {
+              "icon": "🗄️",
+              "name": "Furniture",
+              "desc": "Where you store items (closet, drawer, shelf)"
             },
-            "security": {
-                "title": "Total Security",
-                "desc": "Encrypted data in compliance with LGPD."
+            "item": {
+              "icon": "📦",
+              "name": "Item",
+              "desc": "The object itself (book, tool, document)"
             }
-        },
-        "technology": {
-            "title": "Cutting-Edge Technology",
-            "tech": {
-                "title": "Modern Stack",
-                "desc": "Next.js 15, React 19, TypeScript, Turso, Vercel Edge."
+          },
+          "howTo": {
+            "title": "Getting Started",
+            "step1": "Create your first House (e.g., My Home, Office)",
+            "step2": "Add Rooms to the house (e.g., Bedroom, Kitchen)",
+            "step3": "Register Furniture in each room (e.g., Closet, Drawer)",
+            "step4": "Add your Items inside the furniture"
+          },
+          "example": {
+            "title": "Practical Example",
+            "line1": "🏠 My Home",
+            "line2": "└ 🚪 Main Bedroom",
+            "line3": "   └ 🗄️ Wardrobe",
+            "line4": "      └ 📦 Blue T-Shirt (Qty: 3)"
+          },
+          "tip": "Start with a few items and add gradually. You don't need to catalog everything at once!"
+        }
+      },
+      "locationItems": {
+        "title": "Location Items",
+        "subtitle": "Understand items automatically created by the system",
+        "content": {
+          "intro": "When you create a House, Room or Furniture, the system automatically creates a corresponding 'location item'. These special items appear in your list with a 'Location' badge.",
+          "what": {
+            "title": "What are Location Items?",
+            "desc": "They are representations of your locations that appear in search and item lists:",
+            "house": {
+              "icon": "🏠",
+              "name": "House",
+              "desc": "Appears as an item with 'Location' badge"
             },
-            "user_focus": {
-                "title": "User Focus",
-                "desc": "Intuitive interface inspired by Netflix with premium design."
+            "room": {
+              "icon": "🚪",
+              "name": "Room",
+              "desc": "Allows finding rooms in quick search"
             },
-            "innovation": {
-                "title": "AI Powered",
-                "desc": "Google Cloud Vision for automatic item recognition."
+            "furniture": {
+              "icon": "📦",
+              "name": "Furniture",
+              "desc": "Furniture also appears with 'Location' badge"
             }
-        },
-        "pricing": {
-            "title": "Plans & Pricing",
-            "subtitle": "Choose the ideal plan for your needs.",
-            "trial": "✨ 15-day free trial with all features on sign up!",
-            "included_label": "WHAT'S INCLUDED",
+          },
+          "badge": {
+            "title": "How to Identify",
+            "desc": "Location items have a colored 'Location' badge on the card. Houses show 🏠, rooms 🚪 and furniture 📦. Without a photo, an illustrative icon appears."
+          },
+          "tip": "Add photos to your locations! The photo shows as a small preview on the card. Click it to view the full-size image."
+        }
+      },
+      "itemStatus": {
+        "title": "Item Status",
+        "subtitle": "Track whether items are stored, pending, or borrowed",
+        "content": {
+          "intro": "Each item has a status indicating whether it is already stored, waiting to be stored, or borrowed.",
+          "statuses": {
+            "title": "Status Types",
+            "toStore": {
+              "icon": "🟠",
+              "name": "To Store",
+              "desc": "Item is in Reserve, waiting to be put in a permanent location"
+            },
+            "stored": {
+              "icon": "✅",
+              "name": "Stored",
+              "desc": "Item is already in its permanent location"
+            },
+            "borrowed": {
+              "icon": "🤝",
+              "name": "Borrowed",
+              "desc": "Item was lent to someone"
+            }
+          },
+          "rules": {
+            "title": "How It Works",
+            "rule1": "When creating an item without a specific location, it goes to Reserve with 'To store' status",
+            "rule2": "When moving the item to a permanent location, the status automatically changes to 'Stored'",
+            "rule3": "Status is automatically determined by location and cannot be manually edited",
+            "rule4": "The only exception is the 'Borrowed' status, which can be manually toggled on/off"
+          },
+          "toggle": {
+            "title": "Borrowed Toggle",
+            "desc": "On the item detail page, use the 'Borrowed: YES/NO' button to mark or unmark the item as borrowed. When unmarked, the status reverts to the location-based value."
+          },
+          "tip": "Use the status filter on the items list to quickly see which items still need to be stored!"
+        }
+      },
+      "characterLimits": {
+        "title": "Character Limits",
+        "subtitle": "Know the limits for name fields",
+        "content": {
+          "intro": "To keep things organized and ensure proper display, name fields have character limits.",
+          "table": {
+            "title": "Limits by Field"
+          },
+          "fields": {
+            "houseName": "House/Location Name",
+            "roomName": "Room Name",
+            "furnitureName": "Furniture Name",
+            "itemName": "Item Name",
+            "itemDescription": "Item Description"
+          },
+          "chars": "characters",
+          "why": {
+            "title": "Why do limits exist?",
+            "desc": "Limits ensure names display correctly on cards, search and breadcrumbs without breaking the layout."
+          },
+          "tip": "Use short, descriptive names. E.g., 'John's Wardrobe' instead of 'Big Brown Wooden Wardrobe in John's Bedroom'."
+        }
+      },
+      "searchFilters": {
+        "title": "Search & Filters",
+        "subtitle": "Find any item quickly",
+        "content": {
+          "intro": "Tracka offers global search and filters to find your items in seconds.",
+          "globalSearch": {
+            "title": "Global Search",
+            "desc": "Searches across all your items, houses, rooms and furniture simultaneously.",
+            "step1": "Click the search icon or use the search bar",
+            "step2": "Type part of the item name, location or category",
+            "step3": "Results appear instantly as you type"
+          },
+          "filters": {
+            "title": "Available Filters",
+            "desc": "On the items page, you can filter by:",
+            "category": {
+              "name": "Category",
+              "desc": "Type (electronics, clothes, documents...)"
+            },
+            "location": {
+              "name": "Location",
+              "desc": "Specific house, room or furniture"
+            },
+            "state": {
+              "name": "Condition",
+              "desc": "Item condition (new, used, damaged)"
+            },
+            "status": {
+              "name": "Status",
+              "desc": "To store, Stored, or Borrowed"
+            }
+          },
+          "sorting": {
+            "title": "Sorting Options",
+            "desc": "Organize your item list. Click the same button to reverse direction (↑↓):",
+            "recent": {
+              "name": "Most Recent",
+              "desc": "Recently updated items first. Click again for oldest first."
+            },
+            "az": {
+              "name": "A-Z / Z-A",
+              "desc": "Alphabetical order by name. Click again to reverse (Z→A)."
+            },
+            "location": {
+              "name": "By Location",
+              "desc": "Groups by house, room and furniture. Click again to reverse."
+            },
+            "quantity": {
+              "name": "By Quantity",
+              "desc": "Most units first. Click again for fewest first."
+            }
+          },
+          "tip": "Combine filters with sorting! Filter by 'Bedroom' and sort by quantity to see what has the most units."
+        }
+      },
+      "importExport": {
+        "title": "Import & Export",
+        "subtitle": "Import spreadsheets and export your data",
+        "content": {
+          "intro": "Import data from spreadsheets and export your inventory for backup or analysis.",
+          "planNote": "⚠️ Export requires Plus plan or higher. Import requires Pro plan.",
+          "import": {
+            "title": "Import Data",
+            "desc": "Import items from CSV/Excel to add many at once. You can download a ready-made spreadsheet template!",
+            "step1": "On the Dashboard, click 'Import Data'",
+            "step2": "Download the spreadsheet template to ensure the correct format",
+            "step3": "Fill in the spreadsheet with your items and select the file",
+            "step4": "Review the preview, map columns and confirm"
+          },
+          "export": {
+            "title": "Export Data",
+            "desc": "Export your entire inventory for backup.",
+            "step1": "On the Dashboard, click 'Export Data'",
+            "step2": "The download will start automatically"
+          },
+          "warning": "Make sure spreadsheet columns match the expected fields before importing.",
+          "importRules": {
+            "title": "Import Rules",
+            "rule1": "Location is sovereign: item status is automatically determined by the destination, not by the spreadsheet value.",
+            "rule2": "Houses and rooms are not auto-created. If they don't exist in the database, the item goes to Reserve/Storage/Items to store.",
+            "rule3": "Furniture can be created during import, as long as the house and room exist. You'll see a popup asking for confirmation."
+          },
+          "tip": "Do periodic exports as data backups!"
+        }
+      },
+      "photoRecognition": {
+        "title": "Photo Recognition",
+        "subtitle": "Use AI to identify items automatically",
+        "content": {
+          "intro": "Tracka uses artificial intelligence to identify items from photos and suggest name and category.",
+          "howItWorks": {
+            "title": "How It Works",
+            "desc": "Recognition uses computer vision to analyze the image.",
+            "step1": "When adding an item, click the camera icon",
+            "step2": "Take a photo or select from gallery",
+            "step3": "AI automatically fills in suggested name and category"
+          },
+          "bestResults": {
+            "title": "For Best Results",
+            "lighting": {
+              "name": "Lighting",
+              "desc": "Use good light, preferably natural"
+            },
+            "angle": {
+              "name": "Angle",
+              "desc": "Photograph head-on, centered"
+            },
+            "focus": {
+              "name": "Focus",
+              "desc": "Sharp and in-focus image"
+            }
+          },
+          "tip": "Edit AI suggestions before saving. Use them as a starting point!"
+        }
+      },
+      "history": {
+        "title": "Movement History",
+        "subtitle": "Track changes to your items",
+        "content": {
+          "intro": "Tracka records all changes to your items for complete tracking.",
+          "planNote": "⚠️ History requires Plus plan or higher. On the Free plan, movements are not recorded.",
+          "whatIsTracked": {
+            "title": "What is Tracked",
+            "creation": {
+              "name": "Creation",
+              "desc": "When the item was added"
+            },
+            "moves": {
+              "name": "Moves",
+              "desc": "Location changes"
+            },
+            "edits": {
+              "name": "Edits",
+              "desc": "Changes to name, quantity, etc."
+            },
+            "deletion": {
+              "name": "Deletion",
+              "desc": "Sent to trash"
+            }
+          },
+          "howToAccess": {
+            "title": "How to Access",
+            "step1": "Go to 'History' in the sidebar menu",
+            "step2": "View the timeline with all actions"
+          },
+          "tip": "Use history to find recently moved items!"
+        }
+      },
+      "sharing": {
+        "title": "Share Houses",
+        "subtitle": "Invite people to manage items",
+        "content": {
+          "intro": "Share houses with family or colleagues to manage items together.",
+          "howToShare": {
+            "title": "How to Share",
+            "step1": "Go to the desired House page",
+            "step2": "Click share and enter the email",
+            "step3": "Choose the access level"
+          },
+          "permissions": {
+            "title": "Managing Permissions",
+            "desc": "The owner can change or remove permissions of any member at any time."
+          },
+          "info": "Each member needs a Tracka account. If they don't have one, they'll receive an email invite.",
+          "tip": "Use 'Viewer' for people who only need to check items, without editing."
+        }
+      },
+      "accessLevels": {
+        "title": "Access Levels",
+        "subtitle": "Understand each role's permissions",
+        "content": {
+          "intro": "Tracka has three access levels for shared houses.",
+          "roles": {
+            "title": "Available Roles",
+            "admin": {
+              "name": "Admin",
+              "desc": "Full access"
+            },
+            "editor": {
+              "name": "Editor",
+              "desc": "Add and edit"
+            },
+            "viewer": {
+              "name": "Viewer",
+              "desc": "Read-only"
+            }
+          },
+          "howToChange": {
+            "title": "How to Change Permissions",
+            "step1": "Go to the House and open members",
+            "step2": "Click on the desired member",
+            "step3": "Select the new access level"
+          },
+          "warning": "Be careful granting Admin — it allows deleting data and managing members."
+        }
+      },
+      "ownershipTransfer": {
+        "title": "Transfer Ownership",
+        "subtitle": "Hand over house administration to another user",
+        "content": {
+          "intro": "If you are the administrator of a house, you can transfer ownership to another registered Tracka user.",
+          "howItWorks": {
+            "title": "How It Works",
+            "step1": "Go to the house and open Members (Settings)",
+            "step2": "In the 'Transfer Ownership' section, enter the new owner's email",
+            "step3": "The recipient will receive a 6-digit code by email and a notification in the app",
+            "step4": "The recipient enters the code on the house Members page to accept"
+          },
+          "rules": {
+            "title": "Important Rules",
+            "rule1": "The recipient must have a Tracka account",
+            "rule2": "Only one pending transfer per house is allowed",
+            "rule3": "The code expires in 48 hours",
+            "rule4": "You can cancel before the recipient accepts",
+            "rule5": "Once accepted, the transfer is irreversible"
+          },
+          "afterTransfer": {
+            "title": "What Happens After Transfer",
+            "desc": "The new owner becomes Administrator of the house. The previous owner stays as Editor — can view and edit items, but can no longer manage members."
+          },
+          "ownerProtection": {
+            "title": "Owner Protection",
+            "desc": "The owner (house creator) cannot be removed or demoted by other administrators. They also cannot remove themselves from their own house. The only way to stop being the owner is to transfer ownership to another user."
+          },
+          "ownerIsNotARole": {
+            "title": "Owner Is Not a Role",
+            "desc": "\"Owner\" is not a role that can be manually assigned. It is automatically determined by who created the house. To make another user the owner — even if they are a Viewer — simply use the Ownership Transfer feature. The system handles everything: the recipient becomes Administrator and the previous owner becomes Editor, with no need to change roles beforehand."
+          },
+          "warning": "Warning: once accepted, the transfer cannot be undone!",
+          "tip": "Cancel the transfer at any time before acceptance if you change your mind."
+        }
+      },
+      "manageAccount": {
+        "title": "Manage your Account",
+        "subtitle": "Update personal info and password",
+        "content": {
+          "intro": "In Settings you can update personal information, password and preferences.",
+          "profile": {
+            "title": "Profile Data",
+            "desc": "Keep your data up to date.",
+            "step1": "Go to Settings from the sidebar",
+            "step2": "Edit name, address, phone or document",
+            "step3": "Click Save"
+          },
+          "password": {
+            "title": "Change Password",
+            "step1": "Scroll to 'Change Password' in Settings",
+            "step2": "Enter current and new password",
+            "step3": "Confirm and save"
+          },
+          "tip": "Set a 'preferred name' — it's used in dashboard greetings!"
+        }
+      },
+      "trashRecovery": {
+        "title": "Trash & Recovery",
+        "subtitle": "Recover deleted items",
+        "content": {
+          "intro": "Deleted items go to Trash, allowing recovery before permanent deletion.",
+          "howItWorks": {
+            "title": "How It Works",
+            "desc": "Deleted items stay in Trash for a period before permanent removal."
+          },
+          "restore": {
+            "title": "How to Restore",
+            "step1": "Go to Trash from the sidebar",
+            "step2": "Find the desired item",
+            "step3": "Click 'Restore'"
+          },
+          "warning": "Items in trash may be permanently deleted. Restore as soon as possible!",
+          "tip": "Export a backup before deleting many items."
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Answers to common questions",
+        "content": {
+          "intro": "See the most common questions about Tracka:",
+          "q1": {
+            "question": "Can I use Tracka on multiple devices?",
+            "answer": "Yes! Tracka works in any browser. Log in with the same account on phone, tablet or computer."
+          },
+          "q2": {
+            "question": "Is my data secure?",
+            "answer": "Yes. Data is stored with encryption. Only you and invitees have access."
+          },
+          "q3": {
+            "question": "How many items can I register?",
+            "answer": "Depends on your plan: Free up to 50 items (1 house), Plus up to 200 items (3 houses), and Pro up to 2000 items (10 houses). Upgrade to increase limits."
+          },
+          "q4": {
+            "question": "Can I use it offline?",
+            "answer": "Currently requires internet, as data is saved to the cloud in real-time."
+          },
+          "q5": {
+            "question": "How do I delete my account?",
+            "answer": "Settings → Danger Zone → Delete My Account. You'll receive a confirmation email."
+          }
+        }
+      },
+      "tipsShortcuts": {
+        "title": "Tips & Shortcuts",
+        "subtitle": "Get the most out of Tracka",
+        "content": {
+          "intro": "Useful tips to use Tracka efficiently:",
+          "tip1": {
+            "title": "📸 Batch photos",
+            "desc": "Take multiple photos when adding items for easy identification."
+          },
+          "tip2": {
+            "title": "🔍 Smart search",
+            "desc": "Typing 'shi' finds 'shirt', 'shipping' and 'shield'."
+          },
+          "tip3": {
+            "title": "🏷️ Use categories",
+            "desc": "Categorize items for quick filtering (Electronics, Clothes, Documents)."
+          },
+          "tip4": {
+            "title": "📊 Dashboard",
+            "desc": "See stats, recent items and most used."
+          },
+          "tip5": {
+            "title": "🌐 Languages",
+            "desc": "Available in PT and EN. Change in Settings → Language."
+          },
+          "bonus": "Tip: Add Tracka to your phone's home screen for quick access like a native app!"
+        }
+      },
+      "systemRequirements": {
+        "title": "System Requirements",
+        "subtitle": "Minimum device and internet specs to run Tracka",
+        "content": {
+          "intro": "Tracka is a web app (PWA) that runs directly in your browser. No installation needed — just a device with a modern browser and internet connection.",
+          "devices": {
+            "title": "Compatible Devices",
+            "computer": {
+              "icon": "💻",
+              "name": "Computer / Laptop",
+              "processor": "Processor: Dual-core 1.5 GHz or higher",
+              "ram": "RAM: 2 GB (4 GB recommended)",
+              "storage": "Storage: Not needed (data in the cloud)",
+              "screen": "Screen: 1024×768 or higher"
+            },
+            "smartphone": {
+              "icon": "📱",
+              "name": "Smartphone",
+              "os": "OS: Android 8+ or iOS 13+",
+              "ram": "RAM: 2 GB (3 GB recommended)",
+              "storage": "Storage: ~50 MB (browser cache)",
+              "screen": "Screen: 320px minimum width"
+            },
+            "tablet": {
+              "icon": "📟",
+              "name": "Tablet",
+              "os": "OS: Android 8+, iPadOS 13+ or Windows 10+",
+              "ram": "RAM: 2 GB",
+              "screen": "Screen: 768px minimum width (best experience)"
+            }
+          },
+          "internet": {
+            "title": "Internet Connection",
+            "description": "Tracka requires an active internet connection. Data is saved to the cloud in real-time.",
+            "minimum": {
+              "name": "Minimum",
+              "downstream": "Download: 1 Mbps",
+              "upstream": "Upload: 512 Kbps",
+              "note": "Sufficient for browsing and editing items"
+            },
+            "recommended": {
+              "name": "Recommended",
+              "downstream": "Download: 5 Mbps",
+              "upstream": "Upload: 2 Mbps",
+              "note": "Ideal for photo uploads and import/export"
+            },
+            "photo": {
+              "name": "With Photos & AI",
+              "downstream": "Download: 10 Mbps",
+              "upstream": "Upload: 5 Mbps",
+              "note": "For intensive use of AI camera recognition"
+            },
+            "types": "Works with Wi-Fi, 4G/LTE or 5G. 3G networks may be slow for photo uploads."
+          },
+          "browsers": {
+            "title": "Supported Browsers",
+            "description": "Always use the latest version for best performance:",
+            "chrome": "Google Chrome 90+",
+            "safari": "Safari 14+ (iOS/macOS)",
+            "edge": "Microsoft Edge 90+",
+            "firefox": "Firefox 90+",
+            "samsung": "Samsung Internet 15+",
+            "notSupported": "Internet Explorer is not supported."
+          },
+          "pwa": {
+            "title": "Install as App (PWA)",
+            "desc": "For the best experience, install Tracka on your device's home screen. It takes minimal space and provides quick access without opening the browser."
+          },
+          "tip": "Not sure? Try this: if this page loaded fine, your device and internet are good enough!"
+        }
+      },
+      "techDocs": {
+        "title": "Technical Documentation",
+        "subtitle": "Architecture, security and variables — SUPERADMIN only",
+        "content": {
+          "intro": "Complete technical documentation for the Tracka system. Only SUPERADMIN users can view this page.",
+          "architecture": {
+            "title": "System Architecture",
+            "stack": {
+              "name": "Stack",
+              "desc": "Next.js 16 + React 19 + TypeScript + Prisma ORM"
+            },
+            "database": {
+              "name": "Database",
+              "desc": "Turso (LibSQL) with driver adapter connections"
+            },
+            "auth": {
+              "name": "Authentication",
+              "desc": "JWT (Jose) + Bcrypt + Google OAuth 2.0"
+            },
+            "storage": {
+              "name": "Storage",
+              "desc": "Cloudinary (images via HMAC signed upload)"
+            },
+            "email": {
+              "name": "Email",
+              "desc": "Resend API for verification, reset and deletion"
+            }
+          },
+          "security": {
+            "title": "Security Layers",
+            "passwords": {
+              "name": "Passwords",
+              "desc": "Bcrypt hash with salt factor 10"
+            },
+            "jwt": {
+              "name": "Session",
+              "desc": "JWT HMAC-SHA256, HttpOnly + Secure + SameSite=Lax cookie"
+            },
+            "encryption": {
+              "name": "Sensitive Data",
+              "desc": "AES-256-GCM for CPF, documents, phone and WhatsApp"
+            },
+            "transport": {
+              "name": "Transport",
+              "desc": "HTTPS (Vercel) + TLS on Turso connections"
+            }
+          },
+          "roles": {
+            "title": "Role Hierarchy",
+            "superadmin": {
+              "name": "SUPERADMIN",
+              "desc": "Root. Full access to all data from all users and houses."
+            },
+            "admin": {
+              "name": "ADMIN",
+              "desc": "Company admin. Admin panel, landing, API keys."
+            },
+            "editor": {
+              "name": "EDITOR",
+              "desc": "Editing in admin panel (landing, config)."
+            },
+            "viewer": {
+              "name": "VIEWER",
+              "desc": "View-only in admin panel."
+            },
+            "employee": {
+              "name": "EMPLOYEE",
+              "desc": "Platform role. Employee.role defines admin access."
+            }
+          },
+          "envVars": {
+            "title": "Environment Variables",
+            "database": {
+              "name": "TURSO_*",
+              "desc": "Turso URL and auth token"
+            },
+            "auth": {
+              "name": "JWT_SECRET, GOOGLE_*",
+              "desc": "JWT secret and Google OAuth credentials"
+            },
+            "encryption": {
+              "name": "ENCRYPTION_KEY",
+              "desc": "AES-256 key (64 hex chars = 32 bytes)"
+            },
+            "email": {
+              "name": "RESEND_API_KEY",
+              "desc": "Resend API key for email sending"
+            },
+            "cloudinary": {
+              "name": "CLOUDINARY_*",
+              "desc": "Cloud name, API key and secret"
+            },
+            "vision": {
+              "name": "GOOGLE_CLOUD_VISION_*",
+              "desc": "Credentials for photo recognition"
+            },
+            "stripe": {
+              "name": "STRIPE_*",
+              "desc": "Secret key, webhook secret and publishable key"
+            }
+          },
+          "warning": "This documentation contains confidential information. Do not share outside the development team.",
+          "ownershipTransfer": {
+            "title": "Ownership Transfer",
+            "model": {
+              "name": "OwnershipTransfer",
+              "desc": "Prisma model: id, houseId, fromUserId, toUserId, code (6 digits), status (PENDING/ACCEPTED/CANCELLED), expiresAt (48h)"
+            },
+            "actions": {
+              "name": "Server Actions",
+              "desc": "initiateTransferAction, cancelTransferAction, acceptTransferAction, getPendingTransferAction, getIncomingTransfersAction — in ownership-transfer.actions.ts"
+            },
+            "emails": {
+              "name": "Emails",
+              "desc": "ownershipTransferTemplate (code + link) and ownershipTransferCancelledTemplate — in email-templates.ts"
+            },
+            "notifications": {
+              "name": "Notifications",
+              "desc": "Auto-detector detectPendingOwnershipTransfers in notification.service.ts"
+            },
+            "flow": {
+              "name": "Flow",
+              "desc": "Admin initiates → 6-digit code via email + notification → recipient accepts (atomic tx: House.userId changes, new=ADMIN, old=EDITOR) → irreversible"
+            },
+            "ownerProtection": {
+              "name": "Owner Protection",
+              "desc": "House.userId cannot be removed or demoted. removeMemberAction checks member.userId === house.userId. UI hides Remove button via ownerId prop. Golden 'Owner' badge. Only exit: transfer via OwnershipTransfer."
+            }
+          }
+        }
+      },
+      "devSetup": {
+        "title": "Dev Environment Setup",
+        "subtitle": "Clone, install and run the project locally — SUPERADMIN",
+        "content": {
+          "intro": "Complete guide to set up the Tracka development environment.",
+          "prerequisites": {
+            "title": "Prerequisites",
+            "node": {
+              "name": "Node.js 20+",
+              "desc": "JavaScript runtime (recommended: LTS)"
+            },
+            "git": {
+              "name": "Git",
+              "desc": "Version control"
+            },
+            "editor": {
+              "name": "VS Code",
+              "desc": "Recommended editor with ESLint and Prisma extensions"
+            }
+          },
+          "steps": {
+            "title": "Step by Step",
+            "step1": "Clone the repository: git clone https://github.com/RubensLegal/controle-das-coisas.git",
+            "step2": "Install dependencies: npm install",
+            "step3": "Copy .env.example to .env and fill in the variables",
+            "step4": "Generate Prisma client: npx prisma generate",
+            "step5": "Start the server: npm run dev (access http://localhost:3000)"
+          },
+          "envVars": {
+            "title": "Environment Variables (.env)",
+            "desc": "All variables needed to run locally:",
+            "database": {
+              "name": "DATABASE_URL",
+              "desc": "Turso database URL (libsql://...)"
+            },
+            "auth": {
+              "name": "JWT_SECRET",
+              "desc": "Secret to sign JWT tokens (min. 32 chars)"
+            },
+            "encryption": {
+              "name": "ENCRYPTION_KEY",
+              "desc": "AES-256 key for encrypting sensitive data (64 hex chars)"
+            },
+            "email": {
+              "name": "RESEND_API_KEY",
+              "desc": "Resend API key for sending emails"
+            },
+            "cloudinary": {
+              "name": "CLOUDINARY_*",
+              "desc": "CLOUD_NAME, API_KEY, API_SECRET for image uploads"
+            },
+            "google": {
+              "name": "GOOGLE_*",
+              "desc": "CLIENT_ID, CLIENT_SECRET for OAuth + VISION_API_KEY"
+            },
+            "stripe": {
+              "name": "STRIPE_*",
+              "desc": "SECRET_KEY, WEBHOOK_SECRET, PUBLISHABLE_KEY for payments"
+            }
+          },
+          "commands": {
+            "title": "Useful Commands",
+            "dev": {
+              "name": "npm run dev",
+              "desc": "Start development server (port 3000)"
+            },
+            "build": {
+              "name": "npm run build",
+              "desc": "Build for production"
+            },
+            "lint": {
+              "name": "npm run lint",
+              "desc": "Check for code errors"
+            },
+            "prisma": {
+              "name": "npx prisma studio",
+              "desc": "Open database viewer in browser"
+            }
+          },
+          "tip": "Use Prisma Studio (npx prisma studio) to inspect and edit data directly in the database during development."
+        }
+      },
+      "devDatabase": {
+        "title": "Database Guide",
+        "subtitle": "Prisma schema, migrations and scripts — SUPERADMIN",
+        "content": {
+          "intro": "Complete guide to the Tracka database: schema, migrations, Turso and utility scripts.",
+          "schema": {
+            "title": "Schema (Prisma Models)",
+            "desc": "The schema is at prisma/schema.prisma. Main models:",
+            "user": {
+              "name": "User",
+              "desc": "System users (email, password, role, encrypted personal data)"
+            },
+            "employee": {
+              "name": "Employee",
+              "desc": "Employees with admin access (role: ADMIN/EDITOR/VIEWER)"
+            },
+            "house": {
+              "name": "House",
+              "desc": "User's houses (name, address, image)"
+            },
+            "houseMember": {
+              "name": "HouseMember",
+              "desc": "Invited house members (role, blocking)"
+            },
+            "room": {
+              "name": "Room",
+              "desc": "Rooms within a house"
+            },
+            "furniture": {
+              "name": "Furniture",
+              "desc": "Furniture within a room"
+            },
+            "item": {
+              "name": "Item",
+              "desc": "Stored items (name, description, quantity, photo, status)"
+            },
+            "history": {
+              "name": "History",
+              "desc": "Action log (CREATE, UPDATE, MOVE, DELETE, LOAN, RETURN)"
+            },
+            "siteSettings": {
+              "name": "SiteSettings",
+              "desc": "Global site settings (singleton)"
+            }
+          },
+          "isDefaultStrategy": {
+            "title": "isDefault Strategy ('Geral' Entities)",
+            "desc": "A fundamental design decision: when creating a House, the system automatically creates a default Room 'Geral' and Furniture 'Geral', both with isDefault: true.",
+            "purpose": {
+              "name": "Purpose",
+              "desc": "Every Item must belong to a Furniture in the database (Item → Furniture → Room → House). The 'Geral' entities allow storing items directly in a house or room without requiring the user to create an explicit furniture piece."
+            },
+            "behavior": {
+              "name": "UI Behavior",
+              "desc": "Entities with isDefault: true are HIDDEN in the interface. The user never sees 'Geral' in breadcrumbs, location labels, selects or lists. Use item.furniture?.isDefault and item.furniture?.room?.isDefault to filter."
+            },
+            "creation": {
+              "name": "Automatic Creation",
+              "desc": "createHouse → creates Room 'Geral' (isDefault) + Furniture 'Geral' (isDefault). createRoom → creates Furniture 'Geral' (isDefault). This ensures a default location always exists for items."
+            },
+            "queries": {
+              "name": "Queries",
+              "desc": "In listings, filter with isDefault: false to exclude default entities (e.g., listRooms, listFurniture). When displaying location, check isDefault before including the name in the label."
+            }
+          },
+          "turso": {
+            "title": "Turso (LibSQL)",
+            "desc": "Tracka uses Turso as database, a distributed version of SQLite.",
+            "step1": "Create an account at turso.tech and a database",
+            "step2": "Copy the URL (libsql://...) and auth token to .env",
+            "step3": "In dev: npx prisma db push. In production: use migration scripts (scripts/)"
+          },
+          "scripts": {
+            "title": "Utility Scripts (scripts/)",
+            "desc": "Node.js scripts for direct database operations:",
+            "promote": {
+              "name": "promote_superadmin.mjs",
+              "desc": "Promote an Employee to SUPERADMIN"
+            },
+            "migration": {
+              "name": "run_migration_*.mjs",
+              "desc": "Manual migration scripts for schema changes"
+            },
+            "backfill": {
+              "name": "backfill_*.mjs",
+              "desc": "Fill new columns with default values"
+            },
+            "stripe": {
+              "name": "add_stripe_columns.mjs",
+              "desc": "Add Stripe integration columns"
+            }
+          },
+          "warning": "Always backup before running migration or backfill scripts in production. Use npx dotenv-cli -e .env -- node scripts/name.mjs to load variables."
+        }
+      },
+      "devApi": {
+        "title": "API Reference",
+        "subtitle": "All available REST routes — SUPERADMIN",
+        "content": {
+          "intro": "Complete reference for the Tracka REST API routes. All under /api/*.",
+          "auth": {
+            "title": "🔐 Authentication (/api/auth/)",
+            "login": {
+              "method": "POST /api/auth/login",
+              "desc": "Login with email and password → returns JWT + systemRole"
+            },
+            "register": {
+              "method": "POST /api/auth/register",
+              "desc": "Register new user → sends verification email"
+            },
+            "me": {
+              "method": "GET /api/auth/me",
+              "desc": "Returns logged-in user data (PUT to update, DELETE to remove)"
+            },
+            "logout": {
+              "method": "POST /api/auth/logout",
+              "desc": "Invalidate session (clear cookie)"
+            },
+            "google": {
+              "method": "GET /api/auth/google",
+              "desc": "Start Google OAuth flow (callback at /callback)"
+            },
+            "forgot": {
+              "method": "POST /api/auth/forgot-password",
+              "desc": "Send password reset email"
+            },
+            "reset": {
+              "method": "POST /api/auth/reset-password",
+              "desc": "Reset password using email token"
+            },
+            "verify": {
+              "method": "POST /api/auth/verify",
+              "desc": "Verify user email via token"
+            },
+            "confirmDelete": {
+              "method": "POST /api/auth/confirm-delete",
+              "desc": "Confirm account deletion via email token"
+            }
+          },
+          "houses": {
+            "title": "🏠 Houses, Rooms & Furniture",
+            "list": {
+              "method": "GET /api/houses",
+              "desc": "List user's houses (owned + shared)"
+            },
+            "create": {
+              "method": "POST /api/houses",
+              "desc": "Create new house (multipart/form-data with optional image)"
+            },
+            "update": {
+              "method": "PUT /api/houses/[id]",
+              "desc": "Update house (name, address, image)"
+            },
+            "delete": {
+              "method": "DELETE /api/houses/[id]",
+              "desc": "Soft-delete house (goes to trash)"
+            },
+            "rooms": {
+              "method": "GET|POST /api/rooms",
+              "desc": "List/create rooms (PUT|DELETE at /rooms/[id])"
+            },
+            "furniture": {
+              "method": "GET|POST /api/furniture",
+              "desc": "List/create furniture (PUT|DELETE at /furniture/[id])"
+            },
+            "members": {
+              "method": "Server Actions",
+              "desc": "Invitations and members via collaboration.actions.ts"
+            }
+          },
+          "items": {
+            "title": "📦 Items",
+            "list": {
+              "method": "GET /api/items",
+              "desc": "List items (with filters: houseId, roomId, furnitureId)"
+            },
+            "create": {
+              "method": "POST /api/items",
+              "desc": "Create item (multipart/form-data with optional photo)"
+            },
+            "update": {
+              "method": "PUT /api/items/[id]",
+              "desc": "Update item data"
+            },
+            "delete": {
+              "method": "DELETE /api/items/[id]",
+              "desc": "Soft-delete item (goes to trash)"
+            },
+            "move": {
+              "method": "PATCH /api/items/[id]",
+              "desc": "Move item between locations or toggle loan status"
+            },
+            "history": {
+              "method": "GET /api/items/[id]/history",
+              "desc": "Item action history"
+            }
+          },
+          "admin": {
+            "title": "⚙️ Admin (/api/admin/)",
+            "landing": {
+              "method": "GET /api/admin/landing",
+              "desc": "Get landing page configuration"
+            },
+            "landingPut": {
+              "method": "PUT /api/admin/landing",
+              "desc": "Save landing config (SUPERADMIN/ADMIN/EDITOR)"
+            },
+            "apiKeys": {
+              "method": "GET /api/admin/api-keys",
+              "desc": "Get configured API keys"
+            },
+            "apiKeysPut": {
+              "method": "PUT /api/admin/api-keys",
+              "desc": "Save API keys (SUPERADMIN/ADMIN/EDITOR)"
+            },
+            "users": {
+              "method": "Server Actions",
+              "desc": "List/manage employees via admin-users.actions.ts"
+            }
+          },
+          "integrations": {
+            "title": "🔌 Integrations",
+            "stripe": {
+              "method": "POST /api/stripe/checkout",
+              "desc": "Create Stripe checkout session"
+            },
+            "webhook": {
+              "method": "POST /api/stripe/webhook",
+              "desc": "Receive Stripe events (subscription created/cancelled)"
+            },
+            "vision": {
+              "method": "POST /api/vision/identify",
+              "desc": "Identify objects by photo (Google Vision + Translate)"
+            },
+            "export": {
+              "method": "GET /api/export",
+              "desc": "Export user data as JSON/CSV"
+            },
+            "import": {
+              "method": "POST /api/import",
+              "desc": "Import data via CSV (preview + consolidate)"
+            },
+            "address": {
+              "method": "GET /api/address-search",
+              "desc": "Search addresses via Nominatim/Google Places"
+            },
+            "storage": {
+              "method": "POST /api/storage/sign",
+              "desc": "Generate HMAC signature for Cloudinary upload"
+            }
+          },
+          "tip": "All authenticated routes check the JWT cookie. Use the Cookie header in Postman to test."
+        }
+      },
+      "devDeploy": {
+        "title": "Deploy & Production",
+        "subtitle": "Vercel, variables, Stripe and domain — SUPERADMIN",
+        "content": {
+          "intro": "Guide to deploy Tracka in production using Vercel + Turso + Cloudinary + Stripe.",
+          "vercel": {
+            "title": "Deploy to Vercel",
+            "desc": "Tracka runs on Vercel with automatic builds on each GitHub push.",
+            "step1": "Connect the GitHub repository on Vercel",
+            "step2": "Configure environment variables (Settings → Environment Variables)",
+            "step3": "Build runs automatically: npm run build",
+            "step4": "Check the deploy at Production → Domains"
+          },
+          "envProd": {
+            "title": "Production Variables",
+            "desc": "Required variables on Vercel:",
+            "database": {
+              "name": "DATABASE_URL + TURSO_AUTH_TOKEN",
+              "desc": "Production Turso database"
+            },
+            "auth": {
+              "name": "JWT_SECRET + GOOGLE_*",
+              "desc": "JWT secret and OAuth (use different values from dev)"
+            },
+            "stripe": {
+              "name": "STRIPE_*",
+              "desc": "LIVE Stripe keys (not test keys)"
+            },
+            "email": {
+              "name": "RESEND_API_KEY",
+              "desc": "API key with verified domain"
+            },
+            "cloudinary": {
+              "name": "CLOUDINARY_*",
+              "desc": "Production plan credentials"
+            },
+            "domain": {
+              "name": "NEXT_PUBLIC_APP_URL",
+              "desc": "Public app URL (e.g., https://tracka.app)"
+            }
+          },
+          "stripe": {
+            "title": "Configure Stripe Webhooks",
+            "desc": "Stripe needs a webhook to notify about payment events.",
+            "step1": "In Stripe Dashboard → Webhooks → Add endpoint",
+            "step2": "URL: https://your-domain.com/api/stripe/webhook",
+            "step3": "Select events: checkout.session.completed, customer.subscription.deleted"
+          },
+          "checklist": {
+            "title": "Production Checklist",
+            "step1": "All environment variables configured on Vercel",
+            "step2": "Custom domain configured with active SSL",
+            "step3": "Stripe webhook pointing to production URL",
+            "step4": "Send email configured in Resend (verified domain)",
+            "step5": "Prisma schema synced with database via migration scripts (do not use prisma db push in production)"
+          },
+          "warning": "Never use Stripe test keys in production. Always verify STRIPE_SECRET_KEY starts with sk_live_."
+        }
+      },
+      "plansLimits": {
+        "title": "Plans & Limits",
+        "subtitle": "Understand available plans and how limits work",
+        "content": {
+          "intro": "Tracka offers 4 plan types, each with specific limits and features. When subscribing, limits are frozen at the time of purchase.",
+          "types": {
+            "title": "Plan Types",
+            "trial": {
+              "icon": "🎁",
+              "name": "Trial",
+              "desc": "15 days with all features. After the period, automatically migrates to Free."
+            },
             "free": {
-                "name": "Free",
-                "price": "Free",
-                "desc": "For personal use and small organizations.",
-                "features": "50 Items,50 Vision AI 🤖,1 House,5 Rooms/house,5 Furniture/room,1 Photos/item,0 Collaborators/house",
-                "excluded": "Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
-                "button": "Start Free"
+              "icon": "🆓",
+              "name": "Free",
+              "desc": "Free plan with basic features and reduced limits."
             },
             "plus": {
-                "name": "Plus",
-                "price": "R$ 9,90",
-                "priceMonthly": "/mo",
-                "priceBrl": 9.90,
-                "desc": "For those who need more space and resources.",
-                "features": "200 Items,600 Vision AI 🤖,3 Houses,15 Rooms/house,15 Furniture/room,3 Photos/item,2 Collaborators/house,Usage history,Ranking (most used),Data export,Consolidation/Moving",
-                "button": "Subscribe Now",
-                "popular": "POPULAR"
+              "icon": "⭐",
+              "name": "Plus",
+              "desc": "R$ 9.90/mo — more space, collaborators and advanced features."
             },
             "pro": {
-                "name": "Pro",
-                "price": "R$ 19,90",
-                "priceMonthly": "/mo",
-                "priceBrl": 19.90,
-                "desc": "For those who need the most out of Tracka.",
-                "features": "2000 Items,10000 Vision AI 🤖,10 Houses,50 Rooms/house,50 Furniture/room,5 Photos/item,10 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
-                "button": "Subscribe Now"
+              "icon": "🚀",
+              "name": "Pro",
+              "desc": "R$ 19.90/mo — maximum limits and all features enabled."
             }
-        },
-        "faq": {
-            "title": "Frequently Asked Questions",
-            "items": [
-                {
-                    "question": "Is Tracka free?",
-                    "answer": "Yes! The Free plan is free forever."
-                },
-                {
-                    "question": "Can I cancel anytime?",
-                    "answer": "Yes, cancel anytime without penalty."
-                },
-                {
-                    "question": "Is my data safe?",
-                    "answer": "Yes, we use encryption and follow LGPD."
-                },
-                {
-                    "question": "Does it work on mobile?",
-                    "answer": "Yes! Tracka is a PWA that works on any device."
-                }
-            ]
-        },
-        "cta": {
-            "title": "Ready to organize your life?",
-            "subtitle": "Start for free and discover how Tracka can simplify your day.",
-            "button": "Start Now"
-        }
-    },
-    "admin": {
-        "topbar": {
-            "title": "Soluções RKM",
-            "subtitle": "Admin Panel — Corporate",
-            "readonly": "Read-only"
-        },
-        "breadcrumb": {
-            "home": "Home",
-            "admin": "Admin",
-            "settings": "Settings"
-        },
-        "settings": {
-            "title": "Settings",
-            "description": "Configure texts, sections, integrations, and APIs for the corporate site.",
-            "editMode": "Edit Mode"
-        },
-        "landing": {
-            "title": "Landing Page",
-            "subtitle": "Configure texts, sections, testimonials, and links for the Tracka public page.",
-            "hero": "🎬 Hero (Main)",
-            "heroDesc": "Landing Page main section",
-            "heroTitle": "Main Title",
-            "heroSubtitle": "Subtitle",
-            "heroImageUrl": "Background Image URL",
-            "ctaPrimaryText": "Button Text",
-            "ctaPrimaryLink": "Button Link",
-            "sections": "Control which sections are displayed",
-            "visibility": "👁️ Visibility",
-            "toggleFeatures": "Features",
-            "toggleTechnology": "Technology",
-            "toggleTestimonials": "Testimonials",
-            "togglePricing": "Pricing",
-            "toggleFaq": "FAQ",
-            "sectionTitles": "📝 Section Titles",
-            "features": "Features",
-            "technology": "Technology",
-            "testimonials": "💬 Testimonials",
-            "testimonialsDesc": "Feedbacks displayed on the Landing",
-            "name": "Name",
-            "role": "Role",
-            "comment": "Comment",
-            "addTestimonial": "Add Testimonial",
-            "faq": "❓ Frequently Asked Questions (FAQ)",
-            "faqDesc": "Questions displayed on the Landing",
-            "question": "Question",
-            "answer": "Answer",
-            "addQuestion": "Add Question",
-            "cta": "📣 Call to Action (Final)",
-            "ctaDesc": "Section before footer",
-            "ctaTitle": "Title",
-            "ctaSubtitle": "Subtitle",
-            "ctaButton": "Button Text",
-            "footer": "🔗 Footer",
-            "footerDesc": "Footer links and contact",
-            "footerContact": "Contact",
-            "footerLinks": "Footer Links",
-            "linkLabel": "Text",
-            "linkHref": "URL / Route",
-            "addLink": "Add Link",
-            "save": "Save",
-            "saving": "Saving..."
-        },
-        "plans": {
-            "title": "Plans & Pricing",
-            "subtitle": "Subscription plan settings.",
-            "info": "Plans and pricing are configured directly on the app settings page.",
-            "infoDetail": "Only the {role} has access to this configuration. Changes made there are automatically reflected on both the app and the landing page.",
-            "superAdmin": "Super Admin",
-            "openConfig": "Open Tracka Configuration"
-        },
-        "apiKeys": {
-            "title": "Integrations / API Keys",
-            "subtitle": "Configure API keys for external services.",
-            "googlePlaces": "Google Places API Key",
-            "googlePlacesHint": "Optional. Used as fallback for international address lookup when Nominatim (OpenStreetMap) returns no results.",
-            "saveKey": "Save API Key",
-            "saving": "Saving..."
-        },
-        "freshdesk": {
-            "title": "Freshdesk — Customer Support",
-            "subtitle": "Configure Freshworks support modules.",
-            "domain": "Freshworks Domain",
-            "domainHint": "Your Freshworks domain (obtained from the Freshdesk admin panel)",
-            "widget": "Support Widget",
-            "widgetDesc": "Floating bubble for contact and FAQ",
-            "widgetId": "Widget ID",
-            "widgetIdHint": "Paste the numeric ID or deployment script — the ID will be extracted automatically",
-            "position": "Position",
-            "positionRight": "Right",
-            "positionLeft": "Left",
-            "offset": "Offset (px)",
-            "autoIdentify": "Automatically identify logged-in users",
-            "tickets": "Ticket Portal",
-            "ticketsDesc": "Dedicated page for creating and tracking tickets",
-            "ticketsUrl": "Ticket Portal URL",
-            "ticketsUrlHint": "E.g.: https://yourdomain.freshdesk.com/support/tickets",
-            "kb": "Knowledge Base",
-            "kbDesc": "Knowledge base and help articles",
-            "kbUrl": "Knowledge Base URL",
-            "kbUrlHint": "E.g.: https://yourdomain.freshdesk.com/support/solutions",
-            "syncTitle": "Sync Help → Freshdesk",
-            "syncDesc": "Publishes internal Help topics as articles in the Freshdesk KB. Public topics are visible to all. Admin topics are restricted to agents.",
-            "syncButton": "Sync KB",
-            "syncing": "Syncing...",
-            "syncDone": "Sync completed",
-            "syncError": "Sync with errors",
-            "syncCreated": "created",
-            "syncUpdated": "updated",
-            "chat": "Freshchat",
-            "chatDesc": "Real-time chat with the support team",
-            "chatToken": "Chat Token",
-            "chatTokenHint": "Paste the UUID token or deployment script — the token will be extracted automatically",
-            "saveFreshdesk": "Save Freshdesk",
-            "saving": "Saving..."
-        },
-        "history": {
-            "title": "Change History",
-            "filter": "Filter by section, field, or user...",
-            "noEntries": "No changes recorded. History will appear after the first update.",
-            "noResults": "No results for the filter.",
-            "changes": "change",
-            "changesPlural": "changes",
-            "section": "Section",
-            "field": "Field",
-            "before": "Before",
-            "after": "After"
-        },
-        "help": {
-            "title": "Help Center — Admin",
-            "subtitle": "Documentation for developers and administrators.",
-            "translation": {
-                "title": "Auto-Translation Tool",
-                "description": "Integrated translation system for Landing Page content.",
-                "howItWorks": "How it works",
-                "step1Title": "Edit content",
-                "step1Desc": "Edit fields on the settings page (Title, Subtitle, Testimonials, FAQ, Footer, etc.) in the current language.",
-                "step2Title": "Save changes",
-                "step2Desc": "When saving, the system automatically detects which fields have changed and translates only those to the other language.",
-                "step3Title": "Translation saved",
-                "step3Desc": "The translation is saved to the database for the other language. Once translated, the translator is never called again for that field.",
-                "importantNotes": "Important notes",
-                "note1": "The page language is controlled by the language selector in the top bar. Labels and field content change together.",
-                "note2": "The translator is only called when a field is edited and saved. Unchanged fields do not trigger translation calls.",
-                "note3": "If content is already correctly translated in both languages, the translator is never consulted again.",
-                "errorIndicators": "Error indicators",
-                "indicator": "Indicator",
-                "meaning": "Meaning",
-                "action": "Action",
-                "successLabel": "Success",
-                "successMeaning": "Field translated and saved successfully.",
-                "successAction": "No action needed.",
-                "warningLabel": "Warning",
-                "warningMeaning": "Partial translation — some fields failed.",
-                "warningAction": "Check the yellow panel below the Save button for details.",
-                "errorLabel": "Error",
-                "errorMeaning": "Translation service unavailable or database unreachable.",
-                "errorAction": "Try again later or edit manually.",
-                "apiEndpoints": "API Endpoints (Developers)",
-                "apiMigration": "One-time migration — translates the entire config from one language to another. SUPERADMIN only.",
-                "apiFields": "On-demand translation — translates specific changed fields. Called automatically on save.",
-                "techDetails": "Technical details",
-                "tech1": "Service: Google Translate REST API (free)",
-                "tech2": "PT config is saved as landing_page_config_pt in the database",
-                "tech3": "EN config is saved as landing_page_config_en in the database",
-                "tech4": "Translated fields: title, subtitle, CTA, sections, testimonials, FAQ, footer",
-                "tech5": "Concurrency limit: 5 fields translated in parallel"
+          },
+          "snapshot": {
+            "title": "Limits Snapshot",
+            "desc": "When subscribing to a paid plan, limits are frozen (\"snapshot\"). Even if admin changes plans later, existing subscribers keep their original limits.",
+            "step1": "User chooses a plan on the Pricing page",
+            "step2": "Accepts terms and confirms subscription",
+            "step3": "System saves an immutable snapshot of the limits at that moment"
+          },
+          "cancellation": {
+            "title": "Irreversible Cancellation",
+            "desc": "When canceling, the plan is permanently terminated. If re-subscribing, the user assumes current plans. There is no way to recover the previous plan."
+          },
+          "currency": {
+            "title": "Currency Conversion",
+            "desc": "All prices are defined in BRL (Brazilian Real). For users accessing from other countries, Tracka automatically detects the local currency from the browser settings and displays an approximate converted price.",
+            "detection": {
+              "icon": "🌍",
+              "name": "Automatic Currency Detection",
+              "desc": "The system first checks if pt-BR (or pt) is present in your browser's language list. If so, you are identified as a Brazilian user and prices are always shown in USD ($), regardless of other languages configured (e.g., en-GB). Only when pt-BR is NOT in the list, the system detects the currency from the browser region (e.g., en-GB → GBP, de-DE → EUR). If no region is detected, the default is always USD ($)."
+            },
+            "liveRate": {
+              "icon": "📡",
+              "name": "Live Exchange Rate",
+              "desc": "Exchange rates are fetched in real-time from AwesomeAPI and cached locally for performance. If the API is unavailable, the last cached rate is used as fallback."
+            },
+            "display": {
+              "icon": "💱",
+              "name": "How Prices Are Displayed",
+              "desc": "Converted prices are shown as approximate values (e.g., ~$1.74/mo) alongside the original BRL price (R$ 9,90). A disclaimer indicates these are reference values only."
+            },
+            "examples": {
+              "icon": "📋",
+              "name": "Detection Examples",
+              "desc": "Browser [pt-BR, en-GB] → USD ($) (Brazilian user, en-GB ignored) | Browser [pt-BR, en] → USD ($) | Browser [en-GB] only → GBP (£) (genuinely from UK) | Browser [en-US] → USD ($) | Browser [de-DE] → EUR (€) | Browser [en-AU] → AUD (A$) | No locale detected → USD ($)"
+            },
+            "checkout": {
+              "icon": "💳",
+              "name": "Final Amount at Checkout",
+              "desc": "The final payment amount is calculated by Stripe in the buyer's local currency at the exact exchange rate at the time of payment. The displayed price is for reference only."
             }
+          },
+          "warning": "Subscription cancellation is IRREVERSIBLE. Make sure to clearly communicate this to users.",
+          "tip": "Configure plans in Admin → Landing Page → Plans and Limits. Changes only affect new subscribers!"
         }
+      },
+      "paymentSecurity": {
+        "title": "Payment Security",
+        "subtitle": "How Soluções RKM processes payments and protects your data",
+        "content": {
+          "intro": "Soluções RKM prioritizes the security of your financial data. We use Stripe, one of the world's largest payment processors, to ensure your transactions are secure, transparent and fully compliant with current regulations.",
+          "processor": {
+            "title": "Payment Processor",
+            "desc": "Stripe is used by companies like Google, Amazon, Shopify and Nubank. Your payment data is processed exclusively by Stripe — it never passes through our servers.",
+            "pciDss": {
+              "icon": "🔒",
+              "name": "PCI-DSS Level 1 Certification",
+              "desc": "Stripe holds the highest security certification in the credit card industry"
+            },
+            "noStorage": {
+              "icon": "🚫",
+              "name": "No card storage",
+              "desc": "Credit card data is never stored on our servers"
+            },
+            "encryption": {
+              "icon": "🔐",
+              "name": "End-to-end encryption",
+              "desc": "All transactions are protected with TLS/HTTPS encryption"
+            },
+            "sca": {
+              "icon": "✅",
+              "name": "Strong Authentication (SCA)",
+              "desc": "3D Secure authentication support for additional fraud protection"
+            }
+          },
+          "googlePlay": {
+            "title": "Google Play Compliance",
+            "desc": "Tracka is available as a progressive web app (PWA) and operates in full compliance with Google Play Store policies. Since 2025, Google officially allows alternative payment systems like Stripe in apps distributed through the Play Store.",
+            "alternative": {
+              "name": "Authorized alternative payment",
+              "desc": "Google Play officially allows the use of Stripe and other payment processors, per updated 2025-2026 policies"
+            },
+            "global": {
+              "name": "Global compliance",
+              "desc": "New policies are being rolled out across the US, Europe, Australia, Japan, South Korea and other regions, including Brazil"
+            },
+            "transparent": {
+              "name": "Regulatory transparency",
+              "desc": "Soluções RKM follows Google's SAFE guidelines, ensuring security and trust for users"
+            }
+          },
+          "dataProtection": {
+            "title": "Data Protection",
+            "desc": "Beyond payment security, we protect your personal data in compliance with Brazilian and international legislation.",
+            "lgpd": {
+              "icon": "🇧🇷",
+              "name": "LGPD (Law 13.709/2018)",
+              "desc": "Data processing in full compliance with Brazil's General Data Protection Law"
+            },
+            "minimal": {
+              "icon": "📋",
+              "name": "Minimal data collection",
+              "desc": "We only collect data strictly necessary for the service to function"
+            },
+            "noSharing": {
+              "icon": "🤝",
+              "name": "No data selling",
+              "desc": "Your personal and financial data is never sold or shared for advertising purposes"
+            }
+          },
+          "transparency": {
+            "title": "Our Transparency Commitment",
+            "desc": "Soluções RKM is committed to maintaining a transparent relationship with all users:",
+            "point1": "Prices always clear and visible on the plans page, with no hidden charges",
+            "point2": "Explicit acceptance of terms and conditions before any charge",
+            "point3": "Cancellation available at any time, without bureaucracy",
+            "point4": "Dedicated support for billing and subscription questions"
+          },
+          "info": "For payment questions, contact suporte@solucoesrkm.com. To exercise your LGPD rights: privacidade@solucoesrkm.com.",
+          "tip": "You can check your subscription status anytime in your profile Settings."
+        }
+      },
+      "subscriptionFlow": {
+        "title": "Subscription Flow",
+        "subtitle": "How the subscription process, terms acceptance and legal recording works",
+        "content": {
+          "intro": "The subscription flow ensures legal compliance with mandatory terms acceptance and complete recording of all contracted conditions.",
+          "flow": {
+            "title": "Step by Step",
+            "step1": "User accesses the Plans page (/pricing)",
+            "step2": "Clicks \"Subscribe\" on desired plan",
+            "step3": "Terms acceptance modal shows plan limits",
+            "step4": "User reads and checks Terms/Privacy checkbox",
+            "step5": "Clicks \"Agree and Subscribe\" → redirected to Stripe",
+            "step6": "After payment, system creates Subscription with snapshot and acceptance record"
+          },
+          "termsAcceptance": {
+            "title": "What is recorded",
+            "desc": "For legal validity, we record:",
+            "version": {
+              "name": "Terms Version",
+              "desc": "Identifier of accepted version (e.g., v1.0)"
+            },
+            "timestamp": {
+              "name": "Date and Time",
+              "desc": "Exact timestamp of acceptance"
+            },
+            "ip": {
+              "name": "IP Address",
+              "desc": "Device IP at acceptance time"
+            },
+            "planSnapshot": {
+              "name": "Plan Snapshot",
+              "desc": "Complete copy of contracted limits and features"
+            }
+          },
+          "snapshot": {
+            "title": "Snapshot Immutability",
+            "desc": "The snapshot is a frozen JSON with all limits and features at contracting time. It is NEVER changed."
+          },
+          "legal": {
+            "title": "Legal Basis",
+            "lgpd": {
+              "name": "LGPD (Law 13.709/2018)",
+              "desc": "Personal data protection — explicit consent"
+            },
+            "cdc": {
+              "name": "CDC (Art. 49)",
+              "desc": "7-day withdrawal right for online purchases"
+            },
+            "marco": {
+              "name": "Marco Civil (Law 12.965/2014)",
+              "desc": "Mandatory terms and privacy policy"
+            }
+          },
+          "warning": "Keep Terms and Privacy Policy updated. Consult a lawyer for legal content."
+        }
+      },
+      "adminSubscriptions": {
+        "title": "Subscription Management (Admin)",
+        "subtitle": "How to view subscriptions, acceptances and snapshots",
+        "content": {
+          "intro": "The Admin → Subscriptions panel shows all subscription data including snapshots, terms acceptances and Stripe billing info.",
+          "access": {
+            "title": "How to access",
+            "step1": "Go to Admin → Settings",
+            "step2": "Click \"Subscriptions\" in the top bar",
+            "step3": "Page lists all subscriptions with status filters"
+          },
+          "details": {
+            "title": "Available information",
+            "desc": "Click on a subscription to see expanded details:",
+            "terms": {
+              "name": "📄 Terms Acceptance",
+              "desc": "Accepted version, date/time and device IP"
+            },
+            "stripe": {
+              "name": "💳 Stripe",
+              "desc": "Subscription/customer IDs, next renewal date"
+            },
+            "history": {
+              "name": "⏱️ History",
+              "desc": "Creation date, cancellation and current plan"
+            },
+            "snapshot": {
+              "name": "🔒 Snapshot",
+              "desc": "All frozen numeric limits and features"
+            }
+          },
+          "filters": {
+            "title": "Filters",
+            "desc": "Use top filters: All, Active only, or Canceled only."
+          },
+          "tip": "Acceptance and snapshot data are immutable records — legal proof of user agreement."
+        }
+      },
+      "adminSettingsGuide": {
+        "title": "Settings Guide",
+        "subtitle": "Where to find each setting in admin and dashboard",
+        "content": {
+          "intro": "Tracka has two settings areas: the Admin panel (/admin/settings) for global system settings, and User Settings (/dashboard/settings) for personal preferences.",
+          "adminSettings": {
+            "title": "/admin/settings — Admin Panel",
+            "desc": "Accessible by SUPERADMIN, ADMIN, EDITOR and VIEWER (read-only). Controls global system settings:",
+            "landing": "Texts, sections, CTA, testimonials, FAQ and footer links for the landing page",
+            "apiKeys": "API keys for external services (Google Vision, Cloudinary, etc.)",
+            "freshdesk": "Support widget, live chat and Freshdesk/Freshchat settings",
+            "plans": "Limits, prices, features and popular plan (SUPERADMIN only) — automatically reflects on landing page",
+            "team": "Team management — visible only to SUPERADMIN and ADMIN. Editors and Viewers cannot see this button"
+          },
+          "permissions": {
+            "title": "Permissions by Role",
+            "desc": "Each company role (Employee) has different access levels in the admin panel:",
+            "superadmin": "Full access: site settings, plans and limits, team management, subscriptions and change history",
+            "admin": "Edits site settings and manages team (add/remove/change roles). Cannot edit plans",
+            "editor": "Edits site settings (landing, API keys, Freshdesk). Cannot see team management or plans",
+            "viewer": "View only. Cannot edit anything in the admin panel"
+          },
+          "dashboardSettings": {
+            "title": "/dashboard/settings — User Settings",
+            "desc": "Accessible by any logged-in user. Personal preferences:",
+            "profile": "Name, email, address, ID, phone, WhatsApp",
+            "theme": "Light, dark or automatic (system) theme",
+            "language": "Interface language (pt-BR or en)",
+            "accessibility": "Font size, high contrast",
+            "plan": "Card showing current plan status (Free, Plus, Pro, Trial)"
+          },
+          "dashboardSubPages": {
+            "title": "Dashboard Settings Sub-pages",
+            "desc": "Additional pages accessible via /dashboard/settings:",
+            "plans": "Plans and Limits configuration — same table as admin (SUPERADMIN only)"
+          },
+          "helpRoutes": {
+            "title": "Help Routes (/help)",
+            "desc": "The help system is accessible to all users:",
+            "index": "Index with all help categories and topics",
+            "topic": "Detailed content for each topic (e.g., /help/plans-limits)"
+          },
+          "tip": "Admins can access the admin panel via the ⚙ button in the sidebar. SUPERADMINs have exclusive access to Plans and Limits configuration. Only SUPERADMIN and ADMIN can manage the team."
+        }
+      },
+      "freshdeskSync": {
+        "title": "Sync Help → Freshdesk",
+        "subtitle": "Automatic synchronization of help topics with Freshdesk Knowledge Base",
+        "content": {
+          "intro": "Tracka allows automatic synchronization of all internal Help topics with the Freshdesk Knowledge Base, maintaining a single source of truth.",
+          "howItWorks": {
+            "title": "How it works",
+            "desc": "The sync reads all Help topics, converts to HTML and publishes to the KB via Freshdesk API v2.",
+            "step1": "Go to Admin → Freshdesk → Knowledge Base",
+            "step2": "Click \"Sync KB\"",
+            "step3": "System creates/updates Categories, Folders and Articles in Freshdesk",
+            "step4": "Report shows results: items created, updated and errors"
+          },
+          "visibility": {
+            "title": "Visibility Control",
+            "desc": "Article visibility is set automatically based on topic permissions:",
+            "public": "Unrestricted topics — visible to all KB visitors",
+            "agents": "superadminOnly topics — visible only to Freshdesk agents (confidential company info)"
+          },
+          "mapping": {
+            "title": "Persistent Mapping",
+            "desc": "The system maintains an internal mapping (slug → Freshdesk ID) stored in SiteSettings. This allows re-syncs to update existing articles instead of creating duplicates."
+          },
+          "warning": "FRESHDESK_API_KEY and FRESHDESK_DOMAIN must be configured in environment variables before first sync.",
+          "tip": "After editing Help topics, click \"Sync KB\" to publish changes to Freshdesk automatically!"
+        }
+      },
+      "freshdeskKb": {
+        "title": "Freshdesk — Customer Support",
+        "subtitle": "Support module configuration: widget, tickets, Knowledge Base and chat",
+        "content": {
+          "intro": "Tracka integrates with Freshworks to offer 4 customer support modules, all configurable from the admin panel.",
+          "modules": {
+            "title": "Available modules",
+            "widget": {
+              "icon": "🌐",
+              "name": "Support Widget",
+              "desc": "Floating bubble for quick access to FAQ and contact"
+            },
+            "tickets": {
+              "icon": "🎫",
+              "name": "Ticket Portal",
+              "desc": "Dedicated page to create and track support tickets"
+            },
+            "kb": {
+              "icon": "📚",
+              "name": "Knowledge Base",
+              "desc": "Knowledge base with help articles synced from internal Help"
+            },
+            "chat": {
+              "icon": "💬",
+              "name": "Freshchat",
+              "desc": "Real-time chat with the support team"
+            }
+          },
+          "config": {
+            "title": "How to configure",
+            "step1": "Go to Admin → Freshdesk",
+            "step2": "Enable desired modules with the toggle",
+            "step3": "Fill in required fields (Widget ID, Token, URLs)",
+            "step4": "Click \"Save Freshdesk\""
+          },
+          "auth": {
+            "title": "Automatic identification",
+            "desc": "Widget and Freshchat modules can automatically identify the logged-in user. When enabled, the user's name and email are sent to Freshdesk."
+          },
+          "tip": "You can paste the entire Freshworks deploy script — the system automatically extracts the Widget ID and Chat Token!"
+        }
+      },
+      "faqLegal": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Common questions about Tracka, plans and features",
+        "content": {
+          "intro": "Here are answers to the most frequently asked questions about Tracka.",
+          "q1": {
+            "q": "What is Tracka?",
+            "a": "Tracka is a personal and business inventory management platform that lets you catalog, organize and locate your belongings with AI assistance."
+          },
+          "q2": {
+            "q": "Is Tracka free?",
+            "a": "Yes! The Free plan is free forever with item and feature limits. For additional resources, there are Plus and Pro plans."
+          },
+          "q3": {
+            "q": "Can I cancel my subscription anytime?",
+            "a": "Yes, you can cancel anytime. Access continues until the end of the paid period. Note: once cancelled, the previous plan cannot be recovered."
+          },
+          "q4": {
+            "q": "Is my data secure?",
+            "a": "Yes. We use HTTPS/TLS encryption, bcrypt password hashing, and follow LGPD. Payment data is processed exclusively by Stripe."
+          },
+          "q5": {
+            "q": "How does photo recognition work?",
+            "a": "Tracka uses Google Cloud Vision AI to analyze photos and suggest item names automatically. Images are temporarily processed and not stored by Google."
+          },
+          "q6": {
+            "q": "Can I share my inventory?",
+            "a": "Yes! You can invite other users to collaborate with different access levels (Admin, Editor, Viewer)."
+          },
+          "q7": {
+            "q": "What happens if I exceed my plan limits?",
+            "a": "New items cannot be created beyond the limit. Existing items remain accessible. Consider upgrading to a higher plan."
+          },
+          "q8": {
+            "q": "How do I contact support?",
+            "a": "Through the support widget, email suporte@solucoesrkm.com, or by opening a ticket in the support portal."
+          }
+        }
+      },
+      "termosDeUso": {
+        "title": "Terms of Use",
+        "subtitle": "Terms and conditions of the Tracka platform",
+        "content": {
+          "intro": "By using Tracka, you agree to these Terms of Use. Please read carefully.",
+          "s1": {
+            "title": "1. Acceptance of Terms",
+            "desc": "By accessing and using the Tracka platform, operated by Soluções RKM, you agree to these Terms of Use."
+          },
+          "s2": {
+            "title": "2. Service Description",
+            "desc": "Tracka is a SaaS platform for personal and business inventory management with AI-powered cataloging."
+          },
+          "s3": {
+            "title": "3. Plans and Subscriptions",
+            "desc": "Available in Free, Plus and Pro plans. Upon subscribing, limits are frozen (snapshot). Later changes do not affect existing subscribers. Cancellation is permanent."
+          },
+          "s4": {
+            "title": "4. Payments",
+            "desc": "Processed by Stripe. Charges are recurring and monthly unless cancelled. We do not store credit card data."
+          },
+          "s5": {
+            "title": "5. Acceptable Use",
+            "desc": "Users must provide truthful information, not share credentials, not use the service for illegal purposes."
+          },
+          "s6": {
+            "title": "6. Intellectual Property",
+            "desc": "Tracka, including source code and design, is exclusive property of Soluções RKM. User data remains user property."
+          },
+          "s7": {
+            "title": "7. Limitation of Liability",
+            "desc": "The Service is provided \"as is\". We are not responsible for data loss from misuse or decisions based on AI analysis."
+          },
+          "s8": {
+            "title": "8. Data Protection",
+            "desc": "Data collection follows LGPD (Law 13.709/2018). See our Privacy Policy for details."
+          },
+          "s9": {
+            "title": "9. Right of Withdrawal",
+            "desc": "Users can withdraw within 7 calendar days (Art. 49 of CDC), by email request."
+          },
+          "s10": {
+            "title": "10. Changes",
+            "desc": "We reserve the right to modify these Terms. Changes are communicated via email and/or platform notification."
+          },
+          "s11": {
+            "title": "11. Contact",
+            "desc": "For questions: suporte@solucoesrkm.com."
+          },
+          "warning": "These terms are governed by the laws of the Federative Republic of Brazil."
+        }
+      },
+      "privacidade": {
+        "title": "Privacy Policy",
+        "subtitle": "How we collect, use and protect your personal data",
+        "content": {
+          "intro": "This policy describes how we handle your personal data in compliance with LGPD (Law 13.709/2018).",
+          "s1": {
+            "title": "1. Data Collected",
+            "desc": "We collect registration data (name, email), inventory (items, photos), browsing (IP, browser) and terms acceptance."
+          },
+          "s2": {
+            "title": "2. Payment Data",
+            "desc": "Processed exclusively by Stripe. We do not store credit card data."
+          },
+          "s3": {
+            "title": "3. Artificial Intelligence",
+            "desc": "Images sent to Google Cloud Vision are temporary and not stored after processing."
+          },
+          "s4": {
+            "title": "4. Purposes",
+            "desc": "Service provision, payment processing, legal compliance, experience improvement and notifications."
+          },
+          "s5": {
+            "title": "5. Legal Basis",
+            "desc": "Consent, contract execution, legitimate interest and legal obligation."
+          },
+          "s6": {
+            "title": "6. Sharing",
+            "desc": "Data shared with Stripe, Google Cloud, Cloudinary, Turso and Vercel. We do not sell personal data."
+          },
+          "s7": {
+            "title": "7. Security",
+            "desc": "Bcrypt passwords, HTTPS/TLS, immutable snapshots, acceptance with IP/timestamp, redundant backups."
+          },
+          "s8": {
+            "title": "8. Your Rights (LGPD)",
+            "desc": "Access, correction, anonymization, portability, deletion and consent revocation. Email: privacidade@solucoesrkm.com"
+          },
+          "s9": {
+            "title": "9. Retention",
+            "desc": "Account data kept while active. Acceptances permanent for audit. Subscription data for 5 years (tax obligation)."
+          },
+          "s10": {
+            "title": "10. Cookies",
+            "desc": "We use only essential cookies for authentication and session. No advertising tracking."
+          },
+          "s11": {
+            "title": "11. DPO Contact",
+            "desc": "Data Protection Officer: privacidade@solucoesrkm.com"
+          }
+        }
+      },
+      "cookies": {
+        "title": "Cookie Preferences",
+        "subtitle": "Understand which cookies we use and how to manage them",
+        "content": {
+          "intro": "Tracka uses cookies to ensure proper platform functionality.",
+          "types": {
+            "title": "Cookie Types",
+            "essential": "Required for authentication, session and security. Cannot be disabled.",
+            "analytics": "Used to understand how users interact with the platform (currently not used).",
+            "functional": "Store preferences like theme (light/dark) and selected language."
+          },
+          "manage": {
+            "title": "How to manage",
+            "desc": "You can manage cookies in your browser settings. Note that disabling essential cookies may prevent platform use."
+          },
+          "tip": "Tracka does not use advertising tracking cookies. Your privacy is a priority!"
+        }
+      },
+      "avisosLegais": {
+        "title": "Legal Notices",
+        "subtitle": "Legal bases, compliance and regulatory notices",
+        "content": {
+          "intro": "Tracka operates in compliance with Brazilian legislation. Below are the main applicable legal frameworks.",
+          "lgpd": {
+            "title": "LGPD — General Data Protection Law",
+            "desc": "Law 13.709/2018. Regulates personal data processing. Tracka records explicit consent, offers data portability."
+          },
+          "cdc": {
+            "title": "CDC — Consumer Protection Code",
+            "desc": "Law 8.078/1990. We guarantee 7-day right of withdrawal, price transparency and consumer service."
+          },
+          "marco": {
+            "title": "Marco Civil da Internet",
+            "desc": "Law 12.965/2014. We guarantee network neutrality, communication privacy and data transparency."
+          },
+          "propriedade": {
+            "title": "Intellectual Property",
+            "desc": "Tracka, including source code, design and brands, is exclusive property of Soluções RKM."
+          },
+          "contato": {
+            "title": "Legal Contact",
+            "desc": "For legal matters: juridico@solucoesrkm.com."
+          },
+          "warning": "All terms, policies and legal notices are subject to change with at least 15 days advance notice."
+        }
+      },
+      "autoTranslation": {
+        "title": "Auto Translation",
+        "subtitle": "How the automatic translation system works",
+        "content": {
+          "intro": "The automatic translation system allows content edited in the admin panel to be automatically translated when saved. It uses the Google Translate REST API (free).",
+          "howItWorks": {
+            "title": "How it works",
+            "desc": "When you edit and save fields in the admin panel, the system automatically detects which fields were changed and translates only those fields to the other language.",
+            "step1": "Edit the desired fields in the settings page (hero, testimonials, FAQ, footer, etc.)",
+            "step2": "Click Save — the system saves first and then starts automatic translation",
+            "step3": "Translated fields are saved to the other language configuration automatically"
+          },
+          "notes": {
+            "title": "Important notes",
+            "locale": {
+              "name": "Language",
+              "desc": "Language is controlled by the URL (/pt or /en). Editing in /pt saves in Portuguese and translates to English."
+            },
+            "trigger": {
+              "name": "When it translates",
+              "desc": "The translator is only called when a field is edited and saved. Unchanged fields do not trigger calls."
+            },
+            "idempotent": {
+              "name": "Cache",
+              "desc": "If content is already correctly translated in both languages, the translator is never called again."
+            }
+          },
+          "errors": {
+            "title": "Error indicators",
+            "success": {
+              "name": "Success",
+              "desc": "Field translated and saved successfully. No action needed."
+            },
+            "warning": {
+              "name": "Warning",
+              "desc": "Partial translation — some fields failed. Check the yellow panel below the Save button."
+            },
+            "error": {
+              "name": "Error",
+              "desc": "Translation service unavailable or database inaccessible. Try again later."
+            }
+          },
+          "api": {
+            "title": "API Endpoints (Developers)",
+            "migrateAll": {
+              "method": "POST /api/admin/translate-config",
+              "desc": "One-time migration — translates entire config from one language to another. SUPERADMIN only."
+            },
+            "translateFields": {
+              "method": "POST /api/admin/translate-fields",
+              "desc": "On-demand translation — translates specific changed fields. Called automatically on save."
+            }
+          },
+          "technical": {
+            "title": "Technical details",
+            "service": "Service: Google Translate REST API (free)",
+            "dbPt": "PT config is saved as landing_page_config_pt in the database",
+            "dbEn": "EN config is saved as landing_page_config_en in the database",
+            "fields": "Translated fields: title, subtitle, CTA, sections, testimonials, FAQ, footer",
+            "concurrency": "Concurrency limit: 5 fields translated in parallel"
+          },
+          "warning": "The free Google Translate API may have usage limits. For high-volume production, consider using a paid API.",
+          "tip": "Always edit in the primary language (Portuguese) and let the system automatically translate to the second language."
+        }
+      }
     }
+  }
 }
