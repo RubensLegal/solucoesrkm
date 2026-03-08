@@ -11,6 +11,8 @@ import { useState, useTransition } from 'react';
 import { Check, Eye, EyeOff, Loader2, Save, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
+import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
+import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import { toast } from 'sonner';
 
 /* ─── Types (espelham plan-limits.ts do Tracka) ─────────────── */
@@ -52,6 +54,7 @@ interface Props {
     plansConfig: PlansConfig | null;
     canEdit?: boolean;
     initialVisibility?: PricingVisibilityConfig | null;
+    history?: SettingsHistoryEntry[];
 }
 
 /* ─── Labels ────────────────────────────────────────────────── */
@@ -97,7 +100,7 @@ const EMPTY_VISIBILITY: PricingVisibilityConfig = {
 
 /* ═══════════════════ COMPONENT ═══════════════════════════════ */
 
-export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisibility }: Props) {
+export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisibility, history = [] }: Props) {
     const [isPending, startTransition] = useTransition();
     const [visibility, setVisibility] = useState<PricingVisibilityConfig>(
         initialVisibility || EMPTY_VISIBILITY
@@ -205,9 +208,9 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
     };
 
     return (
-        <div className="space-y-4">
-            {/* ── Status bar ── */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
+        <>
+            <div className="space-y-4">
+                {/* ── Status bar ── */}
                 <div className="flex items-center gap-4 text-xs text-gray-400">
                     <span className="flex items-center gap-1.5">
                         <Eye className="w-3.5 h-3.5 text-emerald-400" />
@@ -220,170 +223,178 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                         </span>
                     )}
                 </div>
-                {dirty && canEdit && (
-                    <Button
-                        onClick={handleSave}
-                        disabled={isPending}
-                        className="gap-1.5 text-xs bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500"
-                    >
-                        {isPending
-                            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Salvando...</>
-                            : <><Save className="w-3.5 h-3.5" /> Salvar</>
-                        }
-                    </Button>
-                )}
-            </div>
 
-            {/* ── Grid ── */}
-            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/5">
-                <table className="w-full text-sm border-collapse">
-                    {/* Header */}
-                    <thead>
-                        <tr className="bg-gray-50 dark:bg-white/[0.02]">
-                            <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider font-medium border-b border-gray-200 dark:border-white/5 w-48">
-                                Feature
-                            </th>
-                            {plans.map(plan => {
-                                const visible = isPlanVisible(plan.key);
-                                return (
-                                    <th key={plan.key} className={`py-3 px-3 text-center border-b border-gray-200 dark:border-white/5 transition-opacity ${!visible ? 'opacity-40' : ''}`}>
-                                        <button
-                                            onClick={() => togglePlan(plan.key)}
-                                            disabled={!canEdit}
-                                            className={`
+                {/* ── Grid ── */}
+                <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/5">
+                    <table className="w-full text-sm border-collapse">
+                        {/* Header */}
+                        <thead>
+                            <tr className="bg-gray-50 dark:bg-white/[0.02]">
+                                <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider font-medium border-b border-gray-200 dark:border-white/5 w-48">
+                                    Funcionalidade
+                                </th>
+                                {plans.map(plan => {
+                                    const visible = isPlanVisible(plan.key);
+                                    return (
+                                        <th key={plan.key} className={`py-3 px-3 text-center border-b border-gray-200 dark:border-white/5 transition-opacity ${!visible ? 'opacity-40' : ''}`}>
+                                            <button
+                                                onClick={() => togglePlan(plan.key)}
+                                                disabled={!canEdit}
+                                                className={`
                                                 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all
                                                 ${visible
-                                                    ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30 hover:bg-emerald-500/25'
-                                                    : 'bg-red-500/10 text-red-400/60 ring-1 ring-red-500/20 hover:bg-red-500/20 line-through'
-                                                }
+                                                        ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30 hover:bg-emerald-500/25'
+                                                        : 'bg-red-500/10 text-red-400/60 ring-1 ring-red-500/20 hover:bg-red-500/20 line-through'
+                                                    }
                                                 ${!canEdit ? 'cursor-not-allowed' : 'cursor-pointer'}
                                             `}
-                                        >
-                                            {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                                            {plan.name}
-                                            {plan.trialDays > 0 && ` (${plan.trialDays} dias)`}
-                                        </button>
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    </thead>
+                                            >
+                                                {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                                {plan.name}
+                                                {plan.trialDays > 0 && ` (${plan.trialDays} dias)`}
+                                            </button>
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        {/* ── Numeric limits ── */}
-                        {NUMERIC_KEYS.map(key => (
-                            <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                        <tbody>
+                            {/* ── Numeric limits ── */}
+                            {NUMERIC_KEYS.map(key => (
+                                <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                    <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                        {NUMERIC_LABELS[key]}
+                                    </td>
+                                    {plans.map(plan => (
+                                        <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                            <FeatureCheckbox planKey={plan.key} featureKey={key}>
+                                                <span className="font-mono font-semibold">
+                                                    {(plan.limits[key as keyof PlanLimits] as number).toLocaleString('pt-BR')}
+                                                </span>
+                                            </FeatureCheckbox>
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+
+                            {/* ── Separator ── */}
+                            <tr>
+                                <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
+                            </tr>
+
+                            {/* ── Boolean features ── */}
+                            {BOOLEAN_KEYS.map(key => (
+                                <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                    <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                        {BOOLEAN_LABELS[key]}
+                                    </td>
+                                    {plans.map(plan => {
+                                        const enabled = plan.limits[key as keyof PlanLimits] as boolean;
+                                        return (
+                                            <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                                <FeatureCheckbox planKey={plan.key} featureKey={key}>
+                                                    <span className={`flex items-center gap-1 ${enabled ? 'text-emerald-500' : 'text-red-400/70'}`}>
+                                                        {enabled ? '✓' : '✕'}
+                                                        <span>{enabled ? 'Habilitado' : 'Desabilitado'}</span>
+                                                    </span>
+                                                </FeatureCheckbox>
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            ))}
+
+                            {/* ── Separator ── */}
+                            <tr>
+                                <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
+                            </tr>
+
+                            {/* ── Popular ── */}
+                            <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                    {NUMERIC_LABELS[key]}
+                                    ★ Plano Popular
                                 </td>
                                 {plans.map(plan => (
                                     <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
-                                        <FeatureCheckbox planKey={plan.key} featureKey={key}>
-                                            <span className="font-mono font-semibold">
-                                                {(plan.limits[key as keyof PlanLimits] as number).toLocaleString('pt-BR')}
+                                        {plan.isPopular ? (
+                                            <span className="inline-flex items-center gap-1 text-xs text-blue-500 font-medium">
+                                                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                                                Popular
+                                            </span>
+                                        ) : (
+                                            <span className="text-gray-300 dark:text-gray-700">—</span>
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+
+                            {/* ── Notifications ── */}
+                            <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                    Notificações
+                                </td>
+                                {plans.map(plan => (
+                                    <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                        <FeatureCheckbox planKey={plan.key} featureKey="notifications">
+                                            <span className={`flex items-center gap-1 ${plan.limits.notifications === 'full' ? 'text-amber-500' : 'text-gray-500'}`}>
+                                                {plan.limits.notifications === 'full' ? '▲' : '■'}
+                                                <span>{NOTIFICATION_LABELS[plan.limits.notifications]}</span>
                                             </span>
                                         </FeatureCheckbox>
                                     </td>
                                 ))}
                             </tr>
-                        ))}
 
-                        {/* ── Separator ── */}
-                        <tr>
-                            <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
-                        </tr>
-
-                        {/* ── Boolean features ── */}
-                        {BOOLEAN_KEYS.map(key => (
-                            <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            {/* ── Support ── */}
+                            <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                    {BOOLEAN_LABELS[key]}
+                                    Suporte
                                 </td>
-                                {plans.map(plan => {
-                                    const enabled = plan.limits[key as keyof PlanLimits] as boolean;
-                                    return (
-                                        <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
-                                            <FeatureCheckbox planKey={plan.key} featureKey={key}>
-                                                <span className={`flex items-center gap-1 ${enabled ? 'text-emerald-500' : 'text-red-400/70'}`}>
-                                                    {enabled ? '✓' : '✕'}
-                                                    <span>{enabled ? 'Habilitado' : 'Desabilitado'}</span>
-                                                </span>
-                                            </FeatureCheckbox>
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        ))}
-
-                        {/* ── Separator ── */}
-                        <tr>
-                            <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
-                        </tr>
-
-                        {/* ── Popular ── */}
-                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                ★ Plano Popular
-                            </td>
-                            {plans.map(plan => (
-                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
-                                    {plan.isPopular ? (
-                                        <span className="inline-flex items-center gap-1 text-xs text-blue-500 font-medium">
-                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                                            Popular
-                                        </span>
-                                    ) : (
-                                        <span className="text-gray-300 dark:text-gray-700">—</span>
-                                    )}
-                                </td>
-                            ))}
-                        </tr>
-
-                        {/* ── Notifications ── */}
-                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                Notificações
-                            </td>
-                            {plans.map(plan => (
-                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
-                                    <FeatureCheckbox planKey={plan.key} featureKey="notifications">
-                                        <span className={`flex items-center gap-1 ${plan.limits.notifications === 'full' ? 'text-amber-500' : 'text-gray-500'}`}>
-                                            {plan.limits.notifications === 'full' ? '▲' : '■'}
-                                            <span>{NOTIFICATION_LABELS[plan.limits.notifications]}</span>
-                                        </span>
-                                    </FeatureCheckbox>
-                                </td>
-                            ))}
-                        </tr>
-
-                        {/* ── Support ── */}
-                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                Suporte
-                            </td>
-                            {plans.map(plan => (
-                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
-                                    <FeatureCheckbox planKey={plan.key} featureKey="support">
-                                        <span className={`flex items-center gap-1 ${plan.limits.support === 'priority' ? 'text-emerald-500' :
+                                {plans.map(plan => (
+                                    <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                        <FeatureCheckbox planKey={plan.key} featureKey="support">
+                                            <span className={`flex items-center gap-1 ${plan.limits.support === 'priority' ? 'text-emerald-500' :
                                                 plan.limits.support === 'email' ? 'text-blue-500' :
                                                     'text-gray-500'
-                                            }`}>
-                                            ■
-                                            <span>{SUPPORT_LABELS[plan.limits.support]}</span>
-                                        </span>
-                                    </FeatureCheckbox>
-                                </td>
-                            ))}
-                        </tr>
-                    </tbody>
-                </table>
+                                                }`}>
+                                                ■
+                                                <span>{SUPPORT_LABELS[plan.limits.support]}</span>
+                                            </span>
+                                        </FeatureCheckbox>
+                                    </td>
+                                ))}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* ── Info ── */}
+                <p className="text-[11px] text-gray-400 leading-relaxed">
+                    💡 Esta configuração <strong>não altera os planos no Tracka</strong> — apenas controla o que é exibido
+                    na landing page para fins de marketing. Os dados vêm da configuração real do Tracka.
+                </p>
+
+                {/* ── Save button (matching other sections) ── */}
+                {canEdit && (
+                    <div className="flex items-center gap-3 pt-4 border-t border-gray-200 dark:border-white/5">
+                        <Button
+                            onClick={handleSave}
+                            disabled={isPending || !dirty}
+                            className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5 disabled:opacity-50"
+                        >
+                            <Save className="w-4 h-4" />
+                            {isPending ? 'Salvando...' : 'Salvar Visibilidade'}
+                        </Button>
+                    </div>
+                )}
             </div>
 
-            {/* ── Info ── */}
-            <p className="text-[11px] text-gray-400 leading-relaxed">
-                💡 Esta configuração <strong>não altera os planos no Tracka</strong> — apenas controla o que é exibido
-                na landing page para fins de marketing. Os dados vêm da configuração real do Tracka.
-            </p>
-        </div>
+            {/* ── Histórico de Alterações ── */}
+            <ChangeHistory
+                entries={history}
+                booleanFields={['hiddenPlans', 'hiddenFeatures']}
+            />
+        </>
     );
 }

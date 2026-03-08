@@ -36,13 +36,14 @@ export default async function AdminSettingsPage() {
 
     // ── Fetch current locale + configs ──
     const locale = await getLocale();
-    const [config, freshdeskConfig, pricingVisibility, landingHistory, freshdeskHistory, apiKeysHistory] = await Promise.all([
+    const [config, freshdeskConfig, pricingVisibility, landingHistory, freshdeskHistory, apiKeysHistory, pricingVisibilityHistory] = await Promise.all([
         getLandingPageConfig(locale),
         getFreshdeskConfig(),
         getSiteSettings('pricing_visibility'),
         getSettingsHistory('landing_page_history'),
         getSettingsHistory('freshdesk_history'),
         getSettingsHistory('api_keys_history'),
+        getSettingsHistory('pricing_visibility_history'),
     ]);
 
     const isCanEdit = checkCanEdit(role);
@@ -148,7 +149,7 @@ export default async function AdminSettingsPage() {
                     icon={<LayoutList className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
                 >
-                    <PricingVisibilityForm plansConfig={plansConfig} canEdit={isCanEdit} initialVisibility={pricingVisibility} />
+                    <PricingVisibilityForm plansConfig={plansConfig} canEdit={isCanEdit} initialVisibility={pricingVisibility} history={pricingVisibilityHistory} />
                 </CollapsibleSection>
 
                 {/* Plans & Pricing — Info only */}
