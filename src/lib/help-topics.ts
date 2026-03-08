@@ -1,8 +1,6 @@
 import {
-    Package, MapPin, Ruler, Search, FileUp, Camera, History,
-    Users, ShieldCheck, UserCog, Trash2, HelpCircle, Lightbulb, Monitor, Tag, Code,
-    Terminal, Database, Globe, Rocket, CreditCard, FileCheck, Settings, RefreshCw, BookOpen,
-    Scale, Cookie, FileText, AlertTriangle, Shield, Languages,
+    CreditCard, Shield, FileCheck, ShieldCheck, Settings, RefreshCw, BookOpen,
+    Code, Terminal, Database, Globe, Rocket, Languages,
     type LucideIcon,
 } from 'lucide-react';
 
@@ -28,60 +26,11 @@ export interface HelpCategory {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Configuração central de tópicos
+// Configuração central de tópicos — APENAS CORPORATIVO
+// Tópicos do Tracka ficam no workspace do Tracka.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const HELP_CATEGORIES: HelpCategory[] = [
-    {
-        id: 'organization',
-        emoji: '📦',
-        translationKey: 'organization',
-        topics: [
-            { slug: 'organizing-items', icon: Package, translationKey: 'organizingItems' },
-            { slug: 'item-status', icon: Tag, translationKey: 'itemStatus' },
-            { slug: 'location-items', icon: MapPin, translationKey: 'locationItems' },
-            { slug: 'character-limits', icon: Ruler, translationKey: 'characterLimits' },
-        ],
-    },
-    {
-        id: 'features',
-        emoji: '🔍',
-        translationKey: 'features',
-        topics: [
-            { slug: 'search-filters', icon: Search, translationKey: 'searchFilters' },
-            { slug: 'import-export', icon: FileUp, translationKey: 'importExport' },
-            { slug: 'photo-recognition', icon: Camera, translationKey: 'photoRecognition' },
-            { slug: 'history', icon: History, translationKey: 'history' },
-        ],
-    },
-    {
-        id: 'collaboration',
-        emoji: '👥',
-        translationKey: 'collaboration',
-        topics: [
-            { slug: 'sharing', icon: Users, translationKey: 'sharing' },
-            { slug: 'access-levels', icon: ShieldCheck, translationKey: 'accessLevels' },
-        ],
-    },
-    {
-        id: 'account',
-        emoji: '🔒',
-        translationKey: 'account',
-        topics: [
-            { slug: 'manage-account', icon: UserCog, translationKey: 'manageAccount' },
-            { slug: 'trash-recovery', icon: Trash2, translationKey: 'trashRecovery' },
-        ],
-    },
-    {
-        id: 'general',
-        emoji: '📱',
-        translationKey: 'general',
-        topics: [
-            { slug: 'faq', icon: HelpCircle, translationKey: 'faq' },
-            { slug: 'tips-shortcuts', icon: Lightbulb, translationKey: 'tipsShortcuts' },
-            { slug: 'system-requirements', icon: Monitor, translationKey: 'systemRequirements' },
-        ],
-    },
     {
         id: 'business',
         emoji: '💰',
