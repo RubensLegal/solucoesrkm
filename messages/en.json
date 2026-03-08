@@ -272,6 +272,47 @@
             "field": "Field",
             "before": "Before",
             "after": "After"
+        },
+        "help": {
+            "title": "Help Center — Admin",
+            "subtitle": "Documentation for developers and administrators.",
+            "translation": {
+                "title": "Auto-Translation Tool",
+                "description": "Integrated translation system for Landing Page content.",
+                "howItWorks": "How it works",
+                "step1Title": "Edit content",
+                "step1Desc": "Edit fields on the settings page (Title, Subtitle, Testimonials, FAQ, Footer, etc.) in the current language.",
+                "step2Title": "Save changes",
+                "step2Desc": "When saving, the system automatically detects which fields have changed and translates only those to the other language.",
+                "step3Title": "Translation saved",
+                "step3Desc": "The translation is saved to the database for the other language. Once translated, the translator is never called again for that field.",
+                "importantNotes": "Important notes",
+                "note1": "The page language is controlled by the language selector in the top bar. Labels and field content change together.",
+                "note2": "The translator is only called when a field is edited and saved. Unchanged fields do not trigger translation calls.",
+                "note3": "If content is already correctly translated in both languages, the translator is never consulted again.",
+                "errorIndicators": "Error indicators",
+                "indicator": "Indicator",
+                "meaning": "Meaning",
+                "action": "Action",
+                "successLabel": "Success",
+                "successMeaning": "Field translated and saved successfully.",
+                "successAction": "No action needed.",
+                "warningLabel": "Warning",
+                "warningMeaning": "Partial translation — some fields failed.",
+                "warningAction": "Check the yellow panel below the Save button for details.",
+                "errorLabel": "Error",
+                "errorMeaning": "Translation service unavailable or database unreachable.",
+                "errorAction": "Try again later or edit manually.",
+                "apiEndpoints": "API Endpoints (Developers)",
+                "apiMigration": "One-time migration — translates the entire config from one language to another. SUPERADMIN only.",
+                "apiFields": "On-demand translation — translates specific changed fields. Called automatically on save.",
+                "techDetails": "Technical details",
+                "tech1": "Service: Google Translate REST API (free)",
+                "tech2": "PT config is saved as landing_page_config_pt in the database",
+                "tech3": "EN config is saved as landing_page_config_en in the database",
+                "tech4": "Translated fields: title, subtitle, CTA, sections, testimonials, FAQ, footer",
+                "tech5": "Concurrency limit: 5 fields translated in parallel"
+            }
         }
     }
 }

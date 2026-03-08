@@ -268,6 +268,47 @@
             "field": "Campo",
             "before": "Antes",
             "after": "Depois"
+        },
+        "help": {
+            "title": "Central de Ajuda — Admin",
+            "subtitle": "Documentação para desenvolvedores e administradores.",
+            "translation": {
+                "title": "Ferramenta de Tradução Automática",
+                "description": "Sistema de tradução integrado para conteúdo da Landing Page.",
+                "howItWorks": "Como funciona",
+                "step1Title": "Editar conteúdo",
+                "step1Desc": "Edite os campos na página de configurações (Título, Subtítulo, Depoimentos, FAQ, Footer, etc.) no idioma atual.",
+                "step2Title": "Salvar alterações",
+                "step2Desc": "Ao salvar, o sistema detecta automaticamente quais campos foram alterados e traduz apenas eles para o outro idioma.",
+                "step3Title": "Tradução salva",
+                "step3Desc": "A tradução é salva no banco de dados para o outro idioma. Uma vez traduzido, não consulta mais o tradutor para aquele campo.",
+                "importantNotes": "Notas importantes",
+                "note1": "O idioma da página é controlado pelo seletor de idioma na barra superior. Os labels e o conteúdo dos campos mudam juntos.",
+                "note2": "O tradutor só é chamado quando um campo é editado e salvo. Campos não alterados não geram chamadas ao tradutor.",
+                "note3": "Se o conteúdo já está traduzido corretamente em ambos os idiomas, o tradutor nunca é consultado novamente.",
+                "errorIndicators": "Indicadores de erro",
+                "indicator": "Indicador",
+                "meaning": "Significado",
+                "action": "Ação",
+                "successLabel": "Sucesso",
+                "successMeaning": "Campo traduzido e salvo com sucesso.",
+                "successAction": "Nenhuma ação necessária.",
+                "warningLabel": "Aviso",
+                "warningMeaning": "Tradução parcial — alguns campos falharam.",
+                "warningAction": "Verifique o painel amarelo abaixo do botão Salvar para detalhes.",
+                "errorLabel": "Erro",
+                "errorMeaning": "Serviço de tradução indisponível ou banco de dados inacessível.",
+                "errorAction": "Tente novamente mais tarde ou edite manualmente.",
+                "apiEndpoints": "Endpoints API (Desenvolvedores)",
+                "apiMigration": "Migração única — traduz toda a config de um idioma para outro. Apenas SUPERADMIN.",
+                "apiFields": "Tradução sob demanda — traduz campos específicos alterados. Chamado automaticamente ao salvar.",
+                "techDetails": "Detalhes técnicos",
+                "tech1": "Serviço: Google Translate REST API (gratuito)",
+                "tech2": "Config PT é salva como landing_page_config_pt no banco de dados",
+                "tech3": "Config EN é salva como landing_page_config_en no banco de dados",
+                "tech4": "Campos traduzidos: título, subtítulo, CTA, seções, depoimentos, FAQ, footer",
+                "tech5": "Limite de concorrência: 5 campos traduzidos em paralelo"
+            }
         }
     }
 }
