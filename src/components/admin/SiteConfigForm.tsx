@@ -220,7 +220,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                 // Save with locale-specific key
                 const key = `landing_page_config_${activeLocale}`;
                 await updateSiteSettings(key, data);
-                toast.success(`Configurações salvas com sucesso! (${activeLocale.toUpperCase()})`);
+                toast.success('Configurações salvas com sucesso!');
             } catch (error) {
                 toast.error('Erro ao salvar configurações.');
                 console.error(error);
@@ -253,7 +253,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 )} />
                                 <FormField control={form.control} name="heroSubtitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Subtítulo ({activeLocale.toUpperCase()})</FormLabel>
+                                        <FormLabel>Subtítulo</FormLabel>
                                         <FormControl><Textarea placeholder={getDefault('heroSubtitle')} rows={3} {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -268,7 +268,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <div className="grid grid-cols-2 gap-3">
                                     <FormField control={form.control} name="ctaPrimaryText" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto Botão ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Texto Botão</FormLabel>
                                             <FormControl><Input placeholder={getDefault('ctaPrimaryText')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
@@ -321,13 +321,13 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <SectionCard title="📝 Títulos das Seções">
                                     <FormField control={form.control} name="featuresTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Funcionalidades ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Funcionalidades</FormLabel>
                                             <FormControl><Input placeholder={getDefault('featuresTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="techTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tecnologia ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Tecnologia</FormLabel>
                                             <FormControl><Input placeholder={getDefault('techTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
@@ -336,19 +336,19 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <SectionCard title="📣 Chamada para Ação (Final)" description="Seção antes do rodapé">
                                     <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Título ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Título</FormLabel>
                                             <FormControl><Input placeholder={getDefault('footerCtaTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Subtítulo ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Subtítulo</FormLabel>
                                             <FormControl><Textarea placeholder={getDefault('footerCtaSubtitle')} rows={2} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto do Botão ({activeLocale.toUpperCase()})</FormLabel>
+                                            <FormLabel>Texto do Botão</FormLabel>
                                             <FormControl><Input placeholder={getDefault('footerCtaButton')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
@@ -420,7 +420,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                             <SectionCard title="🔗 Rodapé" description="Links e contato do rodapé" className="break-inside-avoid mb-6">
                                 <FormField control={form.control} name="footerContact" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Contato ({activeLocale.toUpperCase()})</FormLabel>
+                                        <FormLabel>Contato</FormLabel>
                                         <FormControl><Input placeholder={getDefault('footerContact')} {...field} /></FormControl>
                                     </FormItem>
                                 )} />
@@ -448,10 +448,10 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
 
                         {/* ═══ Save Button ═══ */}
                         {canEdit && (
-                            <div className="sticky bottom-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/95 to-transparent pt-6 pb-4 mt-8 -mx-6 px-6">
+                            <div className="sticky bottom-0 bg-gradient-to-t from-white dark:from-[#0e0e0e] via-white/95 dark:via-[#0e0e0e]/95 to-transparent pt-6 pb-4 mt-8 -mx-6 px-6">
                                 <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5">
                                     <Save className="w-4 h-4" />
-                                    {isPending ? 'Salvando...' : `Salvar (${activeLocale.toUpperCase()})`}
+                                    {isPending ? 'Salvando...' : 'Salvar'}
                                 </Button>
                             </div>
                         )}
