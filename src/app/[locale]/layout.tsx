@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Inter } from 'next/font/google';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -21,12 +22,15 @@ export default async function LocaleLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} className="dark" suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning>
             <body className={`${inter.variable} font-sans antialiased`} style={{ fontFamily: "'Inter', sans-serif" }} suppressHydrationWarning>
                 <NextIntlClientProvider messages={messages}>
-                    {children}
+                    <ThemeProvider defaultTheme="dark">
+                        {children}
+                    </ThemeProvider>
                 </NextIntlClientProvider>
             </body>
         </html>
     );
 }
+
