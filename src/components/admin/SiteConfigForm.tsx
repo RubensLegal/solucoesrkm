@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -157,7 +157,8 @@ function LocaleTabs({ activeLocale, onChange }: {
 
 export function SiteConfigForm({ initialData, canEdit = true, history = [], i18nDefaults, appUrl = '' }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
-    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>('pt');
+    const currentLocale = useLocale();
+    const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>(currentLocale === 'en' ? 'en' : 'pt');
     const t = useTranslations('admin.landing');
     const tp = useTranslations('admin.plans');
 
