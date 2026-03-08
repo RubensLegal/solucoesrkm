@@ -2,11 +2,9 @@
 
 /**
  * @file PricingVisibilityForm.tsx
- * @description Grid de checkboxes para controlar quais planos e features
- * aparecem na landing page da empresa. READ-ONLY dos dados do Tracka;
- * apenas salva visibilidade em SiteSettings (key: pricing_visibility).
- *
- * Os planos são passados como prop (fetch ocorre server-side no page.tsx).
+ * @description Grid de visibilidade — mostra dados brutos do Tracka (limites,
+ * features, notificações, suporte) e permite controlar via checkbox o que será
+ * exibido na landing page. READ-ONLY dos dados — nunca edita planos.
  */
 
 import { useState, useTransition } from 'react';
@@ -15,18 +13,35 @@ import { Button } from '@/components/ui/Button';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
 import { toast } from 'sonner';
 
-/* ─── Types ─────────────────────────────────────────────────── */
+/* ─── Types (espelham plan-limits.ts do Tracka) ─────────────── */
 
-export interface PlanFromApi {
+export interface PlanLimits {
+    items: number;
+    visionAi: number;
+    houses: number;
+    roomsPerHouse: number;
+    furniturePerRoom: number;
+    photosPerItem: number;
+    collaboratorsPerHouse: number;
+    history: boolean;
+    ranking: boolean;
+    importExcel: boolean;
+    exportData: boolean;
+    consolidation: boolean;
+    notifications: 'basic' | 'full';
+    support: 'community' | 'email' | 'priority';
+}
+
+export interface PlanConfig {
     name: string;
     price: string;
     description: string;
-    features: string[];
-    excludedFeatures?: string[];
-    isPopular: boolean;
-    buttonText: string;
-    buttonLink: string;
+    trialDays: number;
+    isPopular?: boolean;
+    limits: PlanLimits;
 }
+
+export type PlansConfig = Record<string, PlanConfig>;
 
 export interface PricingVisibilityConfig {
     hiddenPlans: string[];
@@ -34,10 +49,44 @@ export interface PricingVisibilityConfig {
 }
 
 interface Props {
-    plans: PlanFromApi[];
+    plansConfig: PlansConfig | null;
     canEdit?: boolean;
     initialVisibility?: PricingVisibilityConfig | null;
 }
+
+/* ─── Labels ────────────────────────────────────────────────── */
+
+const NUMERIC_LABELS: Record<string, string> = {
+    items: 'Itens',
+    visionAi: 'Vision AI 📸',
+    houses: 'Casas',
+    roomsPerHouse: 'Cômodos/casa',
+    furniturePerRoom: 'Móveis/cômodo',
+    photosPerItem: 'Fotos/item',
+    collaboratorsPerHouse: 'Colaboradores/casa',
+};
+
+const BOOLEAN_LABELS: Record<string, string> = {
+    history: 'Histórico de uso',
+    ranking: 'Ranking (mais usados)',
+    importExcel: 'Importação (Excel)',
+    exportData: 'Exportação de dados',
+    consolidation: 'Consolidação/Mudança',
+};
+
+const NOTIFICATION_LABELS: Record<string, string> = {
+    basic: 'Básicas',
+    full: 'Completas',
+};
+
+const SUPPORT_LABELS: Record<string, string> = {
+    community: 'Comunidade',
+    email: 'E-mail',
+    priority: 'Prioritário',
+};
+
+const NUMERIC_KEYS = Object.keys(NUMERIC_LABELS);
+const BOOLEAN_KEYS = Object.keys(BOOLEAN_LABELS);
 
 /* ─── Defaults ──────────────────────────────────────────────── */
 
@@ -48,48 +97,59 @@ const EMPTY_VISIBILITY: PricingVisibilityConfig = {
 
 /* ═══════════════════ COMPONENT ═══════════════════════════════ */
 
-export function PricingVisibilityForm({ plans, canEdit = true, initialVisibility }: Props) {
+export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisibility }: Props) {
     const [isPending, startTransition] = useTransition();
-
-    // Visibility state (what's hidden)
     const [visibility, setVisibility] = useState<PricingVisibilityConfig>(
         initialVisibility || EMPTY_VISIBILITY
     );
     const [dirty, setDirty] = useState(false);
 
-    /* ── Toggle plan visibility ── */
-    const togglePlan = (planName: string) => {
+    /* ── Empty state ── */
+    if (!plansConfig || Object.keys(plansConfig).length === 0) {
+        return (
+            <div className="py-8 text-center space-y-2">
+                <div className="flex items-center justify-center gap-2 text-amber-400">
+                    <AlertTriangle className="w-5 h-5" />
+                    <span className="text-sm font-medium">Não foi possível carregar a configuração do Tracka.</span>
+                </div>
+                <p className="text-xs text-gray-500">Verifique se o Tracka está acessível e recarregue a página.</p>
+            </div>
+        );
+    }
+
+    const planKeys = Object.keys(plansConfig);
+    const plans = planKeys.map(key => ({ key, ...plansConfig[key] }));
+
+    /* ── Toggles ── */
+    const togglePlan = (planKey: string) => {
         if (!canEdit) return;
         setVisibility(prev => {
-            const hidden = prev.hiddenPlans.includes(planName)
-                ? prev.hiddenPlans.filter(p => p !== planName)
-                : [...prev.hiddenPlans, planName];
+            const hidden = prev.hiddenPlans.includes(planKey)
+                ? prev.hiddenPlans.filter(p => p !== planKey)
+                : [...prev.hiddenPlans, planKey];
             return { ...prev, hiddenPlans: hidden };
         });
         setDirty(true);
     };
 
-    /* ── Toggle feature visibility ── */
-    const toggleFeature = (planName: string, feature: string) => {
+    const toggleFeature = (planKey: string, featureKey: string) => {
         if (!canEdit) return;
         setVisibility(prev => {
-            const planFeatures = prev.hiddenFeatures[planName] || [];
-            const newFeatures = planFeatures.includes(feature)
-                ? planFeatures.filter(f => f !== feature)
-                : [...planFeatures, feature];
-
+            const planFeatures = prev.hiddenFeatures[planKey] || [];
+            const newFeatures = planFeatures.includes(featureKey)
+                ? planFeatures.filter(f => f !== featureKey)
+                : [...planFeatures, featureKey];
             return {
                 ...prev,
-                hiddenFeatures: { ...prev.hiddenFeatures, [planName]: newFeatures },
+                hiddenFeatures: { ...prev.hiddenFeatures, [planKey]: newFeatures },
             };
         });
         setDirty(true);
     };
 
-    /* ── Helpers ── */
-    const isPlanVisible = (planName: string) => !visibility.hiddenPlans.includes(planName);
-    const isFeatureVisible = (planName: string, feature: string) =>
-        !(visibility.hiddenFeatures[planName] || []).includes(feature);
+    const isPlanVisible = (planKey: string) => !visibility.hiddenPlans.includes(planKey);
+    const isFeatureVisible = (planKey: string, featureKey: string) =>
+        !(visibility.hiddenFeatures[planKey] || []).includes(featureKey);
 
     /* ── Save ── */
     const handleSave = () => {
@@ -104,171 +164,217 @@ export function PricingVisibilityForm({ plans, canEdit = true, initialVisibility
         });
     };
 
-    /* ── Count visible ── */
-    const visiblePlans = plans.filter(p => isPlanVisible(p.name));
-    const totalFeatures = plans.reduce((acc, p) => acc + p.features.length, 0);
+    /* ── Counts ── */
+    const visiblePlanCount = plans.filter(p => isPlanVisible(p.key)).length;
     const hiddenFeatureCount = Object.values(visibility.hiddenFeatures)
         .reduce((acc, arr) => acc + arr.length, 0);
 
-    /* ── Empty state ── */
-    if (plans.length === 0) {
-        return (
-            <div className="py-8 text-center space-y-2">
-                <div className="flex items-center justify-center gap-2 text-amber-400">
-                    <AlertTriangle className="w-5 h-5" />
-                    <span className="text-sm font-medium">Não foi possível carregar os planos do Tracka.</span>
-                </div>
-                <p className="text-xs text-gray-500">Verifique se o Tracka está acessível e recarregue a página.</p>
-            </div>
-        );
-    }
+    /* ── Render helpers ── */
+    const cellBase = "py-2 px-3 border-b border-gray-100 dark:border-white/5 text-center";
 
-    /* ── All unique features across all plans ── */
-    const allFeatures = Array.from(
-        new Set(plans.flatMap(p => [...p.features, ...(p.excludedFeatures || [])]))
-    );
+    const FeatureCheckbox = ({ planKey, featureKey, children }: { planKey: string; featureKey: string; children: React.ReactNode }) => {
+        const planVis = isPlanVisible(planKey);
+        const featVis = isFeatureVisible(planKey, featureKey);
+        const active = planVis && featVis;
+
+        return (
+            <button
+                onClick={() => toggleFeature(planKey, featureKey)}
+                disabled={!canEdit || !planVis}
+                className={`
+                    inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-all w-full justify-center
+                    ${active
+                        ? 'text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5'
+                        : 'text-gray-400 dark:text-gray-600 line-through hover:bg-gray-100 dark:hover:bg-white/5'
+                    }
+                    ${!canEdit || !planVis ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                `}
+            >
+                <span className={`
+                    w-3.5 h-3.5 rounded shrink-0 flex items-center justify-center
+                    ${active
+                        ? 'bg-emerald-500/20 ring-1 ring-emerald-500/40'
+                        : 'bg-gray-200/50 dark:bg-white/5 ring-1 ring-gray-300 dark:ring-white/10'
+                    }
+                `}>
+                    {active && <Check className="w-2.5 h-2.5 text-emerald-400" />}
+                </span>
+                {children}
+            </button>
+        );
+    };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* ── Status bar ── */}
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4 text-xs text-gray-400">
                     <span className="flex items-center gap-1.5">
                         <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                        {visiblePlans.length}/{plans.length} planos visíveis
+                        {visiblePlanCount}/{plans.length} planos visíveis
                     </span>
-                    <span className="flex items-center gap-1.5">
-                        <EyeOff className="w-3.5 h-3.5 text-red-400" />
-                        {hiddenFeatureCount}/{totalFeatures} features ocultas
-                    </span>
-                </div>
-                <div className="flex items-center gap-2">
-                    {dirty && canEdit && (
-                        <Button
-                            onClick={handleSave}
-                            disabled={isPending}
-                            className="gap-1.5 text-xs bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500"
-                        >
-                            {isPending
-                                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Salvando...</>
-                                : <><Save className="w-3.5 h-3.5" /> Salvar</>
-                            }
-                        </Button>
+                    {hiddenFeatureCount > 0 && (
+                        <span className="flex items-center gap-1.5">
+                            <EyeOff className="w-3.5 h-3.5 text-red-400" />
+                            {hiddenFeatureCount} features ocultas
+                        </span>
                     )}
                 </div>
+                {dirty && canEdit && (
+                    <Button
+                        onClick={handleSave}
+                        disabled={isPending}
+                        className="gap-1.5 text-xs bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500"
+                    >
+                        {isPending
+                            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Salvando...</>
+                            : <><Save className="w-3.5 h-3.5" /> Salvar</>
+                        }
+                    </Button>
+                )}
             </div>
 
             {/* ── Grid ── */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/5">
                 <table className="w-full text-sm border-collapse">
-                    {/* Header: plan columns */}
+                    {/* Header */}
                     <thead>
-                        <tr>
-                            <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider font-medium border-b border-gray-200 dark:border-white/5">
+                        <tr className="bg-gray-50 dark:bg-white/[0.02]">
+                            <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider font-medium border-b border-gray-200 dark:border-white/5 w-48">
                                 Feature
                             </th>
                             {plans.map(plan => {
-                                const visible = isPlanVisible(plan.name);
+                                const visible = isPlanVisible(plan.key);
                                 return (
-                                    <th key={plan.name} className={`py-3 px-4 text-center border-b border-gray-200 dark:border-white/5 transition-opacity ${!visible ? 'opacity-40' : ''}`}>
-                                        <div className="flex flex-col items-center gap-2">
-                                            {/* Plan toggle */}
-                                            <button
-                                                onClick={() => togglePlan(plan.name)}
-                                                disabled={!canEdit}
-                                                className={`
-                                                    flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all
-                                                    ${visible
-                                                        ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30 hover:bg-emerald-500/25'
-                                                        : 'bg-red-500/10 text-red-400/60 ring-1 ring-red-500/20 hover:bg-red-500/20 line-through'
-                                                    }
-                                                    ${!canEdit ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                                `}
-                                            >
-                                                {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                                                {plan.name}
-                                            </button>
-                                            {/* Price */}
-                                            <span className="text-[11px] text-gray-500 font-normal">{plan.price}</span>
-                                            {plan.isPopular && (
-                                                <span className="text-[10px] text-amber-400 font-medium">★ Popular</span>
-                                            )}
-                                        </div>
+                                    <th key={plan.key} className={`py-3 px-3 text-center border-b border-gray-200 dark:border-white/5 transition-opacity ${!visible ? 'opacity-40' : ''}`}>
+                                        <button
+                                            onClick={() => togglePlan(plan.key)}
+                                            disabled={!canEdit}
+                                            className={`
+                                                inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all
+                                                ${visible
+                                                    ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30 hover:bg-emerald-500/25'
+                                                    : 'bg-red-500/10 text-red-400/60 ring-1 ring-red-500/20 hover:bg-red-500/20 line-through'
+                                                }
+                                                ${!canEdit ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                            `}
+                                        >
+                                            {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                            {plan.name}
+                                            {plan.trialDays > 0 && ` (${plan.trialDays} dias)`}
+                                        </button>
                                     </th>
                                 );
                             })}
                         </tr>
                     </thead>
-                    {/* Body: feature rows */}
+
                     <tbody>
-                        {allFeatures.map((feature, idx) => (
-                            <tr key={idx} className="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                                <td className="py-2.5 px-4 text-gray-700 dark:text-gray-300 text-xs font-medium border-b border-gray-100 dark:border-white/5 whitespace-nowrap">
-                                    {feature}
+                        {/* ── Numeric limits ── */}
+                        {NUMERIC_KEYS.map(key => (
+                            <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                    {NUMERIC_LABELS[key]}
+                                </td>
+                                {plans.map(plan => (
+                                    <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                        <FeatureCheckbox planKey={plan.key} featureKey={key}>
+                                            <span className="font-mono font-semibold">
+                                                {(plan.limits[key as keyof PlanLimits] as number).toLocaleString('pt-BR')}
+                                            </span>
+                                        </FeatureCheckbox>
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+
+                        {/* ── Separator ── */}
+                        <tr>
+                            <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
+                        </tr>
+
+                        {/* ── Boolean features ── */}
+                        {BOOLEAN_KEYS.map(key => (
+                            <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                                <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                    {BOOLEAN_LABELS[key]}
                                 </td>
                                 {plans.map(plan => {
-                                    const planVisible = isPlanVisible(plan.name);
-                                    const hasFeature = plan.features.includes(feature);
-                                    const isExcluded = plan.excludedFeatures?.includes(feature);
-                                    const featureVisible = isFeatureVisible(plan.name, feature);
-
-                                    // Feature doesn't exist in this plan
-                                    if (!hasFeature && !isExcluded) {
-                                        return (
-                                            <td key={plan.name} className="py-2.5 px-4 text-center border-b border-gray-100 dark:border-white/5">
-                                                <span className="text-gray-300 dark:text-gray-700 text-xs">—</span>
-                                            </td>
-                                        );
-                                    }
-
-                                    // Excluded feature (❌ — not available in this plan)
-                                    if (isExcluded) {
-                                        return (
-                                            <td key={plan.name} className={`py-2.5 px-3 border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="w-4 h-4 rounded flex items-center justify-center bg-red-500/10 shrink-0">
-                                                        <span className="text-red-400/60 text-[10px]">✕</span>
-                                                    </span>
-                                                    <span className="text-xs text-gray-400 line-through">{feature}</span>
-                                                </div>
-                                            </td>
-                                        );
-                                    }
-
-                                    // Included feature with checkbox + text
+                                    const enabled = plan.limits[key as keyof PlanLimits] as boolean;
                                     return (
-                                        <td key={plan.name} className={`py-2.5 px-3 border-b border-gray-100 dark:border-white/5 ${!planVisible ? 'opacity-40' : ''}`}>
-                                            <button
-                                                onClick={() => toggleFeature(plan.name, feature)}
-                                                disabled={!canEdit || !planVisible}
-                                                className={`
-                                                    flex items-center gap-2 w-full text-left rounded-md px-1.5 py-1 transition-all
-                                                    ${!canEdit || !planVisible ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5'}
-                                                `}
-                                            >
-                                                <span className={`
-                                                    w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all
-                                                    ${featureVisible && planVisible
-                                                        ? 'bg-emerald-500/20 ring-1 ring-emerald-500/40'
-                                                        : 'bg-gray-200/50 dark:bg-white/5 ring-1 ring-gray-300 dark:ring-white/10'
-                                                    }
-                                                `}>
-                                                    {featureVisible && planVisible && (
-                                                        <Check className="w-3 h-3 text-emerald-400" />
-                                                    )}
+                                        <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                            <FeatureCheckbox planKey={plan.key} featureKey={key}>
+                                                <span className={`flex items-center gap-1 ${enabled ? 'text-emerald-500' : 'text-red-400/70'}`}>
+                                                    {enabled ? '✓' : '✕'}
+                                                    <span>{enabled ? 'Habilitado' : 'Desabilitado'}</span>
                                                 </span>
-                                                <span className={`text-xs leading-tight ${featureVisible && planVisible
-                                                    ? 'text-gray-700 dark:text-gray-300'
-                                                    : 'text-gray-400 dark:text-gray-600 line-through'
-                                                    }`}>
-                                                    {feature}
-                                                </span>
-                                            </button>
+                                            </FeatureCheckbox>
                                         </td>
                                     );
                                 })}
                             </tr>
                         ))}
+
+                        {/* ── Separator ── */}
+                        <tr>
+                            <td colSpan={plans.length + 1} className="py-1 border-b-2 border-dashed border-gray-200 dark:border-white/10" />
+                        </tr>
+
+                        {/* ── Popular ── */}
+                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                ★ Plano Popular
+                            </td>
+                            {plans.map(plan => (
+                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                    {plan.isPopular ? (
+                                        <span className="inline-flex items-center gap-1 text-xs text-blue-500 font-medium">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                                            Popular
+                                        </span>
+                                    ) : (
+                                        <span className="text-gray-300 dark:text-gray-700">—</span>
+                                    )}
+                                </td>
+                            ))}
+                        </tr>
+
+                        {/* ── Notifications ── */}
+                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                Notificações
+                            </td>
+                            {plans.map(plan => (
+                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                    <FeatureCheckbox planKey={plan.key} featureKey="notifications">
+                                        <span className={`flex items-center gap-1 ${plan.limits.notifications === 'full' ? 'text-amber-500' : 'text-gray-500'}`}>
+                                            {plan.limits.notifications === 'full' ? '▲' : '■'}
+                                            <span>{NOTIFICATION_LABELS[plan.limits.notifications]}</span>
+                                        </span>
+                                    </FeatureCheckbox>
+                                </td>
+                            ))}
+                        </tr>
+
+                        {/* ── Support ── */}
+                        <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                            <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
+                                Suporte
+                            </td>
+                            {plans.map(plan => (
+                                <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
+                                    <FeatureCheckbox planKey={plan.key} featureKey="support">
+                                        <span className={`flex items-center gap-1 ${plan.limits.support === 'priority' ? 'text-emerald-500' :
+                                                plan.limits.support === 'email' ? 'text-blue-500' :
+                                                    'text-gray-500'
+                                            }`}>
+                                            ■
+                                            <span>{SUPPORT_LABELS[plan.limits.support]}</span>
+                                        </span>
+                                    </FeatureCheckbox>
+                                </td>
+                            ))}
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -276,7 +382,7 @@ export function PricingVisibilityForm({ plans, canEdit = true, initialVisibility
             {/* ── Info ── */}
             <p className="text-[11px] text-gray-400 leading-relaxed">
                 💡 Esta configuração <strong>não altera os planos no Tracka</strong> — apenas controla o que é exibido
-                na landing page para fins de marketing. Os dados vêm da API do Tracka.
+                na landing page para fins de marketing. Os dados vêm da configuração real do Tracka.
             </p>
         </div>
     );

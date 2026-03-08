@@ -15,7 +15,7 @@ import { getFreshdeskConfig } from '@/config/freshdesk.config';
 import { getSettingsHistory, getSiteSettings } from '@/actions/site-settings.actions';
 import { FreshdeskConfigForm } from '@/components/admin/FreshdeskConfigForm';
 import { ApiKeysForm } from '@/components/admin/ApiKeysForm';
-import { PricingVisibilityForm, type PlanFromApi } from '@/components/admin/PricingVisibilityForm';
+import { PricingVisibilityForm, type PlansConfig } from '@/components/admin/PricingVisibilityForm';
 import { CollapsibleSection } from '@/components/admin/CollapsibleSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { Settings, Globe, Key, Headset, Shield, LayoutList, CreditCard, ExternalLink } from 'lucide-react';
@@ -48,15 +48,14 @@ export default async function AdminSettingsPage() {
     const isCanEdit = checkCanEdit(role);
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
-    // ── Fetch plans from Tracka (server-side, avoids CORS) ──
-    let trackaPlans: PlanFromApi[] = [];
+    // ── Fetch plan config from Tracka (server-side, avoids CORS) ──
+    let plansConfig: PlansConfig | null = null;
     try {
-        const res = await fetch(`${APP_URL}/api/public/plans`, {
+        const res = await fetch(`${APP_URL}/api/plan-config`, {
             next: { revalidate: 3600 },
         });
         if (res.ok) {
-            const data = await res.json();
-            trackaPlans = data.plans || [];
+            plansConfig = await res.json();
         }
     } catch {
         // Tracka unavailable — form will show empty state
@@ -149,7 +148,7 @@ export default async function AdminSettingsPage() {
                     icon={<LayoutList className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
                 >
-                    <PricingVisibilityForm plans={trackaPlans} canEdit={isCanEdit} initialVisibility={pricingVisibility} />
+                    <PricingVisibilityForm plansConfig={plansConfig} canEdit={isCanEdit} initialVisibility={pricingVisibility} />
                 </CollapsibleSection>
 
                 {/* Plans & Pricing — Info only */}
