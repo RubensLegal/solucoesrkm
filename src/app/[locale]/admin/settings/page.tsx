@@ -144,8 +144,8 @@ export default async function AdminSettingsPage() {
 
                 {/* Pricing Visibility */}
                 <CollapsibleSection
-                    title="Visibilidade dos Planos"
-                    subtitle="Controle quais planos e features aparecem na landing page"
+                    title={ta('visibility.title')}
+                    subtitle={ta('visibility.subtitle')}
                     icon={<LayoutList className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
                 >

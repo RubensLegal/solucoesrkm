@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 /* ─── Types (espelham plan-limits.ts do Tracka) ─────────────── */
@@ -57,39 +58,10 @@ interface Props {
     history?: SettingsHistoryEntry[];
 }
 
-/* ─── Labels ────────────────────────────────────────────────── */
+/* ─── Feature keys ──────────────────────────────────────────── */
 
-const NUMERIC_LABELS: Record<string, string> = {
-    items: 'Itens',
-    visionAi: 'Vision AI 📸',
-    houses: 'Casas',
-    roomsPerHouse: 'Cômodos/casa',
-    furniturePerRoom: 'Móveis/cômodo',
-    photosPerItem: 'Fotos/item',
-    collaboratorsPerHouse: 'Colaboradores/casa',
-};
-
-const BOOLEAN_LABELS: Record<string, string> = {
-    history: 'Histórico de uso',
-    ranking: 'Ranking (mais usados)',
-    importExcel: 'Importação (Excel)',
-    exportData: 'Exportação de dados',
-    consolidation: 'Consolidação/Mudança',
-};
-
-const NOTIFICATION_LABELS: Record<string, string> = {
-    basic: 'Básicas',
-    full: 'Completas',
-};
-
-const SUPPORT_LABELS: Record<string, string> = {
-    community: 'Comunidade',
-    email: 'E-mail',
-    priority: 'Prioritário',
-};
-
-const NUMERIC_KEYS = Object.keys(NUMERIC_LABELS);
-const BOOLEAN_KEYS = Object.keys(BOOLEAN_LABELS);
+const NUMERIC_KEYS = ['items', 'visionAi', 'houses', 'roomsPerHouse', 'furniturePerRoom', 'photosPerItem', 'collaboratorsPerHouse'] as const;
+const BOOLEAN_KEYS = ['history', 'ranking', 'importExcel', 'exportData', 'consolidation'] as const;
 
 /* ─── Defaults ──────────────────────────────────────────────── */
 
@@ -106,6 +78,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
         initialVisibility || EMPTY_VISIBILITY
     );
     const [dirty, setDirty] = useState(false);
+    const t = useTranslations('admin.visibility');
 
     /* ── Empty state ── */
     if (!plansConfig || Object.keys(plansConfig).length === 0) {
@@ -113,9 +86,9 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
             <div className="py-8 text-center space-y-2">
                 <div className="flex items-center justify-center gap-2 text-amber-400">
                     <AlertTriangle className="w-5 h-5" />
-                    <span className="text-sm font-medium">Não foi possível carregar a configuração do Tracka.</span>
+                    <span className="text-sm font-medium">{t('emptyTitle')}</span>
                 </div>
-                <p className="text-xs text-gray-500">Verifique se o Tracka está acessível e recarregue a página.</p>
+                <p className="text-xs text-gray-500">{t('emptyDescription')}</p>
             </div>
         );
     }
@@ -159,10 +132,10 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
         startTransition(async () => {
             try {
                 await updateSiteSettings('pricing_visibility', visibility);
-                toast.success('Visibilidade dos planos salva!');
+                toast.success(t('saveSuccess'));
                 setDirty(false);
             } catch {
-                toast.error('Erro ao salvar visibilidade');
+                toast.error(t('saveError'));
             }
         });
     };
@@ -207,6 +180,10 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
         );
     };
 
+    /* ── Notification/support label helpers (using t()) ── */
+    const notifLabel = (val: string) => val === 'full' ? t('notifFull') : t('notifBasic');
+    const supportLabel = (val: string) => val === 'priority' ? t('supportPriority') : val === 'email' ? t('supportEmail') : t('supportCommunity');
+
     return (
         <>
             <div className="space-y-4">
@@ -214,12 +191,12 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                 <div className="flex items-center gap-4 text-xs text-gray-400">
                     <span className="flex items-center gap-1.5">
                         <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                        {visiblePlanCount}/{plans.length} planos visíveis
+                        {t('plansVisible', { visible: visiblePlanCount, total: plans.length })}
                     </span>
                     {hiddenFeatureCount > 0 && (
                         <span className="flex items-center gap-1.5">
                             <EyeOff className="w-3.5 h-3.5 text-red-400" />
-                            {hiddenFeatureCount} features ocultas
+                            {t('featuresHidden', { count: hiddenFeatureCount })}
                         </span>
                     )}
                 </div>
@@ -231,7 +208,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                         <thead>
                             <tr className="bg-gray-50 dark:bg-white/[0.02]">
                                 <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider font-medium border-b border-gray-200 dark:border-white/5 w-48">
-                                    Funcionalidade
+                                    {t('feature')}
                                 </th>
                                 {plans.map(plan => {
                                     const visible = isPlanVisible(plan.key);
@@ -251,7 +228,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                                             >
                                                 {visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                                                 {plan.name}
-                                                {plan.trialDays > 0 && ` (${plan.trialDays} dias)`}
+                                                {plan.trialDays > 0 && ` (${plan.trialDays} ${t('days')})`}
                                             </button>
                                         </th>
                                     );
@@ -264,7 +241,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             {NUMERIC_KEYS.map(key => (
                                 <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                     <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                        {NUMERIC_LABELS[key]}
+                                        {t(key)}
                                     </td>
                                     {plans.map(plan => (
                                         <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
@@ -287,7 +264,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             {BOOLEAN_KEYS.map(key => (
                                 <tr key={key} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                     <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                        {BOOLEAN_LABELS[key]}
+                                        {t(key)}
                                     </td>
                                     {plans.map(plan => {
                                         const enabled = plan.limits[key as keyof PlanLimits] as boolean;
@@ -296,7 +273,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                                                 <FeatureCheckbox planKey={plan.key} featureKey={key}>
                                                     <span className={`flex items-center gap-1 ${enabled ? 'text-emerald-500' : 'text-red-400/70'}`}>
                                                         {enabled ? '✓' : '✕'}
-                                                        <span>{enabled ? 'Habilitado' : 'Desabilitado'}</span>
+                                                        <span>{enabled ? t('enabled') : t('disabled')}</span>
                                                     </span>
                                                 </FeatureCheckbox>
                                             </td>
@@ -313,14 +290,14 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             {/* ── Popular ── */}
                             <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                    ★ Plano Popular
+                                    ★ {t('popularPlan')}
                                 </td>
                                 {plans.map(plan => (
                                     <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
                                         {plan.isPopular ? (
                                             <span className="inline-flex items-center gap-1 text-xs text-blue-500 font-medium">
                                                 <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                                                Popular
+                                                {t('popular')}
                                             </span>
                                         ) : (
                                             <span className="text-gray-300 dark:text-gray-700">—</span>
@@ -332,14 +309,14 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             {/* ── Notifications ── */}
                             <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                    Notificações
+                                    {t('notifications')}
                                 </td>
                                 {plans.map(plan => (
                                     <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
                                         <FeatureCheckbox planKey={plan.key} featureKey="notifications">
                                             <span className={`flex items-center gap-1 ${plan.limits.notifications === 'full' ? 'text-amber-500' : 'text-gray-500'}`}>
                                                 {plan.limits.notifications === 'full' ? '▲' : '■'}
-                                                <span>{NOTIFICATION_LABELS[plan.limits.notifications]}</span>
+                                                <span>{notifLabel(plan.limits.notifications)}</span>
                                             </span>
                                         </FeatureCheckbox>
                                     </td>
@@ -349,17 +326,17 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             {/* ── Support ── */}
                             <tr className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                                 <td className="py-2 px-4 text-xs font-medium text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-white/5">
-                                    Suporte
+                                    {t('support')}
                                 </td>
                                 {plans.map(plan => (
                                     <td key={plan.key} className={`${cellBase} ${!isPlanVisible(plan.key) ? 'opacity-40' : ''}`}>
                                         <FeatureCheckbox planKey={plan.key} featureKey="support">
                                             <span className={`flex items-center gap-1 ${plan.limits.support === 'priority' ? 'text-emerald-500' :
-                                                plan.limits.support === 'email' ? 'text-blue-500' :
-                                                    'text-gray-500'
+                                                    plan.limits.support === 'email' ? 'text-blue-500' :
+                                                        'text-gray-500'
                                                 }`}>
                                                 ■
-                                                <span>{SUPPORT_LABELS[plan.limits.support]}</span>
+                                                <span>{supportLabel(plan.limits.support)}</span>
                                             </span>
                                         </FeatureCheckbox>
                                     </td>
@@ -371,8 +348,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
 
                 {/* ── Info ── */}
                 <p className="text-[11px] text-gray-400 leading-relaxed">
-                    💡 Esta configuração <strong>não altera os planos no Tracka</strong> — apenas controla o que é exibido
-                    na landing page para fins de marketing. Os dados vêm da configuração real do Tracka.
+                    💡 {t('info')}
                 </p>
 
                 {/* ── Save button (matching other sections) ── */}
@@ -384,7 +360,7 @@ export function PricingVisibilityForm({ plansConfig, canEdit = true, initialVisi
                             className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5 disabled:opacity-50"
                         >
                             <Save className="w-4 h-4" />
-                            {isPending ? 'Salvando...' : 'Salvar Visibilidade'}
+                            {isPending ? t('saving') : t('saveButton')}
                         </Button>
                     </div>
                 )}
