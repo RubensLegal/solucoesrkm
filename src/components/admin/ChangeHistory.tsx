@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { History, Search } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
+import { useTranslations } from 'next-intl';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -22,6 +23,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
     const [isOpen, setIsOpen] = useState(false);
     const [filter, setFilter] = useState('');
     const [expanded, setExpanded] = useState<Set<number>>(new Set());
+    const t = useTranslations('admin.history');
 
     const lowerFilter = filter.toLowerCase();
     const filtered = filter
@@ -70,7 +72,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
             >
                 <div className="flex items-center gap-2">
                     <History className="w-5 h-5 text-blue-400" />
-                    <span className="text-sm font-bold">Histórico de Alterações</span>
+                    <span className="text-sm font-bold">{t('title')}</span>
                     {entries.length > 0 && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/20">
                             {entries.length}
@@ -87,7 +89,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                 <div className="px-4 pb-4 pt-2 border-t border-gray-200 dark:border-white/10">
                     {entries.length === 0 ? (
                         <p className="text-xs text-gray-500 text-center py-4">
-                            Nenhuma alteração registrada. O histórico aparecerá após a primeira atualização.
+                            {t('noEntries')}
                         </p>
                     ) : (
                         <>
@@ -95,7 +97,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                             <div className="relative w-full sm:w-64 mb-3">
                                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
                                 <Input
-                                    placeholder="Filtrar por seção, campo ou usuário..."
+                                    placeholder={t('filter')}
                                     value={filter}
                                     onChange={(e) => setFilter(e.target.value)}
                                     className="pl-8 h-8 text-xs"
@@ -104,7 +106,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
 
                             {filtered.length === 0 && (
                                 <p className="text-xs text-gray-500 text-center py-4">
-                                    Nenhum resultado para o filtro.
+                                    {t('noResults')}
                                 </p>
                             )}
 
@@ -123,7 +125,7 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                                                 <span className="text-gray-500">{formatDate(entry.timestamp)}</span>
                                                 <span className="font-medium">{entry.userName}</span>
                                                 <span className="text-gray-500">
-                                                    — {entry.changes.length} {entry.changes.length === 1 ? 'alteração' : 'alterações'}
+                                                    — {entry.changes.length} {entry.changes.length === 1 ? t('changes') : t('changesPlural')}
                                                 </span>
                                             </div>
                                             <span className="text-xs text-gray-500">
@@ -136,10 +138,10 @@ export function ChangeHistory({ entries, sectionEmojis = {}, booleanFields = [] 
                                                 <table className="w-full text-xs">
                                                     <thead>
                                                         <tr className="text-gray-500 border-b border-gray-200 dark:border-white/10">
-                                                            <th className="text-left py-1 font-medium">Seção</th>
-                                                            <th className="text-left py-1 font-medium">Campo</th>
-                                                            <th className="text-center py-1 font-medium">Antes</th>
-                                                            <th className="text-center py-1 font-medium">Depois</th>
+                                                            <th className="text-left py-1 font-medium">{t('section')}</th>
+                                                            <th className="text-left py-1 font-medium">{t('field')}</th>
+                                                            <th className="text-center py-1 font-medium">{t('before')}</th>
+                                                            <th className="text-center py-1 font-medium">{t('after')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

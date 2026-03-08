@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -155,6 +157,7 @@ function LocaleTabs({ activeLocale, onChange }: {
 export function SiteConfigForm({ initialData, canEdit = true, history = [], i18nDefaults }: SiteConfigFormProps) {
     const [isPending, startTransition] = useTransition();
     const [activeLocale, setActiveLocale] = useState<'pt' | 'en'>('pt');
+    const t = useTranslations('admin.landing');
 
     /** Get default value for a text field: i18n value for current locale */
     function getDefault(field: keyof I18nTextDefaults): string {
@@ -220,7 +223,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                 // Save with locale-specific key
                 const key = `landing_page_config_${activeLocale}`;
                 await updateSiteSettings(key, data);
-                toast.success('Configurações salvas com sucesso!');
+                toast.success(t('save') + ' ✓');
             } catch (error) {
                 toast.error('Erro ao salvar configurações.');
                 console.error(error);
@@ -243,24 +246,24 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                         <div className={gridClass}>
 
                             {/* ═══ Col 1: Hero + CTA ═══ */}
-                            <SectionCard title="🎬 Hero (Principal)" description="Seção inicial da Landing Page" className="break-inside-avoid mb-6">
+                            <SectionCard title={t('hero')} description={t('heroDesc')} className="break-inside-avoid mb-6">
                                 <FormField control={form.control} name="heroTitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Título Principal</FormLabel>
+                                        <FormLabel>{t('heroTitle')}</FormLabel>
                                         <FormControl><Input placeholder="Ex: Soluções RKM" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="heroSubtitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Subtítulo</FormLabel>
+                                        <FormLabel>{t('heroSubtitle')}</FormLabel>
                                         <FormControl><Textarea placeholder={getDefault('heroSubtitle')} rows={3} {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="heroImage" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>URL da Imagem de Fundo</FormLabel>
+                                        <FormLabel>{t('heroImageUrl')}</FormLabel>
                                         <FormControl><Input placeholder="/hero-bg.jpg" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -268,13 +271,13 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                 <div className="grid grid-cols-2 gap-3">
                                     <FormField control={form.control} name="ctaPrimaryText" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto Botão</FormLabel>
+                                            <FormLabel>{t('ctaPrimaryText')}</FormLabel>
                                             <FormControl><Input placeholder={getDefault('ctaPrimaryText')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="ctaPrimaryLink" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Link Botão</FormLabel>
+                                            <FormLabel>{t('ctaPrimaryLink')}</FormLabel>
                                             <FormControl><Input placeholder="/register" {...field} /></FormControl>
                                         </FormItem>
                                     )} />
@@ -283,7 +286,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
 
                             {/* ═══ Col 2: Visibilidade + Títulos + Footer CTA ═══ */}
                             <div className="space-y-6 break-inside-avoid mb-6">
-                                <SectionCard title="👁️ Visibilidade" description="Controle quais seções são exibidas">
+                                <SectionCard title="👁️ Visibilidade" description={t('sections')}>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <ToggleSwitch
                                             label="Funcionalidades"
@@ -318,37 +321,37 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     </div>
                                 </SectionCard>
 
-                                <SectionCard title="📝 Títulos das Seções">
+                                <SectionCard title={t('sectionTitles')}>
                                     <FormField control={form.control} name="featuresTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Funcionalidades</FormLabel>
+                                            <FormLabel>{t('features')}</FormLabel>
                                             <FormControl><Input placeholder={getDefault('featuresTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="techTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tecnologia</FormLabel>
+                                            <FormLabel>{t('technology')}</FormLabel>
                                             <FormControl><Input placeholder={getDefault('techTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                 </SectionCard>
 
-                                <SectionCard title="📣 Chamada para Ação (Final)" description="Seção antes do rodapé">
+                                <SectionCard title={t('cta')} description={t('ctaDesc')}>
                                     <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Título</FormLabel>
+                                            <FormLabel>{t('ctaTitle')}</FormLabel>
                                             <FormControl><Input placeholder={getDefault('footerCtaTitle')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Subtítulo</FormLabel>
+                                            <FormLabel>{t('ctaSubtitle')}</FormLabel>
                                             <FormControl><Textarea placeholder={getDefault('footerCtaSubtitle')} rows={2} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Texto do Botão</FormLabel>
+                                            <FormLabel>{t('ctaButton')}</FormLabel>
                                             <FormControl><Input placeholder={getDefault('footerCtaButton')} {...field} /></FormControl>
                                         </FormItem>
                                     )} />
@@ -357,7 +360,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
 
                             {/* ═══ Col 3: Depoimentos + Planos ═══ */}
                             <div className="space-y-6 break-inside-avoid mb-6">
-                                <SectionCard title="💬 Depoimentos" description="Feedbacks exibidos na Landing">
+                                <SectionCard title={t('testimonials')} description={t('testimonialsDesc')}>
                                     {testimonialFields.map((item, index) => (
                                         <div key={item.id} className="border border-gray-200 dark:border-white/5 p-4 rounded-lg bg-gray-50 dark:bg-white/[0.02] space-y-3">
                                             <div className="flex justify-between items-center">
@@ -368,19 +371,19 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <FormField control={form.control} name={`testimonials.${index}.name`} render={({ field }) => (
-                                                    <FormItem><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                                                    <FormItem><FormLabel>{t('name')}</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
                                                 )} />
                                                 <FormField control={form.control} name={`testimonials.${index}.role`} render={({ field }) => (
-                                                    <FormItem><FormLabel>Cargo</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                                                    <FormItem><FormLabel>{t('role')}</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
                                                 )} />
                                             </div>
                                             <FormField control={form.control} name={`testimonials.${index}.content`} render={({ field }) => (
-                                                <FormItem><FormLabel>Comentário</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl></FormItem>
+                                                <FormItem><FormLabel>{t('comment')}</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl></FormItem>
                                             )} />
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendTestimonial({ name: '', role: '', content: '' })}>
-                                        <Plus className="w-4 h-4 mr-2" /> Adicionar Depoimento
+                                        <Plus className="w-4 h-4 mr-2" /> {t('addTestimonial')}
                                     </Button>
                                 </SectionCard>
 
@@ -395,15 +398,15 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                             </div>
 
                             {/* ═══ FAQ ═══ */}
-                            <SectionCard title="❓ Perguntas Frequentes (FAQ)" description="Perguntas exibidas na Landing" className="break-inside-avoid mb-6">
+                            <SectionCard title={t('faq')} description={t('faqDesc')} className="break-inside-avoid mb-6">
                                 {faqFields.map((item, index) => (
                                     <div key={item.id} className="flex gap-3 items-start border border-gray-200 dark:border-white/5 p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
                                         <div className="flex-1 space-y-2">
                                             <FormField control={form.control} name={`faq.${index}.question`} render={({ field }) => (
-                                                <FormItem><FormControl><Input placeholder="Pergunta" {...field} /></FormControl></FormItem>
+                                                <FormItem><FormControl><Input placeholder={t('question')} {...field} /></FormControl></FormItem>
                                             )} />
                                             <FormField control={form.control} name={`faq.${index}.answer`} render={({ field }) => (
-                                                <FormItem><FormControl><Textarea placeholder="Resposta" rows={2} {...field} /></FormControl></FormItem>
+                                                <FormItem><FormControl><Textarea placeholder={t('answer')} rows={2} {...field} /></FormControl></FormItem>
                                             )} />
                                         </div>
                                         <Button type="button" variant="ghost" size="icon" onClick={() => removeFaq(index)}>
@@ -412,27 +415,27 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     </div>
                                 ))}
                                 <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendFaq({ question: '', answer: '' })}>
-                                    <Plus className="w-4 h-4 mr-2" /> Adicionar Pergunta
+                                    <Plus className="w-4 h-4 mr-2" /> {t('addQuestion')}
                                 </Button>
                             </SectionCard>
 
                             {/* ═══ Rodapé ═══ */}
-                            <SectionCard title="🔗 Rodapé" description="Links e contato do rodapé" className="break-inside-avoid mb-6">
+                            <SectionCard title={t('footer')} description={t('footerDesc')} className="break-inside-avoid mb-6">
                                 <FormField control={form.control} name="footerContact" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Contato</FormLabel>
+                                        <FormLabel>{t('footerContact')}</FormLabel>
                                         <FormControl><Input placeholder={getDefault('footerContact')} {...field} /></FormControl>
                                     </FormItem>
                                 )} />
                                 <div className="space-y-2">
-                                    <FormLabel>Links do Rodapé</FormLabel>
+                                    <FormLabel>{t('footerLinks')}</FormLabel>
                                     {linkFields.map((item, index) => (
                                         <div key={item.id} className="flex gap-3 items-center">
                                             <FormField control={form.control} name={`footerLinks.${index}.label`} render={({ field }) => (
-                                                <FormItem className="flex-1"><FormControl><Input placeholder="Texto" {...field} /></FormControl></FormItem>
+                                                <FormItem className="flex-1"><FormControl><Input placeholder={t('linkLabel')} {...field} /></FormControl></FormItem>
                                             )} />
                                             <FormField control={form.control} name={`footerLinks.${index}.href`} render={({ field }) => (
-                                                <FormItem className="flex-1"><FormControl><Input placeholder="URL / Rota" {...field} /></FormControl></FormItem>
+                                                <FormItem className="flex-1"><FormControl><Input placeholder={t('linkHref')} {...field} /></FormControl></FormItem>
                                             )} />
                                             <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(index)}>
                                                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
@@ -440,7 +443,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                         </div>
                                     ))}
                                     <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendLink({ label: '', href: '' })}>
-                                        <Plus className="w-4 h-4 mr-2" /> Adicionar Link
+                                        <Plus className="w-4 h-4 mr-2" /> {t('addLink')}
                                     </Button>
                                 </div>
                             </SectionCard>
@@ -451,7 +454,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                             <div className="sticky bottom-0 bg-gradient-to-t from-white dark:from-[#0e0e0e] via-white/95 dark:via-[#0e0e0e]/95 to-transparent pt-6 pb-4 mt-8 -mx-6 px-6">
                                 <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-8 py-2.5">
                                     <Save className="w-4 h-4" />
-                                    {isPending ? 'Salvando...' : 'Salvar'}
+                                    {isPending ? t('saving') : t('save')}
                                 </Button>
                             </div>
                         )}

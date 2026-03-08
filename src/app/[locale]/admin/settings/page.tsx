@@ -63,6 +63,9 @@ export default async function AdminSettingsPage() {
     const isCanEdit = checkCanEdit(role);
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
+    // ── Admin translations ──
+    const ta = await getTranslations('admin');
+
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0e0e0e] dark:text-white transition-colors duration-300">
             {/* ─── Top Bar ─── */}
@@ -74,15 +77,15 @@ export default async function AdminSettingsPage() {
                                 <Settings className="w-4 h-4 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-sm font-bold tracking-wide leading-none text-gray-900 dark:text-white">Soluções RKM</h1>
-                                <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Painel Admin — Corporativo</p>
+                                <h1 className="text-sm font-bold tracking-wide leading-none text-gray-900 dark:text-white">{ta('topbar.title')}</h1>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{ta('topbar.subtitle')}</p>
                             </div>
                         </div>
                         <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-white/10" />
                         <Breadcrumb items={[
-                            { label: 'Home', href: '/' },
-                            { label: 'Admin' },
-                            { label: 'Settings' },
+                            { label: ta('breadcrumb.home'), href: '/' },
+                            { label: ta('breadcrumb.admin') },
+                            { label: ta('breadcrumb.settings') },
                         ]} />
                     </div>
                     <div className="flex items-center gap-2">
@@ -100,7 +103,7 @@ export default async function AdminSettingsPage() {
                         </span>
                         {!isCanEdit && (
                             <span className="text-[10px] text-yellow-500/70 flex items-center gap-1">
-                                <Shield className="w-3 h-3" /> Leitura
+                                <Shield className="w-3 h-3" /> {ta('topbar.readonly')}
                             </span>
                         )}
                     </div>
@@ -113,16 +116,16 @@ export default async function AdminSettingsPage() {
                     <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                             <Globe className="w-5 h-5 text-blue-400" />
-                            <h2 className="text-2xl font-bold">Configurações</h2>
+                            <h2 className="text-2xl font-bold">{ta('settings.title')}</h2>
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Configure textos, seções, integrações e APIs do site corporativo.
+                            {ta('settings.description')}
                         </p>
                     </div>
                     {isCanEdit && (
                         <p className="text-xs text-emerald-500/60 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            Modo Edição
+                            {ta('settings.editMode')}
                         </p>
                     )}
                 </div>
@@ -132,8 +135,8 @@ export default async function AdminSettingsPage() {
             <div className="max-w-[1800px] mx-auto px-6 pb-12 space-y-8">
                 {/* Landing Page Config */}
                 <CollapsibleSection
-                    title="Landing Page"
-                    subtitle="Configure textos, seções, depoimentos e links da página pública do Tracka."
+                    title={ta('landing.title')}
+                    subtitle={ta('landing.subtitle')}
                     icon={<Globe className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-teal-500 to-emerald-600"
                 >
@@ -142,8 +145,8 @@ export default async function AdminSettingsPage() {
 
                 {/* Plans & Pricing — Info only */}
                 <CollapsibleSection
-                    title="Planos e Preços"
-                    subtitle="Configuração dos planos de assinatura."
+                    title={ta('plans.title')}
+                    subtitle={ta('plans.subtitle')}
                     icon={<CreditCard className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
                 >
@@ -152,11 +155,10 @@ export default async function AdminSettingsPage() {
                             <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
                             <div className="space-y-2">
                                 <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                    A configuração de planos e preços é feita diretamente na página de configuração do aplicativo Tracka.
+                                    {ta('plans.info')}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    Apenas o <span className="text-amber-600 dark:text-amber-400 font-semibold">Super Admin</span> tem acesso a essa configuração.
-                                    As alterações feitas lá são refletidas automaticamente tanto no app quanto na landing page.
+                                    {ta('plans.infoDetail', { role: ta('plans.superAdmin') })}
                                 </p>
                                 <a
                                     href={`${APP_URL}/pt/admin/settings`}
@@ -165,7 +167,7 @@ export default async function AdminSettingsPage() {
                                     className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
                                 >
                                     <ExternalLink className="w-3.5 h-3.5" />
-                                    Abrir Configuração no Tracka
+                                    {ta('plans.openConfig')}
                                 </a>
                             </div>
                         </div>
@@ -174,8 +176,8 @@ export default async function AdminSettingsPage() {
 
                 {/* API Keys */}
                 <CollapsibleSection
-                    title="Integrações / API Keys"
-                    subtitle="Configure chaves de API para serviços externos."
+                    title={ta('apiKeys.title')}
+                    subtitle={ta('apiKeys.subtitle')}
                     icon={<Key className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-blue-500 to-cyan-600"
                 >
@@ -184,8 +186,8 @@ export default async function AdminSettingsPage() {
 
                 {/* Freshdesk */}
                 <CollapsibleSection
-                    title="Freshdesk — Suporte ao Cliente"
-                    subtitle="Configure os módulos de suporte do Freshworks."
+                    title={ta('freshdesk.title')}
+                    subtitle={ta('freshdesk.subtitle')}
                     icon={<Headset className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-indigo-500 to-purple-600"
                 >

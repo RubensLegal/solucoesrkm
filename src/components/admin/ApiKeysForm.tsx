@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -19,6 +20,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
     const [showKey, setShowKey] = useState(false);
     const [isPending, startTransition] = useTransition();
     const [loaded, setLoaded] = useState(false);
+    const t = useTranslations('admin.apiKeys');
 
     // Carregar a chave do banco
     useEffect(() => {
@@ -62,7 +64,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
             <div className="space-y-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-900 dark:text-white">
-                        Google Places API Key
+                        {t('googlePlaces')}
                     </label>
                     <div className="relative">
                         <Input
@@ -81,7 +83,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
                         </button>
                     </div>
                     <p className="text-xs text-gray-400">
-                        Opcional. Usado como fallback para busca de endereço internacional quando o Nominatim (OpenStreetMap) não retorna resultados.
+                        {t('googlePlacesHint')}
                     </p>
                 </div>
 
@@ -91,7 +93,7 @@ export function ApiKeysForm({ canEdit = true, history = [] }: ApiKeysFormProps) 
                         disabled={isPending}
                         className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-lg shadow-blue-500/20 text-sm font-semibold px-6 py-2.5"
                     >
-                        {isPending ? 'Salvando...' : 'Salvar API Key'}
+                        {isPending ? t('saving') : t('saveKey')}
                     </Button>
                 )}
             </div>
