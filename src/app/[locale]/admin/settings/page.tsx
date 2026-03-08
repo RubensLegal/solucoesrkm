@@ -17,7 +17,7 @@ import { FreshdeskConfigForm } from '@/components/admin/FreshdeskConfigForm';
 import { ApiKeysForm } from '@/components/admin/ApiKeysForm';
 import { CollapsibleSection } from '@/components/admin/CollapsibleSection';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Settings, Globe, Key, Headset, Shield, CreditCard, ExternalLink } from 'lucide-react';
+import { Settings, Globe, Key, Headset, Shield } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { AdminTopBarClient } from '@/components/admin/AdminTopBarClient';
 
@@ -143,36 +143,6 @@ export default async function AdminSettingsPage() {
                     <SiteConfigForm initialData={config} canEdit={isCanEdit} history={landingHistory} i18nDefaults={{ pt: i18nPt, en: i18nEn }} />
                 </CollapsibleSection>
 
-                {/* Plans & Pricing — Info only */}
-                <CollapsibleSection
-                    title={ta('plans.title')}
-                    subtitle={ta('plans.subtitle')}
-                    icon={<CreditCard className="w-4 h-4 text-white" />}
-                    iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
-                >
-                    <div className="p-6 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
-                        <div className="flex items-start gap-3">
-                            <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-                            <div className="space-y-2">
-                                <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                    {ta('plans.info')}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {ta('plans.infoDetail', { role: ta('plans.superAdmin') })}
-                                </p>
-                                <a
-                                    href={`${APP_URL}/pt/admin/settings`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
-                                >
-                                    <ExternalLink className="w-3.5 h-3.5" />
-                                    {ta('plans.openConfig')}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </CollapsibleSection>
 
                 {/* API Keys */}
                 <CollapsibleSection
