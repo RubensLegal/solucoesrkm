@@ -21,7 +21,7 @@ import { updateSiteSettings } from '@/actions/site-settings.actions';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { LandingPageConfig } from '@/config/landing.config';
-import { Plus, Trash2, Eye, EyeOff, Save, Languages, Shield, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, Save, Languages, Shield, ExternalLink, CreditCard } from 'lucide-react';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
@@ -389,12 +389,30 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                                     </Button>
                                 </SectionCard>
 
-                                <SectionCard title="💰 Planos e Preços" description="Configurados em Planos e Limites">
-                                    <div className="flex items-start gap-2 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30">
-                                        <p className="text-xs text-blue-700 dark:text-blue-300">
-                                            Os planos, preços e features exibidos na landing page são configurados automaticamente a partir da seção{' '}
-                                            <strong>Planos e Limites</strong> (disponível para SUPERADMIN).
-                                        </p>
+                                <SectionCard title={`💰 ${tp('title')}`} description={tp('subtitle')}>
+                                    <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
+                                        <div className="flex items-start gap-3">
+                                            <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
+                                            <div className="space-y-2">
+                                                <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                                    {tp('info')}
+                                                </p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {tp('infoDetail', { role: tp('superAdmin') })}
+                                                </p>
+                                                {appUrl && (
+                                                    <a
+                                                        href={`${appUrl}/pt/admin/settings`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
+                                                    >
+                                                        <ExternalLink className="w-3.5 h-3.5" />
+                                                        {tp('openConfig')}
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </SectionCard>
                             </div>
@@ -464,33 +482,6 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], i18n
                 </fieldset>
             </Form>
 
-            {/* ── Plans & Pricing Info ── */}
-            <SectionCard title={tp('title')} description={tp('subtitle')}>
-                <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
-                    <div className="flex items-start gap-3">
-                        <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-                        <div className="space-y-2">
-                            <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                {tp('info')}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {tp('infoDetail', { role: tp('superAdmin') })}
-                            </p>
-                            {appUrl && (
-                                <a
-                                    href={`${appUrl}/pt/admin/settings`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
-                                >
-                                    <ExternalLink className="w-3.5 h-3.5" />
-                                    {tp('openConfig')}
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </SectionCard>
 
             {/* ── Histórico de Alterações ── */}
             <ChangeHistory
