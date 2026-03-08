@@ -9,6 +9,29 @@ import {
     PenLine, Eye, BookOpen, Lock,
 } from 'lucide-react';
 import { HELP_CATEGORIES } from '@/lib/help-topics';
+import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
+
+// Labels legíveis para a sidebar do editor (sem depender de i18n)
+const CATEGORY_LABELS: Record<string, string> = {
+    business: 'Negócios',
+    technical: 'Técnico',
+};
+
+const TOPIC_LABELS: Record<string, string> = {
+    'plans-limits': 'Planos e Limites',
+    'payment-security': 'Segurança de Pagamento',
+    'subscription-flow': 'Fluxo de Assinatura',
+    'admin-subscriptions': 'Gestão de Assinaturas',
+    'admin-settings-guide': 'Guia de Configurações',
+    'freshdesk-sync': 'Sync Freshdesk',
+    'freshdesk-kb': 'Knowledge Base',
+    'tech-docs': 'Documentação Técnica',
+    'dev-setup': 'Setup Dev',
+    'dev-database': 'Banco de Dados',
+    'dev-api': 'Referência API',
+    'dev-deploy': 'Deploy',
+    'auto-translation': 'Tradução Automática',
+};
 
 interface TopicOverride {
     markdown: string;
@@ -23,12 +46,24 @@ export default function HelpEditorPage() {
     const [editMarkdown, setEditMarkdown] = useState('');
     const [saving, setSaving] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
+    const [userRole, setUserRole] = useState<string | null>(null);
 
+    // ── Auth guard: verifica role do usuário ──
     useEffect(() => {
-        fetch('/api/admin/help-topics')
+        fetch('/api/auth/me')
             .then(r => r.json())
-            .then(data => { setOverrides(data.overrides || {}); setLoading(false); })
-            .catch(() => { toast.error('Erro ao carregar'); setLoading(false); });
+            .then(data => {
+                const role = data.user?.role || 'VIEWER';
+                setUserRole(role);
+                if (role === 'SUPERADMIN' || role === 'ADMIN') {
+                    // Só carrega overrides se tem permissão
+                    return fetch('/api/admin/help-topics')
+                        .then(r => r.json())
+                        .then(d => { setOverrides(d.overrides || {}); setLoading(false); });
+                }
+                setLoading(false);
+            })
+            .catch(() => { setLoading(false); });
     }, []);
 
     const handleSelectTopic = (slug: string) => {
@@ -86,26 +121,28 @@ export default function HelpEditorPage() {
         }
     };
 
-    // Renderização simples de Markdown → HTML
-    const renderMarkdown = (md: string) => {
-        let html = md
-            .replace(/^### (.+)$/gm, '<h4 class="text-sm font-bold text-white mt-4 mb-1">$1</h4>')
-            .replace(/^## (.+)$/gm, '<h3 class="text-base font-bold text-white mt-5 mb-2">$1</h3>')
-            .replace(/^# (.+)$/gm, '<h2 class="text-lg font-bold text-white mt-6 mb-2">$1</h2>')
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.+?)\*/g, '<em>$1</em>')
-            .replace(/^- (.+)$/gm, '<li class="ml-4">$1</li>')
-            .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4">$1. $2</li>')
-            .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-teal-500/50 pl-3 text-gray-400 italic my-2">$1</blockquote>')
-            .replace(/\n\n/g, '</p><p class="text-sm text-gray-300 leading-relaxed my-2">')
-            .replace(/\n/g, '<br>');
-        return `<p class="text-sm text-gray-300 leading-relaxed my-2">${html}</p>`;
-    };
+
 
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-teal-400" />
+            </div>
+        );
+    }
+
+    // ── Acesso negado para roles sem permissão ──
+    if (userRole !== 'SUPERADMIN' && userRole !== 'ADMIN') {
+        return (
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-white">
+                <div className="text-center space-y-3">
+                    <Lock className="w-10 h-10 mx-auto text-amber-500/60" />
+                    <h1 className="text-lg font-bold">Acesso Negado</h1>
+                    <p className="text-sm text-gray-500">Apenas SUPERADMIN e ADMIN podem editar o help.</p>
+                    <Link href="/admin/settings" className="text-xs text-teal-400 hover:underline">
+                        ← Voltar às configurações
+                    </Link>
+                </div>
             </div>
         );
     }
@@ -132,7 +169,7 @@ export default function HelpEditorPage() {
                     {HELP_CATEGORIES.map(cat => (
                         <div key={cat.id}>
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                {cat.emoji} {cat.translationKey}
+                                {cat.emoji} {CATEGORY_LABELS[cat.translationKey] || cat.translationKey}
                             </h3>
                             <div className="space-y-1">
                                 {cat.topics.map(topic => {
@@ -149,7 +186,7 @@ export default function HelpEditorPage() {
                                                 }`}
                                         >
                                             <Icon className="w-3.5 h-3.5 shrink-0" />
-                                            <span className="truncate">{topic.slug}</span>
+                                            <span className="truncate">{TOPIC_LABELS[topic.slug] || topic.slug}</span>
                                             {topic.superadminOnly && <Lock className="w-3 h-3 text-amber-500/60 shrink-0" />}
                                             {hasOverride && (
                                                 <span className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-400 shrink-0" title="Editado" />
@@ -212,10 +249,11 @@ export default function HelpEditorPage() {
                                 />
                             ) : (
                                 <div
-                                    className="bg-white/[0.03] border border-white/10 rounded-lg px-6 py-4 prose prose-invert prose-sm max-w-none"
+                                    className="bg-white/[0.03] border border-white/10 rounded-lg px-6 py-4"
                                     style={{ minHeight: 500 }}
-                                    dangerouslySetInnerHTML={{ __html: renderMarkdown(editMarkdown) }}
-                                />
+                                >
+                                    <MarkdownRenderer content={editMarkdown} />
+                                </div>
                             )}
 
                             {/* Ações */}

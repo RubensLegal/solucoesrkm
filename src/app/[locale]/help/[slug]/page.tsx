@@ -1,3 +1,20 @@
+/**
+ * @file [slug]/page.tsx
+ * @description Renderiza tópicos individuais do help corporativo.
+ *
+ * Arquitetura:
+ *   1. Cada tópico tem um componente React (PlansLimits, TechDocs, etc.)
+ *   2. O componente recebe `t()` — função de tradução scoped ao tópico
+ *   3. O mapa TOPIC_COMPONENTS liga slug → componente
+ *   4. HelpContentWithOverride verifica se há markdown customizado no banco;
+ *      se houver, renderiza o markdown; senão, renderiza o componente padrão.
+ *
+ * Para adicionar um novo tópico:
+ *   1. Crie a função do componente abaixo
+ *   2. Adicione ao TOPIC_COMPONENTS
+ *   3. Adicione o slug em lib/help-topics.ts
+ *   4. Adicione as traduções em messages/pt.json e en.json
+ */
 'use client';
 
 import { use, useState, useEffect } from 'react';
@@ -7,16 +24,18 @@ import { notFound } from 'next/navigation';
 import { findTopicBySlug } from '@/lib/help-topics';
 import { ArrowLeft } from 'lucide-react';
 
-// Help components
+// Componentes reutilizáveis do help (compartilhados com Tracka)
 import { HelpSection } from '@/components/help/HelpSection';
 import { TipBox } from '@/components/help/TipBox';
 import { StepList } from '@/components/help/StepList';
 import { InfoTable } from '@/components/help/InfoTable';
+import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Business topic components
+// Business topic components — visíveis para usuários e admins
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Planos e Limites — comparação Trial/Free/Plus/Pro com regras de cancelamento. */
 function PlansLimits({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -47,6 +66,7 @@ function PlansLimits({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Segurança de Pagamento — Stripe PCI-DSS, Google Play, proteção de dados LGPD. */
 function PaymentSecurity({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -100,6 +120,7 @@ function PaymentSecurity({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Fluxo de Assinatura — passos desde a escolha do plano até aceite dos termos. */
 function SubscriptionFlow({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -136,6 +157,7 @@ function SubscriptionFlow({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Gestão de Assinaturas (SUPERADMIN) — acesso, detalhes Stripe, filtros. */
 function AdminSubscriptions({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -162,6 +184,7 @@ function AdminSubscriptions({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Guia de Configurações Admin — seções do painel, permissões por role. */
 function AdminSettingsGuide({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -200,6 +223,7 @@ function AdminSettingsGuide({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Sincronização Freshdesk — como o sync Help→KB funciona, visibilidade. */
 function FreshdeskSync({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -224,6 +248,7 @@ function FreshdeskSync({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Knowledge Base Freshdesk — módulos (widget, tickets, KB, chat), config. */
 function FreshdeskKb({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -256,6 +281,7 @@ function FreshdeskKb({ t }: { t: (key: string) => string }) {
 // Technical topic components
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Documentação Técnica — arquitetura, segurança, roles, variáveis de ambiente. */
 function TechDocs({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -304,6 +330,7 @@ function TechDocs({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Setup de Desenvolvimento — pré-requisitos, instalação, .env, comandos. */
 function DevSetup({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -347,6 +374,7 @@ function DevSetup({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Banco de Dados — schema Prisma, Turso/SQLite, scripts de manutenção. */
 function DevDatabase({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -382,6 +410,7 @@ function DevDatabase({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Referência da API — endpoints agrupados: auth, houses, items, admin, integrações. */
 function DevApi({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -412,6 +441,7 @@ function DevApi({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Deploy em Produção — Vercel, env vars prod, Stripe webhooks, checklist. */
 function DevDeploy({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -443,6 +473,7 @@ function DevDeploy({ t }: { t: (key: string) => string }) {
     );
 }
 
+/** Tradução Automática — como funciona, endpoints, notas técnicas, erros. */
 function AutoTranslation({ t }: { t: (key: string) => string }) {
     return (
         <div className="space-y-6">
@@ -517,8 +548,11 @@ const TOPIC_COMPONENTS: Record<string, React.FC<{ t: (key: string) => string }>>
 // Page component
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
-
+/**
+ * Componente que verifica overrides no banco antes de renderizar.
+ * Se o admin salvou markdown customizado via help-editor, renderiza ele.
+ * Senão, renderiza o componente React padrão do tópico.
+ */
 function HelpContentWithOverride({ slug, TopicContent, tTopic, comingSoon }: {
     slug: string;
     TopicContent?: React.FC<{ t: (key: string) => string }>;
