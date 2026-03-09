@@ -2,28 +2,41 @@
 
 /**
  * @file FreshdeskSyncButton.tsx
- * @description Botão para disparar sincronização do conteúdo corporativo com Freshdesk KB.
+ * @description Botão para disparar sincronização bidirecional do conteúdo do help com Freshdesk KB.
+ * 
+ * Mostra tópicos dinâmicos (de HELP_CATEGORIES) e suporta push + pull.
  */
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, CheckCircle, AlertTriangle, Loader2, Clock } from 'lucide-react';
+import {
+    RefreshCw, CheckCircle, AlertTriangle, Loader2, Clock,
+    ArrowUpCircle, ArrowDownCircle,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { HELP_CATEGORIES } from '@/lib/help-topics';
 
 interface SyncStatus {
     lastSync: string | null;
+    lastPull: string | null;
     articleCount: number;
+}
+
+interface SyncResult {
+    success: boolean;
+    created?: number;
+    updated?: number;
+    pulled?: number;
+    unchanged?: number;
+    errors: string[];
+    details: string[];
 }
 
 export function FreshdeskSyncButton() {
     const [syncing, setSyncing] = useState(false);
+    const [pulling, setPulling] = useState(false);
     const [status, setStatus] = useState<SyncStatus | null>(null);
-    const [result, setResult] = useState<{
-        success: boolean;
-        created: number;
-        updated: number;
-        errors: string[];
-        details: string[];
-    } | null>(null);
+    const [result, setResult] = useState<SyncResult | null>(null);
+    const [direction, setDirection] = useState<'push' | 'pull' | null>(null);
 
     // Buscar status ao montar
     useEffect(() => {
@@ -33,17 +46,17 @@ export function FreshdeskSyncButton() {
             .catch(() => { });
     }, []);
 
-    const handleSync = async () => {
+    const handlePush = async () => {
         setSyncing(true);
         setResult(null);
+        setDirection('push');
         try {
             const res = await fetch('/api/admin/freshdesk-sync', { method: 'POST' });
             const data = await res.json();
             setResult(data);
             // Atualizar status
             const statusRes = await fetch('/api/admin/freshdesk-sync');
-            const statusData = await statusRes.json();
-            setStatus(statusData);
+            setStatus(await statusRes.json());
         } catch (err: any) {
             setResult({ success: false, created: 0, updated: 0, errors: [err.message], details: [] });
         } finally {
@@ -51,47 +64,113 @@ export function FreshdeskSyncButton() {
         }
     };
 
+    const handlePull = async () => {
+        setPulling(true);
+        setResult(null);
+        setDirection('pull');
+        try {
+            const res = await fetch('/api/admin/freshdesk-sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'pull' }),
+            });
+            const data = await res.json();
+            setResult(data);
+            const statusRes = await fetch('/api/admin/freshdesk-sync');
+            setStatus(await statusRes.json());
+        } catch (err: any) {
+            setResult({ success: false, pulled: 0, unchanged: 0, errors: [err.message], details: [] });
+        } finally {
+            setPulling(false);
+        }
+    };
+
+    // Gerar lista de tópicos dinâmicos a partir de HELP_CATEGORIES
+    const allTopics = HELP_CATEGORIES.flatMap(cat =>
+        cat.topics.map(t => ({
+            emoji: cat.emoji,
+            name: t.translationKey.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim(),
+            slug: t.slug,
+            superadminOnly: t.superadminOnly,
+        }))
+    );
+
+    const isWorking = syncing || pulling;
+
     return (
         <div className="space-y-4">
-            {/* Status info */}
-            <div className="flex flex-wrap items-center gap-4">
+            {/* Botões de ação */}
+            <div className="flex flex-wrap items-center gap-3">
                 <Button
-                    onClick={handleSync}
-                    disabled={syncing}
-                    className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-500/20 text-sm font-semibold px-6 py-2.5"
+                    onClick={handlePush}
+                    disabled={isWorking}
+                    className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-500/20 text-sm font-semibold px-5 py-2.5"
                 >
                     {syncing ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" /> Sincronizando...</>
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Enviando...</>
                     ) : (
-                        <><RefreshCw className="w-4 h-4" /> Sincronizar com Freshdesk KB</>
+                        <><ArrowUpCircle className="w-4 h-4" /> Push para Freshdesk</>
                     )}
                 </Button>
 
-                {status && (
-                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                        {status.lastSync && (
-                            <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                Último sync: {new Date(status.lastSync).toLocaleString('pt-BR')}
-                            </span>
-                        )}
-                        <span>{status.articleCount} artigos sincronizados</span>
-                    </div>
-                )}
+                <Button
+                    onClick={handlePull}
+                    disabled={isWorking}
+                    variant="outline"
+                    className="gap-2 text-sm font-semibold px-5 py-2.5 border-indigo-500/30 hover:bg-indigo-500/10"
+                >
+                    {pulling ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Importando...</>
+                    ) : (
+                        <><ArrowDownCircle className="w-4 h-4" /> Pull do Freshdesk</>
+                    )}
+                </Button>
             </div>
 
-            {/* Artigos que serão sincronizados */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
-                {[
-                    { emoji: '❓', name: 'FAQ' },
-                    { emoji: '📋', name: 'Termos de Uso' },
-                    { emoji: '🔒', name: 'Privacidade' },
-                    { emoji: '⚖️', name: 'Aviso Legal' },
-                    { emoji: '🍪', name: 'Cookies' },
-                ].map(item => (
-                    <div key={item.name} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs">
-                        <span>{item.emoji}</span>
-                        <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+            {/* Status info */}
+            {status && (
+                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    {status.lastSync && (
+                        <span className="flex items-center gap-1">
+                            <ArrowUpCircle className="w-3 h-3 text-emerald-500" />
+                            Último push: {new Date(status.lastSync).toLocaleString('pt-BR')}
+                        </span>
+                    )}
+                    {status.lastPull && (
+                        <span className="flex items-center gap-1">
+                            <ArrowDownCircle className="w-3 h-3 text-indigo-500" />
+                            Último pull: {new Date(status.lastPull).toLocaleString('pt-BR')}
+                        </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {status.articleCount} artigos mapeados
+                    </span>
+                </div>
+            )}
+
+            {/* Tópicos dinâmicos */}
+            <div className="space-y-2">
+                {HELP_CATEGORIES.map(cat => (
+                    <div key={cat.id}>
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
+                            {cat.emoji} {cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica'}
+                        </p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">
+                            {cat.topics.map(topic => (
+                                <div
+                                    key={topic.slug}
+                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs"
+                                >
+                                    <span className="text-gray-700 dark:text-gray-300 truncate">
+                                        {topic.translationKey.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                    {topic.superadminOnly && (
+                                        <span className="text-[10px] text-amber-500" title="Agents Only no Freshdesk">🔒</span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -109,10 +188,16 @@ export function FreshdeskSyncButton() {
                             <AlertTriangle className="w-4 h-4 text-red-500" />
                         )}
                         <span className={`text-sm font-semibold ${result.success ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}>
-                            {result.success ? 'Sincronização concluída' : 'Erro na sincronização'}
+                            {result.success
+                                ? (direction === 'push' ? 'Push concluído' : 'Pull concluído')
+                                : (direction === 'push' ? 'Erro no push' : 'Erro no pull')
+                            }
                         </span>
                         <span className="text-xs text-gray-500">
-                            ({result.created} criados, {result.updated} atualizados)
+                            {direction === 'push'
+                                ? `(${result.created || 0} criados, ${result.updated || 0} atualizados)`
+                                : `(${result.pulled || 0} importados, ${result.unchanged || 0} sem alteração)`
+                            }
                         </span>
                     </div>
 
