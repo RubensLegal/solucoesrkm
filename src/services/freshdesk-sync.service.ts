@@ -20,6 +20,7 @@ import prisma from '@/lib/prisma';
 import { getSiteSettings } from '@/actions/site-settings.actions';
 import { HELP_CATEGORIES, type HelpCategory } from '@/lib/help-topics';
 import { markdownToHtml, helpJsonToHtml } from '@/lib/markdown-to-html';
+import { createTopicVersion } from '@/services/help-versioning.service';
 import path from 'path';
 import fs from 'fs';
 
@@ -78,7 +79,7 @@ interface SyncHistoryEntry {
 }
 
 const SYNC_HISTORY_KEY = 'freshdesk_corporate_sync_history';
-const MAX_HISTORY_ENTRIES = 50;
+const MAX_HISTORY_ENTRIES = 500;
 
 async function logSyncHistory(entry: Omit<SyncHistoryEntry, 'timestamp'>) {
     let history: SyncHistoryEntry[] = [];
@@ -383,6 +384,27 @@ export async function pullCorporateFromFreshdesk(triggeredBy: 'admin' | 'cron' =
 
             if (updatedAt > lastPull) {
                 const existing = overrides[slug];
+
+                // Backup da versão anterior antes de sobrescrever
+                if (existing?.markdown || existing?.html) {
+                    await createTopicVersion(
+                        slug,
+                        existing.markdown || existing.html,
+                        existing.updatedBy || 'local',
+                        'editor',
+                        'Backup automático antes de pull do Freshdesk',
+                    );
+                }
+
+                // Salvar versão do Freshdesk
+                await createTopicVersion(
+                    slug,
+                    article.description,
+                    `Freshdesk (${triggeredBy})`,
+                    'freshdesk',
+                    `Importado do Freshdesk: ${article.title}`,
+                );
+
                 overrides[slug] = {
                     ...existing,
                     html: article.description,
