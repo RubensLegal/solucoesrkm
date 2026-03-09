@@ -860,27 +860,65 @@
           "api": "View versions: GET /api/admin/help-topics?versions=slug — lists all versions"
         },
         "freshdeskSync": {
-          "title": "Bidirectional Sync with Freshdesk",
-          "desc": "Help syncs bidirectionally with the Freshdesk Knowledge Base:",
-          "push": "Push (Site → Freshdesk): 'Push to Freshdesk' button sends all updated topics",
-          "pull": "Pull (Freshdesk → Site): 'Pull from Freshdesk' button imports edits made directly in Freshdesk",
-          "cron": "Automatic cron: daily bidirectional sync at 3:30 AM UTC (pull + push)",
-          "dynamic": "Dynamic content: reads DB overrides (help-editor) with JSON default fallback",
-          "agents": "superadminOnly topics appear as 'Agents Only' in Freshdesk"
+          "title": "Complete Flow: Edit → Freshdesk",
+          "desc": "The flow from help-editor to Freshdesk is 100% automatic:",
+          "flow1": "1. Admin edits topic in help-editor (Markdown)",
+          "flow2": "2. Clicks 'Save'",
+          "flow3": "3. ✅ Automatic: previous version saved as backup",
+          "flow4": "4. ✅ Automatic: new version registered (who, when, what)",
+          "flow5": "5. ✅ Automatic: /help site updated instantly",
+          "flow6": "6. ✅ Automatic: push to Freshdesk (fire-and-forget, doesn't block the save)",
+          "flow7": "7. ✅ Automatic: daily cron at 3:30 AM UTC does pull + push bidirectional",
+          "note": "Note: if Freshdesk API key is not configured, auto-push is silently skipped"
+        },
+        "automationTable": {
+          "title": "What is Automatic vs Manual",
+          "desc": "Actions and their trigger type:",
+          "edit": "Edit content → ⚠️ Manual (admin in help-editor)",
+          "save": "Save edit → ⚠️ Manual (Save button)",
+          "backup": "Backup previous version → ✅ Automatic (each save)",
+          "version": "Register version (who/when) → ✅ Automatic (each save)",
+          "siteUpdate": "Update /help site → ✅ Automatic (direct DB read)",
+          "pushFreshdesk": "Push to Freshdesk → ✅ Automatic (after save + daily cron)",
+          "pullFreshdesk": "Pull from Freshdesk → ✅ Automatic (daily cron) or ⚠️ Manual (Pull button)",
+          "rollback": "Rollback to previous version → ⚠️ Manual (History tab in help-editor)"
+        },
+        "bidirectional": {
+          "title": "Bidirectional Sync",
+          "desc": "Sync works in both directions:",
+          "push": "Push (Site → Freshdesk): automatic on each help-editor save + daily cron",
+          "pull": "Pull (Freshdesk → Site): daily cron imports edits made directly in Freshdesk",
+          "manual": "Manual: 'Push' and 'Pull' buttons available in the Freshdesk admin section",
+          "priority": "Priority: DB overrides (help-editor) > JSON defaults (messages/help/pt.json)",
+          "conflict": "Conflicts: last write wins. Pull saves 'previousContent' and 'previousSource' for auditing",
+          "coexistence": "Coexistence: sync only manages articles it created (tracked via slug → ID mapping). Existing Freshdesk content from other sources is NOT affected",
+          "mapping": "Mapping: stored in SiteSettings (freshdesk_corporate_mapping). Enables re-syncs without duplication"
         },
         "permissions": {
           "title": "Permissions by Role",
           "desc": "Each role has different access levels:",
-          "superadmin": "Full access: manages settings, plans, team, help and Freshdesk",
-          "admin": "Manages site settings and edits help content. Cannot edit plans",
-          "editor": "Read-only access to admin panel. Cannot edit settings",
-          "viewer": "Blocked from admin panel. Read-only access to public help"
+          "superadmin": "SUPERADMIN: full access — edits help, syncs, manages plans, team and settings",
+          "admin": "ADMIN: edits help and site settings. Cannot manage plans",
+          "editor": "EDITOR: read-only admin panel. Cannot edit settings",
+          "viewer": "VIEWER: blocked from admin panel. Read-only access to public help",
+          "freshdeskNote": "Freshdesk Sync: only SUPERADMIN and ADMIN can trigger manual push/pull",
+          "cronNote": "Automatic cron: runs without role restriction (protected by CRON_SECRET)"
         },
-        "contentStrategy": {
-          "title": "Content Strategy",
-          "desc": "Help is split between two workspaces:",
-          "corporate": "solucoesrkm.com/help — corporate topics: plans, payment, admin settings, tech docs, Freshdesk",
-          "tracka": "Tracka (Controle das Coisas) — app-exclusive topics: features, how-to, usage tips"
+        "workspaces": {
+          "title": "Workspace Comparison",
+          "desc": "Help is split between two workspaces with different capabilities:",
+          "rkm_name": "Soluções RKM (solucoesrkm.com)",
+          "rkm_help": "✅ /help — 13 corporate topics (plans, payment, admin, tech docs, Freshdesk)",
+          "rkm_editor": "✅ /admin/help-editor — visual editing with Markdown, preview and versioning",
+          "rkm_sync": "✅ Bidirectional sync with Freshdesk (auto + manual push/pull)",
+          "rkm_versions": "✅ Versioning: up to 10,000 versions per topic with rollback",
+          "rkm_history": "✅ Sync history: up to 10,000 entries with full audit trail",
+          "tracka_name": "Tracka (Controle das Coisas)",
+          "tracka_help": "✅ /help — app topics (features, how-to, tips)",
+          "tracka_editor": "❌ No admin editor — content edited in translation JSONs",
+          "tracka_sync": "❌ No Freshdesk sync",
+          "tracka_versions": "❌ No automatic versioning (versioned only via Git)",
+          "tracka_history": "❌ No edit history"
         },
         "fileStructure": {
           "title": "i18n File Structure",

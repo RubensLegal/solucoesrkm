@@ -860,27 +860,65 @@
           "api": "Consultar versões: GET /api/admin/help-topics?versions=slug — lista todas as versões"
         },
         "freshdeskSync": {
-          "title": "Sincronização Bidirecional com Freshdesk",
-          "desc": "O help sincroniza bidirecionalmente com a Knowledge Base do Freshdesk:",
-          "push": "Push (Site → Freshdesk): Botão 'Push para Freshdesk' envia todos os tópicos atualizados",
-          "pull": "Pull (Freshdesk → Site): Botão 'Pull do Freshdesk' importa edições feitas diretamente no Freshdesk",
-          "cron": "Cron automático: sync bidirecional diário às 3:30 AM UTC (pull + push)",
-          "dynamic": "Conteúdo dinâmico: lê DB overrides (help-editor) com fallback para JSON default",
-          "agents": "Tópicos superadminOnly ficam como 'Agents Only' no Freshdesk"
+          "title": "Fluxo Completo: Edição → Freshdesk",
+          "desc": "O fluxo do help-editor até o Freshdesk é 100% automático:",
+          "flow1": "1. Admin edita tópico no help-editor (Markdown)",
+          "flow2": "2. Clica 'Salvar'",
+          "flow3": "3. ✅ Automático: versão anterior salva como backup",
+          "flow4": "4. ✅ Automático: nova versão registrada (quem, quando, o quê)",
+          "flow5": "5. ✅ Automático: /help do site atualizado instantaneamente",
+          "flow6": "6. ✅ Automático: push para Freshdesk (fire-and-forget, não bloqueia o save)",
+          "flow7": "7. ✅ Automático: cron diário 3:30 AM UTC faz pull + push bidirecional",
+          "note": "Obs: se a API key do Freshdesk não estiver configurada, o auto-push é ignorado silenciosamente"
+        },
+        "automationTable": {
+          "title": "O que é Automático vs Manual",
+          "desc": "Tabela de ações e seu tipo de disparo:",
+          "edit": "Editar conteúdo → ⚠️ Manual (admin no help-editor)",
+          "save": "Salvar edição → ⚠️ Manual (botão Salvar)",
+          "backup": "Backup da versão anterior → ✅ Automático (a cada save)",
+          "version": "Registrar versão (quem/quando) → ✅ Automático (a cada save)",
+          "siteUpdate": "Atualizar /help do site → ✅ Automático (leitura direta do DB)",
+          "pushFreshdesk": "Push para Freshdesk → ✅ Automático (após save + cron diário)",
+          "pullFreshdesk": "Pull do Freshdesk → ✅ Automático (cron diário) ou ⚠️ Manual (botão Pull)",
+          "rollback": "Rollback para versão anterior → ⚠️ Manual (aba Histórico no help-editor)"
+        },
+        "bidirectional": {
+          "title": "Sincronização Bidirecional",
+          "desc": "O sync funciona nos dois sentidos:",
+          "push": "Push (Site → Freshdesk): automático a cada save no help-editor + cron diário",
+          "pull": "Pull (Freshdesk → Site): cron diário importa edições feitas diretamente no Freshdesk",
+          "manual": "Manual: botões 'Push' e 'Pull' disponíveis na seção Freshdesk do admin",
+          "priority": "Prioridade: DB overrides (help-editor) > JSON defaults (messages/help/pt.json)",
+          "conflict": "Conflitos: o último write vence. Pull salva 'previousContent' e 'previousSource' para auditoria",
+          "coexistence": "Coexistência: o sync só gerencia artigos criados por ele mesmo (rastreados por mapeamento slug → ID). Conteúdo existente no Freshdesk criado por outros meios NÃO é afetado",
+          "mapping": "Mapeamento: armazenado em SiteSettings (freshdesk_corporate_mapping). Permite re-syncs sem duplicação"
         },
         "permissions": {
           "title": "Permissões por Role",
           "desc": "Cada role tem diferentes níveis de acesso:",
-          "superadmin": "Acesso total: gerencia configurações, planos, equipe, help e Freshdesk",
-          "admin": "Gerencia configurações do site e edita conteúdo do help. Não pode editar planos",
-          "editor": "Acesso de leitura ao painel admin. Não edita configurações",
-          "viewer": "Bloqueado do painel admin. Apenas acesso de leitura ao help público"
+          "superadmin": "SUPERADMIN: acesso total — edita help, faz sync, gerencia planos, equipe e configurações",
+          "admin": "ADMIN: edita help e configurações do site. Não gerencia planos",
+          "editor": "EDITOR: leitura ao painel admin. Não edita configurações",
+          "viewer": "VIEWER: bloqueado do painel admin. Apenas leitura ao help público",
+          "freshdeskNote": "Sync Freshdesk: apenas SUPERADMIN e ADMIN podem disparar push/pull manual",
+          "cronNote": "Cron automático: roda sem restrição de role (protegido por CRON_SECRET)"
         },
-        "contentStrategy": {
-          "title": "Estratégia de Conteúdo",
-          "desc": "O help está dividido entre dois workspaces:",
-          "corporate": "solucoesrkm.com/help — tópicos corporativos: planos, pagamento, configurações admin, docs técnicos, Freshdesk",
-          "tracka": "Tracka (Controle das Coisas) — tópicos exclusivos do aplicativo: funcionalidades, como usar, dicas de uso"
+        "workspaces": {
+          "title": "Comparação de Workspaces",
+          "desc": "O help está dividido entre dois workspaces com capacidades diferentes:",
+          "rkm_name": "Soluções RKM (solucoesrkm.com)",
+          "rkm_help": "✅ /help — 13 tópicos corporativos (planos, pagamento, admin, docs técnicos, Freshdesk)",
+          "rkm_editor": "✅ /admin/help-editor — edição visual com Markdown, preview e versionamento",
+          "rkm_sync": "✅ Sync bidirecional com Freshdesk (push/pull automático + manual)",
+          "rkm_versions": "✅ Versionamento: até 10.000 versões por tópico com rollback",
+          "rkm_history": "✅ Histórico de sync: até 10.000 entradas com auditoria completa",
+          "tracka_name": "Tracka (Controle das Coisas)",
+          "tracka_help": "✅ /help — tópicos do aplicativo (funcionalidades, como usar, dicas)",
+          "tracka_editor": "❌ Sem editor admin — conteúdo editado nos JSONs de tradução",
+          "tracka_sync": "❌ Sem sync com Freshdesk",
+          "tracka_versions": "❌ Sem versionamento automático (versionado apenas via Git)",
+          "tracka_history": "❌ Sem histórico de edições"
         },
         "fileStructure": {
           "title": "Estrutura de Arquivos i18n",
