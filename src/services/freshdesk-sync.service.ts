@@ -20,6 +20,8 @@ import prisma from '@/lib/prisma';
 import { getSiteSettings } from '@/actions/site-settings.actions';
 import { HELP_CATEGORIES, type HelpCategory } from '@/lib/help-topics';
 import { markdownToHtml, helpJsonToHtml } from '@/lib/markdown-to-html';
+import path from 'path';
+import fs from 'fs';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -28,6 +30,15 @@ interface FreshdeskMapping {
     folders: Record<string, number>;
     articles: Record<string, number>;
     lastSync?: string;
+    lastPull?: string;
+}
+
+interface PullResult {
+    success: boolean;
+    pulled: number;
+    unchanged: number;
+    errors: string[];
+    details: string[];
 }
 
 interface SyncResult {
@@ -107,8 +118,8 @@ async function loadHelpOverrides(): Promise<Record<string, HelpOverride>> {
  */
 function loadHelpJsonContent(): Record<string, any> {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const helpPt = require('../../../messages/help/pt.json');
+        const helpPath = path.join(process.cwd(), 'messages', 'help', 'pt.json');
+        const helpPt = JSON.parse(fs.readFileSync(helpPath, 'utf-8'));
         return helpPt.topics || {};
     } catch {
         return {};
@@ -291,16 +302,84 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
     return result;
 }
 
+// ─── Pull from Freshdesk (reverse sync) ──────────────────────────────────────
+
+/**
+ * Busca artigos corporativos editados no Freshdesk KB e importa como overrides.
+ */
+export async function pullCorporateFromFreshdesk(): Promise<PullResult> {
+    const result: PullResult = { success: true, pulled: 0, unchanged: 0, errors: [], details: [] };
+    const mapping = await loadMapping();
+    const lastPull = mapping.lastPull ? new Date(mapping.lastPull) : new Date(0);
+
+    if (Object.keys(mapping.articles).length === 0) {
+        result.errors.push('Nenhum artigo mapeado. Rode o push primeiro.');
+        result.success = false;
+        return result;
+    }
+
+    // Carregar overrides atuais
+    let overrides: Record<string, any> = {};
+    try {
+        const setting = await prisma.siteSettings.findUnique({ where: { key: HELP_OVERRIDES_KEY } });
+        if (setting) overrides = JSON.parse(setting.value);
+    } catch { /* continua vazio */ }
+
+    for (const [slug, articleId] of Object.entries(mapping.articles)) {
+        try {
+            const article = await freshdeskRequest('GET', `/solutions/articles/${articleId}`);
+            const updatedAt = new Date(article.updated_at);
+
+            if (updatedAt > lastPull) {
+                overrides[slug] = {
+                    ...overrides[slug],
+                    html: article.description,
+                    title: article.title,
+                    source: 'freshdesk',
+                    pulledAt: new Date().toISOString(),
+                };
+                result.pulled++;
+                result.details.push(`⬇️ Importado: ${article.title}`);
+            } else {
+                result.unchanged++;
+            }
+        } catch (err: any) {
+            if (err.message.includes('404')) {
+                result.details.push(`⚠️ Artigo removido no Freshdesk: ${slug}`);
+                delete mapping.articles[slug];
+            } else {
+                result.errors.push(`${slug}: ${err.message}`);
+            }
+        }
+    }
+
+    if (result.pulled > 0) {
+        await prisma.siteSettings.upsert({
+            where: { key: HELP_OVERRIDES_KEY },
+            update: { value: JSON.stringify(overrides) },
+            create: { key: HELP_OVERRIDES_KEY, value: JSON.stringify(overrides) },
+        });
+    }
+
+    mapping.lastPull = new Date().toISOString();
+    await saveMapping(mapping);
+
+    if (result.errors.length > 0) result.success = false;
+    return result;
+}
+
 /**
  * Retorna info do último sync para exibição no admin.
  */
 export async function getSyncStatus(): Promise<{
     lastSync: string | null;
+    lastPull: string | null;
     articleCount: number;
 }> {
     const mapping = await loadMapping();
     return {
         lastSync: mapping.lastSync || null,
+        lastPull: mapping.lastPull || null,
         articleCount: Object.keys(mapping.articles).length,
     };
 }

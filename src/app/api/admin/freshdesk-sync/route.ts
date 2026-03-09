@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession, getSystemRole } from '@/lib/auth';
-import { syncCorporateToFreshdesk, getSyncStatus } from '@/services/freshdesk-sync.service';
+import { syncCorporateToFreshdesk, pullCorporateFromFreshdesk, getSyncStatus } from '@/services/freshdesk-sync.service';
 
 /**
  * GET /api/admin/freshdesk-sync
@@ -27,9 +27,10 @@ export async function GET() {
 
 /**
  * POST /api/admin/freshdesk-sync
- * Dispara sincronização do conteúdo corporativo com o Freshdesk KB.
+ * Dispara sincronização com Freshdesk KB.
+ * Body: { action?: 'push' | 'pull' | 'both' } (default: 'push')
  */
-export async function POST() {
+export async function POST(req: Request) {
     try {
         const session = await getSession();
         if (!session) {
@@ -41,8 +42,24 @@ export async function POST() {
             return NextResponse.json({ error: 'Forbidden — ADMIN only' }, { status: 403 });
         }
 
+        let body: { action?: string } = {};
+        try { body = await req.json(); } catch { /* default: push */ }
+        const action = body.action || 'push';
+
+        if (action === 'pull') {
+            const result = await pullCorporateFromFreshdesk();
+            return NextResponse.json({ action: 'pull', ...result });
+        }
+
+        if (action === 'both') {
+            const pullResult = await pullCorporateFromFreshdesk();
+            const pushResult = await syncCorporateToFreshdesk();
+            return NextResponse.json({ action: 'both', pull: pullResult, push: pushResult });
+        }
+
+        // Default: push
         const result = await syncCorporateToFreshdesk();
-        return NextResponse.json(result);
+        return NextResponse.json({ action: 'push', ...result });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
