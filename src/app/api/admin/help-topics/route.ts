@@ -6,6 +6,7 @@ import {
     getTopicVersions,
     getSpecificVersion,
 } from '@/services/help-versioning.service';
+import { syncCorporateToFreshdesk } from '@/services/freshdesk-sync.service';
 
 const SETTINGS_KEY = 'help_topic_overrides';
 
@@ -108,6 +109,11 @@ export async function PUT(req: NextRequest) {
             where: { key: SETTINGS_KEY },
             update: { value: JSON.stringify(overrides) },
             create: { key: SETTINGS_KEY, value: JSON.stringify(overrides) },
+        });
+
+        // 4. Auto-push para Freshdesk (fire-and-forget, não bloqueia o save)
+        syncCorporateToFreshdesk('admin').catch(() => {
+            // Silencioso: se não tiver API key, ignora
         });
 
         return NextResponse.json({ success: true, slug });
