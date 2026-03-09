@@ -844,16 +844,29 @@
           "step2": "Select a topic from the left sidebar",
           "step3": "Edit content using Markdown (bold, lists, sections, blockquotes)",
           "step4": "Use the preview button to toggle between editing and preview",
-          "step5": "Click \"Save\" — content is updated instantly on the help pages",
-          "step6": "To revert, click \"Restore Default\" — returns to original content"
+          "step5": "Click \"Save\" — content is automatically versioned and updated on the help pages",
+          "step6": "To revert, use the rollback API (PATCH /api/admin/help-topics) or \"Restore Default\""
+        },
+        "versioning": {
+          "title": "Versioning and Audit Trail",
+          "desc": "All edits are automatically versioned with full tracking:",
+          "backup": "Automatic backup: before each save, the previous version is saved as a backup",
+          "who": "Who: name/email of the admin who edited (session.name)",
+          "when": "When: ISO timestamp for each version (savedAt)",
+          "what": "What: complete Markdown content for each version",
+          "source": "Source: 'editor' (help-editor), 'freshdesk' (Freshdesk pull), or 'rollback'",
+          "limit": "Limit: up to 10,000 versions per topic — virtually unlimited history",
+          "rollback": "Rollback: PATCH /api/admin/help-topics with slug and version number to restore",
+          "api": "View versions: GET /api/admin/help-topics?versions=slug — lists all versions"
         },
         "freshdeskSync": {
-          "title": "Sync Help with Freshdesk",
-          "desc": "After editing topics, sync with Freshdesk to keep the Knowledge Base updated:",
-          "step1": "Go to Admin → Freshdesk → Knowledge Base section",
-          "step2": "Click \"Sync KB\"",
-          "step3": "The system creates/updates Categories, Folders and Articles automatically",
-          "step4": "Public topics are visible to all; superadminOnly ones are set to \"Agents Only\""
+          "title": "Bidirectional Sync with Freshdesk",
+          "desc": "Help syncs bidirectionally with the Freshdesk Knowledge Base:",
+          "push": "Push (Site → Freshdesk): 'Push to Freshdesk' button sends all updated topics",
+          "pull": "Pull (Freshdesk → Site): 'Pull from Freshdesk' button imports edits made directly in Freshdesk",
+          "cron": "Automatic cron: daily bidirectional sync at 3:30 AM UTC (pull + push)",
+          "dynamic": "Dynamic content: reads DB overrides (help-editor) with JSON default fallback",
+          "agents": "superadminOnly topics appear as 'Agents Only' in Freshdesk"
         },
         "permissions": {
           "title": "Permissions by Role",
@@ -877,21 +890,37 @@
           "merge": "The merge is done automatically in src/i18n/request.ts — the 'help' key is loaded from the separate file and injected into the messages object.",
           "why": "This separation reduces ~80% of main JSON size. Same strategy used in Tracka."
         },
-        "tip": "To add a new topic: register in help-topics.ts and add translations in messages/help/pt.json and messages/help/en.json (help content) — NOT in the main JSONs."
+        "tip": "To add a new topic: register in help-topics.ts and add translations in messages/help/pt.json and messages/help/en.json (help content) — NOT in the main JSONs. The topic will be automatically included in the Freshdesk sync."
       }
     },
     "freshdeskSync": {
-      "title": "Sync Help → Freshdesk",
-      "subtitle": "Automatic synchronization of help topics with the Freshdesk Knowledge Base",
+      "title": "Bidirectional Sync Help ↔ Freshdesk",
+      "subtitle": "Automatic bidirectional synchronization of help topics with the Freshdesk Knowledge Base",
       "content": {
-        "intro": "Soluções RKM automatically syncs all corporate help topics with the Freshdesk Knowledge Base, maintaining a single source of truth and eliminating content duplication.",
+        "intro": "Soluções RKM bidirectionally syncs all corporate help topics with the Freshdesk Knowledge Base, maintaining a single source of truth with dynamic content, versioning and full audit trail.",
         "howItWorks": {
           "title": "How it works",
-          "desc": "The sync reads all corporate help topics, converts them to HTML and publishes to the Knowledge Base via Freshdesk API v2.",
+          "desc": "The system reads content from two sources (DB overrides from help-editor and JSON defaults), converts to HTML and publishes or imports via Freshdesk API v2.",
           "step1": "Go to Admin → Freshdesk → Knowledge Base",
-          "step2": "Click \"Sync KB\"",
-          "step3": "The system creates/updates Categories, Folders and Articles in Freshdesk",
-          "step4": "Topics edited via help-editor are converted from Markdown to HTML"
+          "step2": "Click \"Push to Freshdesk\" to send from site to Freshdesk",
+          "step3": "Click \"Pull from Freshdesk\" to import edits made in Freshdesk to the site",
+          "step4": "The automatic cron does pull + push daily at 3:30 AM UTC"
+        },
+        "dynamic": {
+          "title": "Dynamic Content",
+          "desc": "The sync reads content automatically from two sources with priority:",
+          "step1": "DB override (help-editor): if the topic was edited via Markdown in help-editor, that version takes priority",
+          "step2": "JSON default (messages/help/pt.json): used as fallback if no override exists",
+          "step3": "Automatic conversion: Markdown → HTML (overrides) or JSON → HTML (defaults)",
+          "step4": "13 topics are dynamically generated from HELP_CATEGORIES in help-topics.ts"
+        },
+        "versioning": {
+          "title": "Versioning and Audit Trail",
+          "desc": "All sync operations are versioned and audited:",
+          "backup": "Automatic backup before each push and pull — the previous version is preserved",
+          "history": "Sync history: up to 10,000 entries with timestamp, direction, trigger source, results and errors",
+          "versions": "Versions per topic: up to 10,000 versions with content, author, date and source (editor/freshdesk/rollback)",
+          "rollback": "Rollback available via PATCH /api/admin/help-topics to restore any previous version"
         },
         "visibility": {
           "title": "Visibility Control",
@@ -899,18 +928,18 @@
           "public": "Unrestricted topics — visible to all KB visitors",
           "agents": "superadminOnly topics — visible only to Freshdesk agents (internal information)"
         },
-        "mapping": {
-          "title": "Persistent Mapping",
-          "desc": "The system maintains an internal mapping (slug → Freshdesk ID) stored in SiteSettings. This allows re-syncs to update existing articles instead of creating duplicates."
-        },
         "api": {
           "title": "API Endpoints",
           "desc": "Sync can be triggered via API (useful for automation):",
-          "post": "POST /api/admin/freshdesk-sync — runs full sync (SUPERADMIN only)",
-          "get": "GET /api/admin/freshdesk-sync — returns last sync status (ADMIN+)"
+          "push": "POST /api/admin/freshdesk-sync {action:'push'} — sends from site to Freshdesk",
+          "pull": "POST /api/admin/freshdesk-sync {action:'pull'} — imports from Freshdesk to site",
+          "both": "POST /api/admin/freshdesk-sync {action:'both'} — full bidirectional",
+          "status": "GET /api/admin/freshdesk-sync — last sync/pull status + article count",
+          "historyApi": "GET /api/admin/freshdesk-sync?history=true — full sync history",
+          "cron": "GET /api/cron/freshdesk-sync — protected by CRON_SECRET (Vercel Cron)"
         },
-        "warning": "You must configure FRESHDESK_API_KEY and FRESHDESK_DOMAIN in environment variables before the first sync.",
-        "tip": "After editing topics in help-editor, click \"Sync KB\" to publish changes to Freshdesk automatically!"
+        "warning": "You must configure FRESHDESK_API_KEY and FRESHDESK_DOMAIN (via Admin → API Keys or environment variables) before the first sync.",
+        "tip": "The daily cron ensures edits made directly in Freshdesk are automatically imported. For immediate sync, use the Push/Pull buttons in admin."
       }
     },
     "freshdeskKb": {
