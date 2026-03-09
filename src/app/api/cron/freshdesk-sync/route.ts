@@ -25,10 +25,10 @@ export async function GET(req: Request) {
 
     try {
         // 1. Pull primeiro (Freshdesk → App)
-        const pullResult = await pullCorporateFromFreshdesk();
+        const pullResult = await pullCorporateFromFreshdesk('cron');
 
         // 2. Push depois (App → Freshdesk)
-        const pushResult = await syncCorporateToFreshdesk();
+        const pushResult = await syncCorporateToFreshdesk('cron');
 
         return NextResponse.json({
             success: pullResult.success && pushResult.success,

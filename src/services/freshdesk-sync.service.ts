@@ -63,6 +63,47 @@ interface HelpOverride {
     updatedBy: string;
 }
 
+// ─── Sync History ────────────────────────────────────────────────────────────
+
+interface SyncHistoryEntry {
+    timestamp: string;
+    direction: 'push' | 'pull' | 'both';
+    triggeredBy: 'admin' | 'cron';
+    created?: number;
+    updated?: number;
+    pulled?: number;
+    unchanged?: number;
+    errors: string[];
+    success: boolean;
+}
+
+const SYNC_HISTORY_KEY = 'freshdesk_corporate_sync_history';
+const MAX_HISTORY_ENTRIES = 50;
+
+async function logSyncHistory(entry: Omit<SyncHistoryEntry, 'timestamp'>) {
+    let history: SyncHistoryEntry[] = [];
+    try {
+        const setting = await prisma.siteSettings.findUnique({ where: { key: SYNC_HISTORY_KEY } });
+        if (setting) history = JSON.parse(setting.value);
+    } catch { /* vazio */ }
+
+    history.unshift({ ...entry, timestamp: new Date().toISOString() });
+    if (history.length > MAX_HISTORY_ENTRIES) history = history.slice(0, MAX_HISTORY_ENTRIES);
+
+    await prisma.siteSettings.upsert({
+        where: { key: SYNC_HISTORY_KEY },
+        update: { value: JSON.stringify(history) },
+        create: { key: SYNC_HISTORY_KEY, value: JSON.stringify(history) },
+    });
+}
+
+export async function getSyncHistory(): Promise<SyncHistoryEntry[]> {
+    try {
+        const setting = await prisma.siteSettings.findUnique({ where: { key: SYNC_HISTORY_KEY } });
+        return setting ? JSON.parse(setting.value) : [];
+    } catch { return []; }
+}
+
 // ─── Freshdesk API helpers ───────────────────────────────────────────────────
 
 async function getFreshdeskCredentials() {
@@ -220,7 +261,7 @@ async function saveMapping(mapping: FreshdeskMapping) {
 
 const CATEGORY_NAME = '🏢 Soluções RKM — Corporativo';
 
-export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
+export async function syncCorporateToFreshdesk(triggeredBy: 'admin' | 'cron' = 'admin'): Promise<SyncResult> {
     const result: SyncResult = { success: true, created: 0, updated: 0, errors: [], details: [] };
     const mapping = await loadMapping();
     const articles = await getCorporateArticles();
@@ -299,6 +340,16 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
         result.errors.push(err.message);
     }
 
+    // Registrar no histórico
+    await logSyncHistory({
+        direction: 'push',
+        triggeredBy,
+        created: result.created,
+        updated: result.updated,
+        errors: result.errors,
+        success: result.success,
+    });
+
     return result;
 }
 
@@ -307,7 +358,7 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
 /**
  * Busca artigos corporativos editados no Freshdesk KB e importa como overrides.
  */
-export async function pullCorporateFromFreshdesk(): Promise<PullResult> {
+export async function pullCorporateFromFreshdesk(triggeredBy: 'admin' | 'cron' = 'admin'): Promise<PullResult> {
     const result: PullResult = { success: true, pulled: 0, unchanged: 0, errors: [], details: [] };
     const mapping = await loadMapping();
     const lastPull = mapping.lastPull ? new Date(mapping.lastPull) : new Date(0);
@@ -331,12 +382,15 @@ export async function pullCorporateFromFreshdesk(): Promise<PullResult> {
             const updatedAt = new Date(article.updated_at);
 
             if (updatedAt > lastPull) {
+                const existing = overrides[slug];
                 overrides[slug] = {
-                    ...overrides[slug],
+                    ...existing,
                     html: article.description,
                     title: article.title,
                     source: 'freshdesk',
                     pulledAt: new Date().toISOString(),
+                    previousContent: existing?.html || existing?.markdown || undefined,
+                    previousSource: existing?.source || 'local',
                 };
                 result.pulled++;
                 result.details.push(`⬇️ Importado: ${article.title}`);
@@ -365,6 +419,17 @@ export async function pullCorporateFromFreshdesk(): Promise<PullResult> {
     await saveMapping(mapping);
 
     if (result.errors.length > 0) result.success = false;
+
+    // Registrar no histórico
+    await logSyncHistory({
+        direction: 'pull',
+        triggeredBy,
+        pulled: result.pulled,
+        unchanged: result.unchanged,
+        errors: result.errors,
+        success: result.success,
+    });
+
     return result;
 }
 
