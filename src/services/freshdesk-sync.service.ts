@@ -1,11 +1,16 @@
 /**
  * @file freshdesk-sync.service.ts
- * @description Sincroniza conteúdo corporativo do solucoesrkm com a Knowledge Base do Freshdesk.
+ * @description Sincroniza conteúdo corporativo do help com a Knowledge Base do Freshdesk.
  *
- * Hierarquia:
- *   CORPORATE_ARTICLES → Freshdesk Category "Soluções RKM — Corporativo"
- *     └── Folder por seção (FAQ, Legal, etc.)
- *       └── Artigos individuais
+ * Refatorado para ler conteúdo DINÂMICO:
+ *   1. DB overrides (help-editor, Markdown) → prioridade
+ *   2. JSON default (messages/help/pt.json) → fallback
+ *   3. Converte Markdown/JSON → HTML para Freshdesk
+ *
+ * Hierarquia no Freshdesk:
+ *   Category "Soluções RKM — Corporativo"
+ *     └── Folder por categoria (Planos e Assinaturas, Técnico)
+ *       └── Artigos individuais por tópico
  *
  * Credenciais: buscadas do banco via SiteSettings key 'api_keys'
  * Mapping: persistido em SiteSettings key 'freshdesk_corporate_mapping'
@@ -13,6 +18,8 @@
 
 import prisma from '@/lib/prisma';
 import { getSiteSettings } from '@/actions/site-settings.actions';
+import { HELP_CATEGORIES, type HelpCategory } from '@/lib/help-topics';
+import { markdownToHtml, helpJsonToHtml } from '@/lib/markdown-to-html';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -36,12 +43,18 @@ interface CorporateArticle {
     title: string;
     folder: string;
     htmlContent: string;
+    superadminOnly?: boolean;
+}
+
+interface HelpOverride {
+    markdown: string;
+    updatedAt: string;
+    updatedBy: string;
 }
 
 // ─── Freshdesk API helpers ───────────────────────────────────────────────────
 
 async function getFreshdeskCredentials() {
-    // Buscar API key do banco (SiteSettings → api_keys)
     const apiKeys = await getSiteSettings('api_keys');
     const apiKey = apiKeys?.freshdeskApiKey || process.env.FRESHDESK_API_KEY;
     const domain = apiKeys?.freshdeskDomain || process.env.FRESHDESK_DOMAIN || 'solucoesrkm.freshdesk.com';
@@ -77,214 +90,98 @@ async function freshdeskRequest(
     return res.json();
 }
 
-// ─── Corporate Content ───────────────────────────────────────────────────────
+// ─── Dynamic Content Loading ─────────────────────────────────────────────────
+
+const HELP_OVERRIDES_KEY = 'help_topic_overrides';
 
 /**
- * Definição estática das seções corporativas.
- * O conteúdo é gerado a partir do que está nas páginas TSX.
+ * Carrega overrides do help-editor salvos no banco.
  */
-const CORPORATE_SECTIONS = [
-    {
-        id: 'faq',
-        name: '❓ Perguntas Frequentes',
-        folderName: 'Perguntas Frequentes',
-    },
-    {
-        id: 'terms',
-        name: '📋 Termos de Uso',
-        folderName: 'Termos de Uso',
-    },
-    {
-        id: 'privacy',
-        name: '🔒 Política de Privacidade',
-        folderName: 'Política de Privacidade',
-    },
-    {
-        id: 'legal',
-        name: '⚖️ Aviso Legal',
-        folderName: 'Aviso Legal',
-    },
-    {
-        id: 'cookies',
-        name: '🍪 Política de Cookies',
-        folderName: 'Política de Cookies',
-    },
-];
+async function loadHelpOverrides(): Promise<Record<string, HelpOverride>> {
+    const setting = await prisma.siteSettings.findUnique({ where: { key: HELP_OVERRIDES_KEY } });
+    return setting ? JSON.parse(setting.value) : {};
+}
+
+/**
+ * Carrega o conteúdo default dos tópicos do JSON de tradução.
+ */
+function loadHelpJsonContent(): Record<string, any> {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const helpPt = require('../../../messages/help/pt.json');
+        return helpPt.topics || {};
+    } catch {
+        return {};
+    }
+}
 
 /**
  * Gera os artigos corporativos para sincronização com o Freshdesk.
- * Cada página corporativa vira um artigo HTML.
+ * 
+ * Prioridade:
+ *   1. DB override (Markdown editado via help-editor) → convertido para HTML
+ *   2. JSON default (messages/help/pt.json) → convertido para HTML
+ * 
+ * Usa HELP_CATEGORIES de help-topics.ts como fonte dos tópicos.
  */
-function getCorporateArticles(): CorporateArticle[] {
-    return [
-        {
-            slug: 'corporate-faq',
-            title: 'Perguntas Frequentes — Soluções RKM',
-            folder: 'faq',
-            htmlContent: `
-<h2>Sobre a Empresa</h2>
+async function getCorporateArticles(): Promise<CorporateArticle[]> {
+    const overrides = await loadHelpOverrides();
+    const jsonTopics = loadHelpJsonContent();
+    const articles: CorporateArticle[] = [];
 
-<h3>O que é a Soluções RKM?</h3>
-<p>A Soluções RKM é uma empresa de tecnologia que desenvolve aplicativos inteligentes para organizar, gerenciar e simplificar o dia a dia de pessoas e empresas.</p>
+    for (const category of HELP_CATEGORIES) {
+        for (const topic of category.topics) {
+            const slug = topic.slug;
+            const translationKey = topic.translationKey;
 
-<h3>Quais produtos a Soluções RKM oferece?</h3>
-<p>Atualmente oferecemos o <strong>Tracka</strong> — uma plataforma de gestão de inventário pessoal e empresarial com inteligência artificial. Novos produtos estão em desenvolvimento.</p>
+            let htmlContent = '';
+            let title = '';
 
-<h2>Sobre o Tracka</h2>
+            // 1. Verificar DB override (Markdown do help-editor)
+            const override = overrides[slug];
+            if (override?.markdown) {
+                htmlContent = markdownToHtml(override.markdown);
+            }
 
-<h3>O que é o Tracka?</h3>
-<p>O Tracka permite catalogar, organizar e localizar seus pertences com auxílio de inteligência artificial. Disponível como app web e PWA.</p>
+            // 2. Fallback: JSON default
+            if (!htmlContent) {
+                const topicData = jsonTopics[translationKey];
+                if (topicData?.content) {
+                    htmlContent = helpJsonToHtml(topicData);
+                }
+            }
 
-<h3>O Tracka é gratuito?</h3>
-<p>Sim! O plano Free é gratuito para sempre, com limites de itens e funcionalidades. Para recursos adicionais, existem os planos Plus e Pro.</p>
+            // Título: do JSON ou slug formatado
+            const topicJson = jsonTopics[translationKey];
+            title = topicJson?.title || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-<h3>Posso cancelar minha assinatura a qualquer momento?</h3>
-<p>Sim, você pode cancelar a qualquer momento. O acesso ao plano pago continua até o fim do período já pago. Atenção: ao cancelar, o plano anterior não pode ser recuperado.</p>
+            // Só adiciona se tem conteúdo
+            if (htmlContent) {
+                articles.push({
+                    slug,
+                    title: `${title} — Soluções RKM`,
+                    folder: category.id,
+                    htmlContent,
+                    superadminOnly: topic.superadminOnly,
+                });
+            }
+        }
+    }
 
-<h3>Meus dados estão seguros?</h3>
-<p>Sim. Utilizamos criptografia HTTPS/TLS, senhas com hash bcrypt, e seguimos a LGPD. Seus dados de pagamento são processados exclusivamente pelo Stripe.</p>
+    return articles;
+}
 
-<h3>Como funciona o reconhecimento de fotos?</h3>
-<p>O Tracka utiliza Google Cloud Vision AI para analisar fotos e sugerir nomes de itens automaticamente. As imagens são processadas temporariamente e não são armazenadas pelo Google.</p>
+// ─── Folder Config ───────────────────────────────────────────────────────────
 
-<h3>Como entro em contato com o suporte?</h3>
-<p>Através do widget de suporte (bolha flutuante), pelo email <strong>suporte@solucoesrkm.com</strong>, ou abrindo um ticket no portal de suporte.</p>
-`,
-        },
-        {
-            slug: 'corporate-terms',
-            title: 'Termos de Uso — Soluções RKM',
-            folder: 'terms',
-            htmlContent: `
-<h2>1. Aceitação dos Termos</h2>
-<p>Ao utilizar nossos serviços, você concorda com estes Termos de Uso. Se não concordar, não utilize nossos serviços.</p>
-
-<h2>2. Definições</h2>
-<p><strong>Plataforma:</strong> Conjunto de serviços oferecidos pela Soluções RKM, incluindo o Tracka.</p>
-<p><strong>Usuário:</strong> Pessoa física ou jurídica que utiliza nossos serviços.</p>
-<p><strong>Conteúdo:</strong> Dados, textos, imagens e informações inseridos pelo Usuário.</p>
-
-<h2>3. Uso da Plataforma</h2>
-<p>O Usuário se compromete a: utilizar a plataforma apenas para fins lícitos; não tentar acessar áreas restritas; não utilizar bots ou ferramentas automatizadas sem autorização; manter suas credenciais de acesso em sigilo.</p>
-
-<h2>4. Planos e Pagamentos</h2>
-<h3>4.1 Snapshot de Limites</h3>
-<p>Ao assinar um plano, os limites vigentes naquele momento são "congelados" na assinatura. Mudanças futuras nos planos não afetam assinaturas ativas.</p>
-<h3>4.2 Cancelamento e Irreversibilidade</h3>
-<p>Ao cancelar uma assinatura, o acesso pago continua até o fim do período. Após o cancelamento, não é possível reativar o mesmo plano com as condições anteriores.</p>
-<h3>4.3 Trial</h3>
-<p>O período de avaliação (trial) dura 15 dias. Após o trial, a conta é convertida automaticamente para o plano Free.</p>
-
-<h2>5. Propriedade Intelectual</h2>
-<p>Todo o software, design, marcas e conteúdo criado pela Soluções RKM são protegidos por direitos autorais. O Usuário mantém a propriedade de todo o conteúdo que inserir na plataforma.</p>
-
-<h2>6. Privacidade</h2>
-<p>O tratamento de dados pessoais é regido pela nossa <strong>Política de Privacidade</strong>, que complementa estes Termos.</p>
-
-<h2>7. Limitação de Responsabilidade</h2>
-<p>A Soluções RKM não se responsabiliza por: danos indiretos, lucros cessantes ou perda de dados causada por fatores fora do nosso controle.</p>
-
-<h2>8. Modificações</h2>
-<p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Alterações significativas serão comunicadas com antecedência.</p>
-
-<h2>9. Legislação Aplicável</h2>
-<p>Estes termos são regidos pela legislação brasileira. Qualquer disputa será submetida ao foro da comarca de Zurich, Suíça ou jurisdição competente no Brasil.</p>
-
-<p><em>Última atualização: Janeiro 2025</em></p>
-`,
-        },
-        {
-            slug: 'corporate-privacy',
-            title: 'Política de Privacidade — Soluções RKM',
-            folder: 'privacy',
-            htmlContent: `
-<h2>1. Introdução</h2>
-<p>A Soluções RKM valoriza a privacidade dos seus usuários. Esta política descreve como coletamos, usamos e protegemos seus dados pessoais.</p>
-
-<h2>2. Dados Coletados</h2>
-<h3>2.1 Dados fornecidos pelo usuário</h3>
-<p>Nome, e-mail, senha (hash bcrypt), dados de perfil.</p>
-<h3>2.2 Dados coletados automaticamente</h3>
-<p>Endereço IP, tipo de navegador, páginas visitadas, timestamps de acesso.</p>
-<h3>2.3 Dados de Inteligência Artificial</h3>
-<p>Imagens enviadas para análise são processadas pelo Google Cloud Vision AI. As imagens são transmitidas temporariamente e não são armazenadas pelo Google após o processamento.</p>
-
-<h2>3. Uso dos Dados</h2>
-<p>Utilizamos seus dados para: fornecer e melhorar nossos serviços; personalizar sua experiência; processar pagamentos via Stripe; enviar comunicações relevantes; cumprir obrigações legais.</p>
-
-<h2>4. Compartilhamento</h2>
-<p>Não vendemos dados pessoais. Compartilhamos apenas com: Stripe (processamento de pagamentos); Google Cloud (processamento de imagens via Vision AI); Cloudinary (armazenamento de imagens); Turso (banco de dados).</p>
-
-<h2>5. Segurança</h2>
-<p>Implementamos: criptografia HTTPS/TLS em todas as comunicações; hash bcrypt para senhas; acesso restrito por roles (SUPERADMIN, ADMIN, EDITOR, VIEWER); backups regulares do banco de dados.</p>
-
-<h2>6. Cookies</h2>
-<p>Utilizamos cookies essenciais para autenticação e preferências. Consulte nossa Política de Cookies para detalhes.</p>
-
-<h2>7. Seus Direitos (LGPD)</h2>
-<p>Você tem direito a: acessar seus dados; solicitar correção; solicitar exclusão (botão "Excluir Conta" no app); revogar consentimento; portabilidade de dados (exportação CSV/JSON).</p>
-
-<h2>8. Retenção de Dados</h2>
-<p>Mantemos seus dados enquanto sua conta estiver ativa. Após exclusão, os dados são removidos em até 30 dias, exceto quando houver obrigação legal de retenção.</p>
-
-<h2>9. Contato</h2>
-<p>Para questões sobre privacidade: <strong>privacidade@solucoesrkm.com</strong></p>
-
-<p><em>Última atualização: Janeiro 2025</em></p>
-`,
-        },
-        {
-            slug: 'corporate-legal',
-            title: 'Aviso Legal — Soluções RKM',
-            folder: 'legal',
-            htmlContent: `
-<h2>Razão Social</h2>
-<p>Soluções RKM — Tecnologia e Inovação</p>
-
-<h2>Sede</h2>
-<p>Zurique, Suíça</p>
-
-<h2>Contato</h2>
-<p>Email: <strong>contato@solucoesrkm.com</strong></p>
-<p>Suporte: <strong>suporte@solucoesrkm.com</strong></p>
-
-<h2>Propriedade Intelectual</h2>
-<p>Todo o conteúdo deste site — incluindo textos, gráficos, logotipos, ícones, imagens, clipes de áudio, downloads digitais e compilações de dados — é propriedade da Soluções RKM e está protegido por leis internacionais de direitos autorais.</p>
-
-<h2>Marcas Registradas</h2>
-<p>Soluções RKM e Tracka são marcas de propriedade da empresa. Uso não autorizado é proibido.</p>
-
-<h2>Isenção de Responsabilidade</h2>
-<p>As informações neste site são fornecidas "como estão" sem garantias de qualquer tipo. A Soluções RKM não se responsabiliza por erros ou omissões no conteúdo.</p>
-
-<h2>LGPD / GDPR</h2>
-<p>Estamos em conformidade com a Lei Geral de Proteção de Dados (LGPD) e o Regulamento Geral sobre a Proteção de Dados (GDPR) da União Europeia.</p>
-`,
-        },
-        {
-            slug: 'corporate-cookies',
-            title: 'Política de Cookies — Soluções RKM',
-            folder: 'cookies',
-            htmlContent: `
-<h2>O que são Cookies?</h2>
-<p>Cookies são pequenos arquivos de texto armazenados no seu navegador quando você visita um site.</p>
-
-<h2>Cookies que Utilizamos</h2>
-<h3>Essenciais</h3>
-<p>Necessários para o funcionamento básico do site e autenticação.</p>
-<h3>Funcionais</h3>
-<p>Lembram suas preferências (idioma, tema, etc.).</p>
-<h3>Analíticos</h3>
-<p>Ajudam a entender como os visitantes interagem com o site.</p>
-
-<h2>Gerenciamento</h2>
-<p>Você pode gerenciar suas preferências de cookies a qualquer momento através do banner de cookies ou das configurações do seu navegador.</p>
-
-<h2>Cookies de Terceiros</h2>
-<p>Stripe (pagamentos), Freshdesk (suporte), Google (analytics — quando ativado).</p>
-`,
-        },
-    ];
+/**
+ * Gera as seções corporativas a partir de HELP_CATEGORIES.
+ */
+function getCorporateSections(): { id: string; name: string; folderName: string }[] {
+    return HELP_CATEGORIES.map((cat: HelpCategory) => ({
+        id: cat.id,
+        name: `${cat.emoji} ${cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica'}`,
+        folderName: cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica',
+    }));
 }
 
 // ─── Load/Save mapping ───────────────────────────────────────────────────────
@@ -315,7 +212,8 @@ const CATEGORY_NAME = '🏢 Soluções RKM — Corporativo';
 export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
     const result: SyncResult = { success: true, created: 0, updated: 0, errors: [], details: [] };
     const mapping = await loadMapping();
-    const articles = getCorporateArticles();
+    const articles = await getCorporateArticles();
+    const sections = getCorporateSections();
 
     try {
         // ── Criar/buscar Category ──
@@ -323,7 +221,7 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
         if (!categoryId) {
             const created = await freshdeskRequest('POST', '/solutions/categories', {
                 name: CATEGORY_NAME,
-                description: 'Conteúdo corporativo da Soluções RKM — FAQ, Termos, Privacidade, Legal, Cookies',
+                description: 'Conteúdo corporativo da Soluções RKM — gerado automaticamente do help',
             });
             categoryId = created.id;
             mapping.categories['corporate'] = categoryId;
@@ -332,7 +230,7 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
         }
 
         // ── Criar/buscar Folders ──
-        for (const section of CORPORATE_SECTIONS) {
+        for (const section of sections) {
             let folderId = mapping.folders[section.id];
             if (!folderId) {
                 const created = await freshdeskRequest('POST', `/solutions/categories/${categoryId}/folders`, {
@@ -354,6 +252,9 @@ export async function syncCorporateToFreshdesk(): Promise<SyncResult> {
                 result.errors.push(`Pasta não encontrada para: ${article.folder}`);
                 continue;
             }
+
+            // Tópicos superadminOnly → visíveis apenas para agentes
+            const visibility = article.superadminOnly ? 4 : 1; // 4 = agents only, 1 = público
 
             const articlePayload = {
                 title: article.title,

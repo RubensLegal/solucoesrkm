@@ -68,7 +68,17 @@ export function HeroSection({ title, subtitle, image, badgeNew, badgeOriginal, c
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                     }}>
-                        {title}
+                        {title.startsWith('S') ? (
+                            <span className="inline-flex items-baseline">
+                                <img
+                                    src="/s-logo.png"
+                                    alt="S"
+                                    className="inline-block h-[0.85em] w-auto -mb-[0.02em] mr-[-0.02em]"
+                                    style={{ verticalAlign: 'baseline' }}
+                                />
+                                {title.slice(1)}
+                            </span>
+                        ) : title}
                     </h1>
                     <p className="text-lg md:text-2xl text-gray-300 max-w-xl leading-relaxed font-light" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>
                         {subtitle}
