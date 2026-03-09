@@ -79,7 +79,7 @@ interface SyncHistoryEntry {
 }
 
 const SYNC_HISTORY_KEY = 'freshdesk_corporate_sync_history';
-const MAX_HISTORY_ENTRIES = 2000;
+const MAX_HISTORY_ENTRIES = 10000;
 
 async function logSyncHistory(entry: Omit<SyncHistoryEntry, 'timestamp'>) {
     let history: SyncHistoryEntry[] = [];

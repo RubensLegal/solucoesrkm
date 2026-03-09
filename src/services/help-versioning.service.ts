@@ -27,7 +27,7 @@ export interface TopicVersion {
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const VERSIONS_KEY = 'help_topic_versions';
-const MAX_VERSIONS_PER_TOPIC = 50;
+const MAX_VERSIONS_PER_TOPIC = 10000;
 
 // ─── Core Functions ──────────────────────────────────────────────────────────
 
