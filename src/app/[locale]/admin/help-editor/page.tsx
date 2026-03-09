@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Link } from '@/i18n/navigation';
 import { toast } from 'sonner';
+import { VersionHistory } from '@/components/admin/VersionHistory';
 import {
     ArrowLeft, Save, Loader2, RotateCcw,
-    PenLine, Eye, BookOpen, Lock,
+    PenLine, Eye, BookOpen, Lock, Clock,
 } from 'lucide-react';
 import { HELP_CATEGORIES } from '@/lib/help-topics';
 import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
@@ -45,7 +46,7 @@ export default function HelpEditorPage() {
     const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
     const [editMarkdown, setEditMarkdown] = useState('');
     const [saving, setSaving] = useState(false);
-    const [previewMode, setPreviewMode] = useState(false);
+    const [previewMode, setPreviewMode] = useState<'edit' | 'preview' | 'history'>('edit');
     const [userRole, setUserRole] = useState<string | null>(null);
 
     // ── Auth guard: verifica role do usuário ──
@@ -69,7 +70,7 @@ export default function HelpEditorPage() {
     const handleSelectTopic = (slug: string) => {
         setSelectedSlug(slug);
         setEditMarkdown(overrides[slug]?.markdown || '');
-        setPreviewMode(false);
+        setPreviewMode('edit');
     };
 
     const handleSave = async () => {
@@ -214,18 +215,25 @@ export default function HelpEditorPage() {
                             {/* Toggle Editor / Preview */}
                             <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                                 <button
-                                    onClick={() => setPreviewMode(false)}
-                                    className={`px-3 py-1.5 rounded-t-lg text-xs font-semibold transition-colors ${!previewMode ? 'bg-teal-500/15 text-teal-300' : 'text-gray-500 hover:text-gray-300'
+                                    onClick={() => setPreviewMode('edit')}
+                                    className={`px-3 py-1.5 rounded-t-lg text-xs font-semibold transition-colors ${previewMode === 'edit' ? 'bg-teal-500/15 text-teal-300' : 'text-gray-500 hover:text-gray-300'
                                         }`}
                                 >
                                     <PenLine className="w-3.5 h-3.5 inline mr-1" /> Editar
                                 </button>
                                 <button
-                                    onClick={() => setPreviewMode(true)}
-                                    className={`px-3 py-1.5 rounded-t-lg text-xs font-semibold transition-colors ${previewMode ? 'bg-teal-500/15 text-teal-300' : 'text-gray-500 hover:text-gray-300'
+                                    onClick={() => setPreviewMode('preview')}
+                                    className={`px-3 py-1.5 rounded-t-lg text-xs font-semibold transition-colors ${previewMode === 'preview' ? 'bg-teal-500/15 text-teal-300' : 'text-gray-500 hover:text-gray-300'
                                         }`}
                                 >
                                     <Eye className="w-3.5 h-3.5 inline mr-1" /> Preview
+                                </button>
+                                <button
+                                    onClick={() => setPreviewMode('history')}
+                                    className={`px-3 py-1.5 rounded-t-lg text-xs font-semibold transition-colors ${previewMode === 'history' ? 'bg-amber-500/15 text-amber-300' : 'text-gray-500 hover:text-gray-300'
+                                        }`}
+                                >
+                                    <Clock className="w-3.5 h-3.5 inline mr-1" /> Histórico
                                 </button>
 
                                 {overrides[selectedSlug] && (
@@ -239,7 +247,15 @@ export default function HelpEditorPage() {
                             </div>
 
                             {/* Textarea / Preview */}
-                            {!previewMode ? (
+                            {previewMode === 'history' ? (
+                                <VersionHistory
+                                    slug={selectedSlug}
+                                    onRollback={(markdown) => {
+                                        setEditMarkdown(markdown);
+                                        setPreviewMode('edit');
+                                    }}
+                                />
+                            ) : previewMode === 'edit' ? (
                                 <textarea
                                     value={editMarkdown}
                                     onChange={e => setEditMarkdown(e.target.value)}
