@@ -229,6 +229,10 @@ export default function HelpEditorPage() {
             <div className="max-w-[1800px] mx-auto px-6 py-6 flex gap-6" style={{ minHeight: 'calc(100vh - 56px)' }}>
                 {/* Sidebar — Lista de tópicos */}
                 <div className="w-72 shrink-0 space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 104px)' }}>
+                    <div className="flex items-center gap-2 pb-2 border-b border-white/5 mb-1">
+                        <span className="text-[11px] font-bold text-teal-400 uppercase tracking-widest">🏢 Corporativo</span>
+                        <span className="text-[9px] text-gray-600 ml-auto">solucoesrkm.com</span>
+                    </div>
                     {HELP_CATEGORIES.map(cat => (
                         <div key={cat.id}>
                             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
