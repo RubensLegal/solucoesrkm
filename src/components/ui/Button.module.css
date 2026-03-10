@@ -58,12 +58,11 @@
 .outline {
     border-color: #e2e8f0;
     background-color: transparent;
-    color: #334155;
+    color: inherit;
 }
 
 :global(.dark) .outline {
     border-color: rgba(255, 255, 255, 0.2);
-    color: white;
 }
 
 @media (hover: hover) {

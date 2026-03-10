@@ -7,8 +7,87 @@ import {
     getSpecificVersion,
 } from '@/services/help-versioning.service';
 import { syncCorporateToFreshdesk } from '@/services/freshdesk-sync.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const SETTINGS_KEY = 'help_topic_overrides';
+
+// ─── Converter JSON de tópico → Markdown ─────────────────────────────────────
+
+function jsonContentToMarkdown(topicData: any): string {
+    if (!topicData) return '';
+
+    const lines: string[] = [];
+
+    // Título e subtítulo
+    if (topicData.title) lines.push(`# ${topicData.title}`);
+    if (topicData.subtitle) lines.push('', topicData.subtitle);
+
+    const content = topicData.content;
+    if (!content) return lines.join('\n');
+
+    // Intro
+    if (content.intro) lines.push('', content.intro);
+
+    // Warning no topo
+    if (content.warning) lines.push('', `> ⚠️ ${content.warning}`);
+
+    // Iterar por seções do conteúdo
+    for (const [key, value] of Object.entries(content)) {
+        if (['intro', 'warning', 'tip'].includes(key)) continue;
+
+        if (typeof value === 'string') {
+            lines.push('', value);
+            continue;
+        }
+
+        if (typeof value === 'object' && value !== null) {
+            const section = value as Record<string, any>;
+
+            if (section.title) {
+                lines.push('', `## ${section.title}`);
+            }
+            if (section.desc) {
+                lines.push('', section.desc);
+            }
+
+            for (const [subKey, subVal] of Object.entries(section)) {
+                if (['title', 'desc'].includes(subKey)) continue;
+
+                if (typeof subVal === 'string') {
+                    if (subKey.startsWith('step') || subKey.startsWith('q')) {
+                        const num = subKey.replace(/\D/g, '');
+                        lines.push(`${num}. ${subVal}`);
+                    } else {
+                        lines.push(`- ${subVal}`);
+                    }
+                } else if (typeof subVal === 'object' && subVal !== null) {
+                    const item = subVal as Record<string, any>;
+                    if (item.q && item.a) {
+                        lines.push('', `### ${item.q}`, '', item.a);
+                    } else if (item.name) {
+                        const icon = item.icon ? `${item.icon} ` : '';
+                        lines.push(`- **${icon}${item.name}** — ${item.desc || ''}`);
+                    } else if (item.title) {
+                        lines.push('', `### ${item.title}`);
+                        if (item.desc) lines.push('', item.desc);
+                        for (const [ssKey, ssVal] of Object.entries(item)) {
+                            if (['title', 'desc'].includes(ssKey)) continue;
+                            if (typeof ssVal === 'string') {
+                                lines.push(`- ${ssVal}`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Tip no final
+    if (content.tip) lines.push('', `> 💡 ${content.tip}`);
+
+    return lines.join('\n');
+}
 
 // ─── GET ─────────────────────────────────────────────────────────────────────
 
@@ -16,6 +95,7 @@ const SETTINGS_KEY = 'help_topic_overrides';
  * GET /api/admin/help-topics
  * Retorna overrides e/ou versões.
  * Query: ?versions=slug para listar versões de um tópico específico.
+ * Query: ?base=slug para retornar o conteúdo base (JSON→Markdown) de um tópico.
  */
 export async function GET(req: NextRequest) {
     try {
@@ -31,6 +111,7 @@ export async function GET(req: NextRequest) {
 
         const url = new URL(req.url);
         const versionsSlug = url.searchParams.get('versions');
+        const baseSlug = url.searchParams.get('base');
 
         // Se pediu versões de um tópico específico
         if (versionsSlug) {
@@ -40,6 +121,28 @@ export async function GET(req: NextRequest) {
                 versions: topicVersions,
                 totalVersions: topicVersions.length,
             });
+        }
+
+        // Se pediu o conteúdo base (JSON→Markdown) de um tópico
+        if (baseSlug) {
+            try {
+                const helpPath = path.join(process.cwd(), 'messages', 'help', 'pt.json');
+                const helpData = JSON.parse(fs.readFileSync(helpPath, 'utf-8'));
+                const { HELP_CATEGORIES } = await import('@/lib/help-topics');
+                const found = HELP_CATEGORIES
+                    .flatMap(c => c.topics)
+                    .find(t => t.slug === baseSlug);
+
+                if (!found) {
+                    return NextResponse.json({ slug: baseSlug, markdown: '', error: 'Tópico não encontrado' });
+                }
+
+                const topicData = helpData?.help?.topics?.[found.translationKey];
+                const markdown = jsonContentToMarkdown(topicData);
+                return NextResponse.json({ slug: baseSlug, markdown });
+            } catch (err: any) {
+                return NextResponse.json({ slug: baseSlug, markdown: '', error: err.message });
+            }
         }
 
         // Default: retornar overrides

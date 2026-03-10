@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { VersionHistory } from '@/components/admin/VersionHistory';
 import {
     ArrowLeft, Save, Loader2, RotateCcw,
-    PenLine, Eye, BookOpen, Lock, Clock,
+    PenLine, Eye, BookOpen, Lock, Clock, Undo2, Redo2,
 } from 'lucide-react';
 import { HELP_CATEGORIES } from '@/lib/help-topics';
 import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
@@ -45,8 +45,12 @@ export default function HelpEditorPage() {
     const [loading, setLoading] = useState(true);
     const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
     const [editMarkdown, setEditMarkdown] = useState('');
+    const [baseMarkdown, setBaseMarkdown] = useState('');
+    const [loadingContent, setLoadingContent] = useState(false);
     const [saving, setSaving] = useState(false);
     const [previewMode, setPreviewMode] = useState<'edit' | 'preview' | 'history'>('edit');
+    const [undoStack, setUndoStack] = useState<string[]>([]);
+    const [redoStack, setRedoStack] = useState<string[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
 
     // ── Auth guard: verifica role do usuário ──
@@ -67,10 +71,54 @@ export default function HelpEditorPage() {
             .catch(() => { setLoading(false); });
     }, []);
 
-    const handleSelectTopic = (slug: string) => {
+    const handleSelectTopic = async (slug: string) => {
         setSelectedSlug(slug);
-        setEditMarkdown(overrides[slug]?.markdown || '');
         setPreviewMode('edit');
+        setBaseMarkdown('');
+        setUndoStack([]);
+        setRedoStack([]);
+
+        // Se tem override, usar o markdown do override
+        if (overrides[slug]?.markdown) {
+            setEditMarkdown(overrides[slug].markdown);
+            return;
+        }
+
+        // Sem override → carregar conteúdo base (JSON→Markdown) da API
+        setLoadingContent(true);
+        setEditMarkdown('');
+        try {
+            const res = await fetch(`/api/admin/help-topics?base=${slug}`);
+            const data = await res.json();
+            if (data.markdown) {
+                setEditMarkdown(data.markdown);
+                setBaseMarkdown(data.markdown);
+            }
+        } catch { /* fallback: editor vazio */ }
+        setLoadingContent(false);
+    };
+
+    /** Atualizar markdown com undo stack */
+    const updateMarkdown = (newValue: string) => {
+        setUndoStack(prev => [...prev.slice(-49), editMarkdown]);
+        setRedoStack([]);
+        setEditMarkdown(newValue);
+    };
+
+    const handleUndo = () => {
+        if (undoStack.length === 0) return;
+        const prev = undoStack[undoStack.length - 1];
+        setRedoStack(r => [...r, editMarkdown]);
+        setUndoStack(u => u.slice(0, -1));
+        setEditMarkdown(prev);
+    };
+
+    const handleRedo = () => {
+        if (redoStack.length === 0) return;
+        const next = redoStack[redoStack.length - 1];
+        setUndoStack(u => [...u, editMarkdown]);
+        setRedoStack(r => r.slice(0, -1));
+        setEditMarkdown(next);
     };
 
     const handleSave = async () => {
@@ -114,15 +162,29 @@ export default function HelpEditorPage() {
                     delete next[selectedSlug];
                     return next;
                 });
-                setEditMarkdown('');
+                // Recarregar conteúdo base do JSON
+                try {
+                    const baseRes = await fetch(`/api/admin/help-topics?base=${selectedSlug}`);
+                    const baseData = await baseRes.json();
+                    if (baseData.markdown) {
+                        setEditMarkdown(baseData.markdown);
+                        setBaseMarkdown(baseData.markdown);
+                    } else {
+                        setEditMarkdown('');
+                        setBaseMarkdown('');
+                    }
+                } catch {
+                    setEditMarkdown('');
+                    setBaseMarkdown('');
+                }
+                setUndoStack([]);
+                setRedoStack([]);
                 toast.success('Restaurado ao padrão');
             }
         } catch {
             toast.error('Erro ao restaurar');
         }
     };
-
-
 
     if (loading) {
         return (
@@ -212,7 +274,7 @@ export default function HelpEditorPage() {
                         </div>
                     ) : (
                         <>
-                            {/* Toggle Editor / Preview */}
+                            {/* Toggle Editor / Preview / Histórico */}
                             <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                                 <button
                                     onClick={() => setPreviewMode('edit')}
@@ -244,9 +306,16 @@ export default function HelpEditorPage() {
                                             : '—'}
                                     </span>
                                 )}
+
+                                {/* Indicador de fonte */}
+                                {!overrides[selectedSlug] && baseMarkdown && (
+                                    <span className="ml-auto text-[10px] text-amber-400/60 bg-amber-500/10 px-2 py-0.5 rounded">
+                                        📄 Conteúdo base (JSON)
+                                    </span>
+                                )}
                             </div>
 
-                            {/* Textarea / Preview */}
+                            {/* Textarea / Preview / Histórico */}
                             {previewMode === 'history' ? (
                                 <VersionHistory
                                     slug={selectedSlug}
@@ -255,44 +324,103 @@ export default function HelpEditorPage() {
                                         setPreviewMode('edit');
                                     }}
                                 />
+                            ) : loadingContent ? (
+                                <div className="flex items-center justify-center bg-white/[0.03] border border-white/10 rounded-lg" style={{ minHeight: 500 }}>
+                                    <div className="text-center space-y-2 text-gray-500">
+                                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                                        <p className="text-xs">Carregando conteúdo...</p>
+                                    </div>
+                                </div>
                             ) : previewMode === 'edit' ? (
                                 <textarea
                                     value={editMarkdown}
-                                    onChange={e => setEditMarkdown(e.target.value)}
+                                    onChange={e => updateMarkdown(e.target.value)}
+                                    onKeyDown={e => {
+                                        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                                            e.preventDefault();
+                                            if (e.shiftKey) handleRedo(); else handleUndo();
+                                        }
+                                        if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                                            e.preventDefault();
+                                            handleRedo();
+                                        }
+                                    }}
                                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-gray-200 font-mono leading-relaxed placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500/40 resize-y"
                                     style={{ minHeight: 500 }}
                                     placeholder={'# Título do artigo\n\nTexto introdutório aqui...\n\n## Seção\n\nConteúdo da seção...\n\n- Item 1\n- Item 2\n\n> 💡 Dica: escreva todo o conteúdo em Markdown!'}
                                 />
-                            ) : (
+                            ) : editMarkdown.trim() ? (
                                 <div
                                     className="bg-white/[0.03] border border-white/10 rounded-lg px-6 py-4"
                                     style={{ minHeight: 500 }}
                                 >
                                     <MarkdownRenderer content={editMarkdown} />
                                 </div>
+                            ) : (
+                                <div className="flex items-center justify-center bg-white/[0.03] border border-white/10 rounded-lg" style={{ minHeight: 500 }}>
+                                    <div className="text-center space-y-2 text-gray-500">
+                                        <Eye className="w-6 h-6 mx-auto opacity-40" />
+                                        <p className="text-sm">Nenhum conteúdo para pré-visualizar</p>
+                                        <p className="text-xs">Escreva algo na aba Editar primeiro</p>
+                                    </div>
+                                </div>
                             )}
 
                             {/* Ações */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <Button
-                                    onClick={handleSave}
-                                    disabled={saving || !editMarkdown.trim()}
-                                    className="gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-sm font-semibold px-6 py-2.5"
-                                >
-                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                    {saving ? 'Salvando...' : 'Salvar'}
-                                </Button>
-                                <Button
-                                    onClick={handleReset}
-                                    variant="outline"
-                                    className="gap-2 border-white/10 text-xs"
-                                >
-                                    <RotateCcw className="w-3.5 h-3.5" /> Restaurar padrão
-                                </Button>
-                                <span className="text-[10px] text-gray-600 ml-auto">
-                                    {editMarkdown.length > 0 ? `${editMarkdown.length} caracteres` : 'Vazio — usará conteúdo padrão'}
-                                </span>
-                            </div>
+                            {(() => {
+                                const originalMarkdown = overrides[selectedSlug]?.markdown || baseMarkdown;
+                                const hasChanges = editMarkdown !== originalMarkdown;
+                                const hasOverride = !!overrides[selectedSlug];
+                                return (
+                                    <div className="flex items-center gap-3 pt-2">
+                                        {/* Undo / Redo */}
+                                        <div className="flex items-center gap-1 mr-1">
+                                            <button
+                                                type="button"
+                                                onClick={handleUndo}
+                                                disabled={undoStack.length === 0}
+                                                className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+                                                title="Desfazer (Ctrl+Z)"
+                                            >
+                                                <Undo2 className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleRedo}
+                                                disabled={redoStack.length === 0}
+                                                className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+                                                title="Refazer (Ctrl+Shift+Z)"
+                                            >
+                                                <Redo2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                        <Button
+                                            onClick={handleSave}
+                                            disabled={saving || !editMarkdown.trim() || !hasChanges}
+                                            className="gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-sm font-semibold px-6 py-2.5 disabled:opacity-40"
+                                        >
+                                            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                            {saving ? 'Salvando...' : 'Salvar'}
+                                        </Button>
+                                        <button
+                                            type="button"
+                                            onClick={handleReset}
+                                            disabled={!hasOverride}
+                                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/50 disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                                        >
+                                            <RotateCcw className="w-3.5 h-3.5" /> Restaurar padrão
+                                        </button>
+                                        <span className="text-[10px] text-gray-600 ml-auto">
+                                            {hasChanges
+                                                ? `✏️ ${editMarkdown.length} caracteres (modificado)`
+                                                : editMarkdown.length > 0
+                                                    ? `${editMarkdown.length} caracteres`
+                                                    : 'Vazio — usará conteúdo padrão'}
+                                        </span>
+                                    </div>
+                                );
+                            })()}
                         </>
                     )}
                 </div>
