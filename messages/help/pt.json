@@ -839,13 +839,15 @@
         },
         "helpEditor": {
           "title": "/admin/help-editor — Editor de Help",
-          "desc": "Ferramenta para editar o conteúdo dos tópicos de ajuda sem necessidade de deploy. Apenas SUPERADMIN e ADMIN têm acesso.",
+          "desc": "Ferramenta visual para editar tópicos de ajuda sem necessidade de deploy. Apenas SUPERADMIN e ADMIN têm acesso.",
           "step1": "Acesse /admin/help-editor",
-          "step2": "Selecione o tópico na sidebar esquerda",
-          "step3": "Edite o conteúdo usando Markdown (negrito, listas, seções, blockquotes)",
-          "step4": "Use o botão de preview para alternar entre edição e visualização",
-          "step5": "Clique em \"Salvar\" — o conteúdo é versionado automaticamente e atualizado no help",
-          "step6": "Para reverter, use o rollback via API (PATCH /api/admin/help-topics) ou \"Restaurar Padrão\""
+          "step2": "A sidebar mostra '🏢 Corporativo — solucoesrkm.com' como hierarquia principal, com categorias Negócios e Técnico abaixo",
+          "step3": "Selecione o tópico na sidebar esquerda (pontos verdes indicam tópicos customizados)",
+          "step4": "Edite o conteúdo usando Markdown (negrito, listas, seções, blockquotes)",
+          "step5": "Use as 3 abas: Editar (markdown), Preview (visualização formatada), Histórico (versões anteriores com rollback)",
+          "step6": "Clique em 'Salvar' — o conteúdo é versionado e publicado automaticamente no /help e no Freshdesk",
+          "step7": "Para reverter: aba Histórico → expanda a versão desejada → 'Restaurar esta versão' → Confirmar",
+          "step8": "Para voltar ao conteúdo original do JSON: botão 'Restaurar Padrão'"
         },
         "versioning": {
           "title": "Versionamento e Auditoria",
@@ -856,8 +858,9 @@
           "what": "O quê: conteúdo Markdown completo de cada versão",
           "source": "Fonte: 'editor' (help-editor), 'freshdesk' (pull do Freshdesk), ou 'rollback'",
           "limit": "Limite: até 10.000 versões por tópico — histórico praticamente ilimitado",
-          "rollback": "Rollback: PATCH /api/admin/help-topics com slug e número da versão para restaurar",
-          "api": "Consultar versões: GET /api/admin/help-topics?versions=slug — lista todas as versões"
+          "rollback": "Rollback visual: aba Histórico no help-editor mostra todas as versões com preview e botão de restaurar",
+          "api": "Rollback via API: PATCH /api/admin/help-topics com slug e número da versão",
+          "autoPush": "Auto-push: ao salvar, o conteúdo é enviado automaticamente para o Freshdesk (fire-and-forget)"
         },
         "freshdeskSync": {
           "title": "Fluxo Completo: Edição → Freshdesk",

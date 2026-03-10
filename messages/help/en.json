@@ -839,13 +839,15 @@
         },
         "helpEditor": {
           "title": "/admin/help-editor — Help Editor",
-          "desc": "Tool for editing help topic content without requiring a deploy. Only SUPERADMIN and ADMIN have access.",
+          "desc": "Visual tool for editing help topics without requiring a deploy. Only SUPERADMIN and ADMIN have access.",
           "step1": "Go to /admin/help-editor",
-          "step2": "Select a topic from the left sidebar",
-          "step3": "Edit content using Markdown (bold, lists, sections, blockquotes)",
-          "step4": "Use the preview button to toggle between editing and preview",
-          "step5": "Click \"Save\" — content is automatically versioned and updated on the help pages",
-          "step6": "To revert, use the rollback API (PATCH /api/admin/help-topics) or \"Restore Default\""
+          "step2": "The sidebar shows '🏢 Corporativo — solucoesrkm.com' as the top-level hierarchy, with Negócios and Técnico categories below",
+          "step3": "Select a topic from the left sidebar (green dots indicate customized topics)",
+          "step4": "Edit content using Markdown (bold, lists, sections, blockquotes)",
+          "step5": "Use the 3 tabs: Editar (markdown), Preview (formatted view), Histórico (version history with rollback)",
+          "step6": "Click 'Save' — content is automatically versioned and published to /help and Freshdesk",
+          "step7": "To revert: Histórico tab → expand desired version → 'Restaurar esta versão' → Confirm",
+          "step8": "To return to original JSON content: 'Restaurar Padrão' button"
         },
         "versioning": {
           "title": "Versioning and Audit Trail",
@@ -856,8 +858,9 @@
           "what": "What: complete Markdown content for each version",
           "source": "Source: 'editor' (help-editor), 'freshdesk' (Freshdesk pull), or 'rollback'",
           "limit": "Limit: up to 10,000 versions per topic — virtually unlimited history",
-          "rollback": "Rollback: PATCH /api/admin/help-topics with slug and version number to restore",
-          "api": "View versions: GET /api/admin/help-topics?versions=slug — lists all versions"
+          "rollback": "Visual rollback: Histórico tab in help-editor shows all versions with preview and restore button",
+          "api": "API rollback: PATCH /api/admin/help-topics with slug and version number",
+          "autoPush": "Auto-push: on save, content is automatically sent to Freshdesk (fire-and-forget)"
         },
         "freshdeskSync": {
           "title": "Complete Flow: Edit → Freshdesk",
