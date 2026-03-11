@@ -7,8 +7,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { ThemeSwitcher } from '@/components/layout/ThemeSwitcher';
 
 export function AdminTopBarClient() {
     const [isDark, setIsDark] = useState(true);

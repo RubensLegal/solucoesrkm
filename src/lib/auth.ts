@@ -13,21 +13,15 @@ import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
+import { env } from '@/lib/env';
+import type { SessionPayload, SystemRole } from '@/types';
+import { USER_ROLES, EMPLOYEE_ROLES, EDITABLE_ROLES } from '@/constants';
 
-// ─── Segredo JWT ──────────────────────────────────────────────────
-const SECRET_KEY = process.env.JWT_SECRET || 'dev-secret-solucoesrkm';
-const key = new TextEncoder().encode(SECRET_KEY);
+// ─── Segredo JWT (validado pelo Zod em env.ts) ───────────────────
+const key = new TextEncoder().encode(env.JWT_SECRET);
 
-// ─── Tipos ────────────────────────────────────────────────────────
-export interface SessionPayload {
-    userId: string;
-    email: string;
-    name: string | null;
-    role?: string;
-    [key: string]: unknown;
-}
-
-export type SystemRole = 'SUPERADMIN' | 'ADMIN' | 'EDITOR' | 'VIEWER';
+// ─── Re-export de tipos (backward compatibility) ─────────────────
+export type { SessionPayload, SystemRole } from '@/types';
 
 // ─── Password ─────────────────────────────────────────────────────
 export async function hashPassword(password: string): Promise<string> {
@@ -101,7 +95,7 @@ export async function getSystemRole(userId: string): Promise<SystemRole | null> 
             select: { role: true, email: true },
         });
         if (!user) return null;
-        if (user.role === 'SUPERADMIN') return 'SUPERADMIN';
+        if (user.role === USER_ROLES.SUPERADMIN) return 'SUPERADMIN';
 
         // 2. Check existing Employee
         const employee = await prisma.employee.findUnique({
@@ -113,18 +107,18 @@ export async function getSystemRole(userId: string): Promise<SystemRole | null> 
         // 3. Auto-provision @solucoesrkm.com
         if (user.email.toLowerCase().endsWith('@solucoesrkm.com')) {
             // Marca User como EMPLOYEE se ainda não for
-            if (user.role !== 'EMPLOYEE') {
+            if (user.role !== USER_ROLES.EMPLOYEE) {
                 await prisma.user.update({
                     where: { id: userId },
-                    data: { role: 'EMPLOYEE' },
+                    data: { role: USER_ROLES.EMPLOYEE },
                 });
             }
 
             const newEmployee = await prisma.employee.create({
-                data: { userId, role: 'VIEWER' },
+                data: { userId, role: EMPLOYEE_ROLES.VIEWER },
             });
 
-            console.log(`[Auth] Auto-provisioned Employee for ${user.email} → VIEWER`);
+            // Auto-provisioned employee
             return newEmployee.role as SystemRole;
         }
 
@@ -141,5 +135,6 @@ export async function getSystemRole(userId: string): Promise<SystemRole | null> 
  * SUPERADMIN, ADMIN e EDITOR podem editar configs.
  */
 export function canEdit(role: SystemRole | null): boolean {
-    return role === 'SUPERADMIN' || role === 'ADMIN' || role === 'EDITOR';
+    if (!role) return false;
+    return EDITABLE_ROLES.has(role);
 }

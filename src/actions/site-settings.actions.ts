@@ -11,6 +11,8 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getSession, getSystemRole, canEdit as checkCanEdit } from '@/lib/auth';
+import type { SettingsChange, SettingsHistoryEntry, ActionResult } from '@/types';
+import { HISTORY_KEYS, MAX_HISTORY_ENTRIES } from '@/constants';
 
 // ═══════════════════════════════════════════════════════════════════
 // Leitura — Pública (sem auth, usada pela landing page)
@@ -31,35 +33,8 @@ export async function getSiteSettings(key: string) {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// History — Tipos e constantes
-// ═══════════════════════════════════════════════════════════════════
-
-export interface SettingsChange {
-    section: string;  // Ex: "hero", "features", "plus.limits"
-    field: string;    // Ex: "heroTitle", "items"
-    oldValue: any;
-    newValue: any;
-}
-
-export interface SettingsHistoryEntry {
-    timestamp: string;
-    userId: string;
-    userName: string;
-    changes: SettingsChange[];
-}
-
-const MAX_HISTORY_ENTRIES = 100;
-
-/** Mapeia key de config → key de histórico */
-const HISTORY_KEYS: Record<string, string> = {
-    landing_page_config: 'landing_page_history',
-    landing_page_config_pt: 'landing_page_history',
-    landing_page_config_en: 'landing_page_history',
-    freshdesk_config: 'freshdesk_history',
-    api_keys: 'api_keys_history',
-    pricing_visibility: 'pricing_visibility_history',
-};
+// Re-export de tipos para backward compatibility
+export type { SettingsChange, SettingsHistoryEntry, ActionResult } from '@/types';
 
 // ═══════════════════════════════════════════════════════════════════
 // Diff — Calcula mudanças entre configs

@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/components/layout/ThemeProvider';
 
 const themes = [
     { code: 'light' as const, label: 'Claro', icon: Sun },

@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { LandingHeader } from '@/components/landing/LandingHeader';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/layout/Footer';
 import { Play, Info, Search, Truck, Smartphone, Shield, Code, Users, Zap, ChevronDown, Check, Star } from 'lucide-react';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {

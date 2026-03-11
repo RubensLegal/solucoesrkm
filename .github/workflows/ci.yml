@@ -1,0 +1,82 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# CI Pipeline — Soluções RKM
+# ──────────────────────────────────────────────────────────────────────────────
+# 
+# O QUE FAZ:
+# Este workflow roda automaticamente sempre que alguém faz push ou abre um 
+# Pull Request para as branches main ou develop. Ele verifica a qualidade 
+# do código em 3 etapas:
+#
+#   1. Type-check — garante que não há erros de TypeScript
+#   2. Lint — garante padrões de código (ESLint do Next.js)
+#   3. Build — garante que o projeto compila sem erros
+#
+# QUANDO RODA:
+#   - Push em main ou develop
+#   - Abertura/atualização de Pull Request para main
+#
+# SE FALHAR:
+#   - O ícone fica vermelho ❌ no GitHub
+#   - O merge do PR é bloqueado (se configurar branch protection)
+#   - Verifique a aba "Actions" no GitHub para ver o erro
+#
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+# Cancela runs anteriores do mesmo PR/branch (economiza minutos)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: 🔍 Quality Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout do código ──
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Node.js com cache do npm ──
+      # O cache evita reinstalar dependências a cada run
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── 3. Instalar dependências ──
+      # npm ci é mais rápido e confiável que npm install
+      # Usa exatamente as versões do package-lock.json
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # ── 4. Type-check ──
+      # Verifica erros de TypeScript SEM gerar arquivos de saída
+      # Pega problemas como: tipos errados, imports quebrados, props faltando
+      - name: 🔷 Type-check
+        run: npx tsc --noEmit
+
+      # ── 5. Lint ──
+      # Verifica padrões de código usando ESLint do Next.js
+      # Pega problemas como: imports não usados, regras de React, acessibilidade
+      - name: 🧹 Lint
+        run: npx next lint
+
+      # ── 6. Build ──
+      # Tenta compilar o projeto inteiro como faz o Vercel
+      # Se o build falhar aqui, falharia no deploy também
+      - name: 🏗️ Build
+        run: npx next build
+        env:
+          # Variáveis mínimas para o build passar
+          DATABASE_URL: "file:./dev.db"
+          NEXT_PUBLIC_APP_URL: "https://tracka.solucoesrkm.com"

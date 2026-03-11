@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { HELP_CATEGORIES } from '@/lib/help-topics';
 import { ArrowLeft, HelpCircle, ChevronRight } from 'lucide-react';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 export default function HelpIndexPage() {
     const t = useTranslations('help');

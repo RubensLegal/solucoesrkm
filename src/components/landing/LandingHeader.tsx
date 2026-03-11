@@ -10,7 +10,7 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { ReactNode } from 'react';
 
 interface LandingHeaderProps {

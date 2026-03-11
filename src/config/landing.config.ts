@@ -8,77 +8,18 @@
 
 import { getSiteSettings } from '@/actions/site-settings.actions';
 import { DEFAULT_LANDING_CONFIG } from './defaults';
+import { SETTINGS_KEYS } from '@/constants';
 
-// ─── Tipos dos blocos dinâmicos ──────────────────────────────────
+// Re-export de tipos para backward compatibility
+export type {
+    FAQItem,
+    FooterLinkItem,
+    PricingParams,
+    TestimonialItem,
+    FeatureItem,
+    LandingPageConfig,
+} from '@/types';
 
-export interface FAQItem {
-    question: string;
-    answer: string;
-}
-
-export interface FooterLinkItem {
-    label: string;
-    href: string;
-}
-
-export interface PricingParams {
-    name: string;
-    price: string;
-    description: string;
-    features: string[];
-    excludedFeatures?: string[];
-    isPopular: boolean;
-    buttonText: string;
-    buttonLink: string;
-}
-
-export interface TestimonialItem {
-    name: string;
-    role: string;
-    content: string;
-}
-
-export interface FeatureItem {
-    icon: string;
-    title: string;
-    description: string;
-}
-
-// ─── Config principal ────────────────────────────────────────────
-
-export interface LandingPageConfig {
-    // Hero
-    heroTitle?: string;
-    heroSubtitle?: string;
-    heroImage?: string;
-
-    // Visibility flags
-    showFeatures?: boolean;
-    showTechnology?: boolean;
-    showPricing?: boolean;
-    showTestimonials?: boolean;
-    showFaq?: boolean;
-
-    // Textos customizáveis
-    ctaPrimaryText?: string;
-    ctaPrimaryLink?: string;
-    featuresTitle?: string;
-    techTitle?: string;
-
-    // Footer CTA
-    footerCtaTitle?: string;
-    footerCtaSubtitle?: string;
-    footerCtaButton?: string;
-
-    // Contato
-    footerContact?: string;
-
-    // Conteúdo dinâmico
-    features?: FeatureItem[];
-    testimonials?: TestimonialItem[];
-    faq?: FAQItem[];
-    footerLinks?: FooterLinkItem[];
-}
 
 // ─── Fetcher com smart merge ─────────────────────────────────────
 
@@ -88,10 +29,12 @@ export interface LandingPageConfig {
  * 
  * Prioridade: DB locale-specific → DB generic → defaults
  */
+import type { LandingPageConfig } from '@/types';
+
 export async function getLandingPageConfig(locale?: string): Promise<LandingPageConfig> {
     // Fetch both generic and locale-specific configs in parallel
     const [genericSettings, localeSettings] = await Promise.all([
-        getSiteSettings('landing_page_config'),
+        getSiteSettings(SETTINGS_KEYS.LANDING_CONFIG),
         locale ? getSiteSettings(`landing_page_config_${locale}`) : null,
     ]);
 

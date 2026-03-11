@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { LandingHeader } from '@/components/landing/LandingHeader';
-import { Footer } from '@/components/Footer';
+import { Footer } from '@/components/layout/Footer';
 import { Package, Rocket, ArrowRight, Sparkles, Shield, Zap } from 'lucide-react';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
