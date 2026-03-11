@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { VersionHistory } from '@/components/admin/VersionHistory';
 import {
     ArrowLeft, Save, Loader2, RotateCcw,
-    PenLine, Eye, BookOpen, Lock, Clock, Undo2, Redo2,
+    PenLine, Eye, BookOpen, Lock, Clock, Undo2, Redo2, FileCheck,
 } from 'lucide-react';
 import { HELP_CATEGORIES } from '@/lib/help-topics';
 import { MarkdownRenderer } from '@/components/help/MarkdownRenderer';
@@ -223,6 +223,12 @@ export default function HelpEditorPage() {
                         <h1 className="text-lg font-bold">Editor de Help</h1>
                         <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded">Markdown</span>
                     </div>
+                    <Link href="/admin/help-validation">
+                        <Button variant="outline" size="sm" className="gap-2 border-white/20 hover:border-emerald-500/40 hover:bg-emerald-500/5 text-white text-xs">
+                            <FileCheck className="w-3.5 h-3.5 text-emerald-400" />
+                            <span className="hidden sm:inline">Validação</span>
+                        </Button>
+                    </Link>
                 </div>
             </header>
 

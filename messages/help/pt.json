@@ -816,213 +816,158 @@
     },
     "adminSettingsGuide": {
       "title": "Guia de Configurações",
-      "subtitle": "Como administrar o sistema corporativo e o help center",
+      "subtitle": "Onde encontrar cada configuração no admin e no dashboard",
       "content": {
-        "intro": "O site corporativo Soluções RKM possui um painel Admin (/admin/settings) para configurações globais e um Editor de Help (/admin/help-editor) para gerenciar o conteúdo de ajuda.",
+        "intro": "O SoluçõesRKM possui configurações no painel Admin (/admin/settings) para configurações globais do sistema.",
         "adminSettings": {
           "title": "/admin/settings — Painel Admin",
-          "desc": "Acessível por SUPERADMIN e ADMIN. Controla as configurações globais:",
-          "landing": "Textos, cores, imagens e seções da landing page",
-          "apiKeys": "Chaves de API para serviços externos (Google Vision, Cloudinary, etc.)",
-          "freshdesk": "Widget de suporte, tickets, Knowledge Base e chat — configuração completa do Freshdesk",
-          "plans": "Configuração de planos, limites e preços (SUPERADMIN only)",
-          "team": "Gestão de equipe — adicionar, remover e alterar roles dos membros"
+          "desc": "Acessível por SUPERADMIN, ADMIN, EDITOR e VIEWER (leitura). Controla as configurações globais do sistema.",
+          "step1": "Landing Page — textos, seções, planos, depoimentos e links da página pública",
+          "step2": "Integrações / API Keys — chaves de API para serviços externos",
+          "step3": "Freshdesk — Suporte ao Cliente — widget, tickets, KB, chat e sync com Freshdesk",
+          "step4": "Visibilidade de Planos — configuração de visibilidade e features por plano"
         },
-        "planVisibility": {
-          "title": "Visibilidade dos Planos (Marketing)",
-          "desc": "A seção 'Visibilidade dos Planos' em /admin/settings permite controlar quais planos e features aparecem na landing page da empresa, sem alterar a configuração real dos planos no Tracka.",
-          "howItWorks": "Os dados são buscados da API do Tracka (/api/plan-config) a cada carregamento da página (revalidate: 0 — sempre fresco). O grid exibe todos os planos com seus limites numéricos, features booleanas, notificações e suporte — exatamente como estão configurados no Tracka.",
-          "checkboxes": "Cada checkbox no grid controla apenas a VISIBILIDADE na landing page. Ocultar um plano ou feature aqui não altera nada no Tracka — é apenas para marketing.",
-          "storage": "As preferências de visibilidade são salvas na tabela SiteSettings como JSON (key: pricing_visibility), contendo hiddenPlans (array de plan keys) e hiddenFeatures (map de plan key → array de feature keys).",
-          "history": "Todas as alterações de visibilidade são registradas no Change History, acessível na própria seção.",
-          "tip": "Se os planos não carregarem, verifique se o Tracka (NEXT_PUBLIC_APP_URL) está acessível. A API /api/plan-config precisa estar disponível para o servidor Next.js do site corporativo."
+        "adminPages": {
+          "title": "Páginas Admin",
+          "desc": "Além das configurações, existem outras páginas administrativas:",
+          "step1": "Help Editor (/admin/help-editor) — editor de conteúdo do help em Markdown",
+          "step2": "Validação de Help (/admin/help-validation) — página para SUPERADMIN validar e promover overrides ao JSON base"
         },
         "helpEditor": {
-          "title": "/admin/help-editor — Editor de Help",
-          "desc": "Ferramenta visual para editar tópicos de ajuda sem necessidade de deploy. Apenas SUPERADMIN e ADMIN têm acesso.",
-          "step1": "Acesse /admin/help-editor",
-          "step2": "A sidebar mostra '🏢 Corporativo — solucoesrkm.com' como hierarquia principal, com categorias Negócios e Técnico abaixo",
-          "step3": "Selecione o tópico na sidebar esquerda (pontos verdes indicam tópicos customizados)",
-          "step4": "Edite o conteúdo usando Markdown (negrito, listas, seções, blockquotes)",
-          "step5": "Use as 3 abas: Editar (markdown), Preview (visualização formatada), Histórico (versões anteriores com rollback)",
-          "step6": "Clique em 'Salvar' — o conteúdo é versionado e publicado automaticamente no /help e no Freshdesk",
-          "step7": "Para reverter: aba Histórico → expanda a versão desejada → 'Restaurar esta versão' → Confirmar",
-          "step8": "Para voltar ao conteúdo original do JSON: botão 'Restaurar Padrão'"
+          "title": "Como Funciona o Help Editor",
+          "desc": "O Help Editor permite editar o conteúdo do help sem alterar o código-fonte. Entenda o fluxo:",
+          "step1": "Ao editar e salvar, o conteúdo é gravado como 'override' no banco de dados",
+          "step2": "O conteúdo base (original) fica intacto nos arquivos JSON do código-fonte",
+          "step3": "O help exibe: override do banco (se existir) → markdown validado do JSON → componente React padrão",
+          "step4": "'Restaurar Padrão' apaga o override do banco — volta a exibir o conteúdo original do JSON",
+          "step5": "Cada salvamento cria uma versão no histórico com timestamp, autor e conteúdo"
         },
-        "versioning": {
-          "title": "Versionamento e Auditoria",
-          "desc": "Todas as edições são versionadas automaticamente com rastreamento completo:",
-          "backup": "Backup automático: antes de cada save, a versão anterior é salva como backup",
-          "who": "Quem: nome/email do admin que editou (session.name)",
-          "when": "Quando: timestamp ISO de cada versão (savedAt)",
-          "what": "O quê: conteúdo Markdown completo de cada versão",
-          "source": "Fonte: 'editor' (help-editor), 'freshdesk' (pull do Freshdesk), ou 'rollback'",
-          "limit": "Limite: até 10.000 versões por tópico — histórico praticamente ilimitado",
-          "rollback": "Rollback visual: aba Histórico no help-editor mostra todas as versões com preview e botão de restaurar",
-          "api": "Rollback via API: PATCH /api/admin/help-topics com slug e número da versão",
-          "autoPush": "Auto-push: ao salvar, o conteúdo é enviado automaticamente para o Freshdesk (fire-and-forget)"
+        "helpValidation": {
+          "title": "Validação de Overrides",
+          "desc": "A página de Validação (/admin/help-validation) permite ao SUPERADMIN promover overrides ao JSON base:",
+          "step1": "Overrides ficam no banco até serem validados — não alteram o código-fonte automaticamente",
+          "step2": "Na página de validação, compare o conteúdo base (JSON) com o override (banco)",
+          "step3": "Valide individualmente ou em batch — o JSON é atualizado com campo 'markdown'",
+          "step4": "Após validar, faça commit e deploy — em produção o filesystem é read-only",
+          "step5": "O override validado é removido do banco (agora é parte do código-fonte)"
         },
-        "freshdeskSync": {
-          "title": "Fluxo Completo: Edição → Freshdesk",
-          "desc": "O fluxo do help-editor até o Freshdesk é 100% automático:",
-          "flow1": "1. Admin edita tópico no help-editor (Markdown)",
-          "flow2": "2. Clica 'Salvar'",
-          "flow3": "3. ✅ Automático: versão anterior salva como backup",
-          "flow4": "4. ✅ Automático: nova versão registrada (quem, quando, o quê)",
-          "flow5": "5. ✅ Automático: /help do site atualizado instantaneamente",
-          "flow6": "6. ✅ Automático: push para Freshdesk (fire-and-forget, não bloqueia o save)",
-          "flow7": "7. ✅ Automático: cron diário 3:30 AM UTC faz pull + push bidirecional",
-          "note": "Obs: se a API key do Freshdesk não estiver configurada, o auto-push é ignorado silenciosamente"
+        "helpHistory": {
+          "title": "Histórico e Rollback",
+          "desc": "Cada edição no Help Editor cria uma versão no banco de dados:",
+          "step1": "Cada versão guarda: conteúdo completo, timestamp, autor (email/nome) e tipo (editor/rollback)",
+          "step2": "O Rollback carrega o conteúdo de uma versão anterior e aplica como novo override",
+          "step3": "Mesmo após rollback, todas as versões antigas permanecem no histórico"
         },
-        "automationTable": {
-          "title": "O que é Automático vs Manual",
-          "desc": "Tabela de ações e seu tipo de disparo:",
-          "edit": "Editar conteúdo → ⚠️ Manual (admin no help-editor)",
-          "save": "Salvar edição → ⚠️ Manual (botão Salvar)",
-          "backup": "Backup da versão anterior → ✅ Automático (a cada save)",
-          "version": "Registrar versão (quem/quando) → ✅ Automático (a cada save)",
-          "siteUpdate": "Atualizar /help do site → ✅ Automático (leitura direta do DB)",
-          "pushFreshdesk": "Push para Freshdesk → ✅ Automático (após save + cron diário)",
-          "pullFreshdesk": "Pull do Freshdesk → ✅ Automático (cron diário) ou ⚠️ Manual (botão Pull)",
-          "rollback": "Rollback para versão anterior → ⚠️ Manual (aba Histórico no help-editor)"
+        "authAdmin": {
+          "title": "Permissões de Acesso",
+          "desc": "Todas as páginas em /admin/* requerem autenticação e role de funcionário:",
+          "viewer": {
+            "name": "VIEWER",
+            "desc": "Visualiza configurações (leitura). Não pode editar help."
+          },
+          "editor": {
+            "name": "EDITOR",
+            "desc": "Pode editar configurações da Landing Page."
+          },
+          "admin": {
+            "name": "ADMIN",
+            "desc": "Pode editar help, gerenciar integrações."
+          },
+          "superadmin": {
+            "name": "SUPERADMIN",
+            "desc": "Acesso total: validar help, executar sync, restaurar padrão, deletar overrides."
+          }
         },
-        "bidirectional": {
-          "title": "Sincronização Bidirecional",
-          "desc": "O sync funciona nos dois sentidos:",
-          "push": "Push (Site → Freshdesk): automático a cada save no help-editor + cron diário",
-          "pull": "Pull (Freshdesk → Site): cron diário importa edições feitas diretamente no Freshdesk",
-          "manual": "Manual: botões 'Push' e 'Pull' disponíveis na seção Freshdesk do admin",
-          "priority": "Prioridade: DB overrides (help-editor) > JSON defaults (messages/help/pt.json)",
-          "conflict": "Conflitos: o último write vence. Pull salva 'previousContent' e 'previousSource' para auditoria",
-          "coexistence": "Coexistência: o sync só gerencia artigos criados por ele mesmo (rastreados por mapeamento slug → ID). Conteúdo existente no Freshdesk criado por outros meios NÃO é afetado",
-          "mapping": "Mapeamento: armazenado em SiteSettings (freshdesk_corporate_mapping). Permite re-syncs sem duplicação"
-        },
-        "permissions": {
-          "title": "Permissões por Role",
-          "desc": "Cada role tem diferentes níveis de acesso:",
-          "superadmin": "SUPERADMIN: acesso total — edita help, faz sync, gerencia planos, equipe e configurações",
-          "admin": "ADMIN: edita help e configurações do site. Não gerencia planos",
-          "editor": "EDITOR: leitura ao painel admin. Não edita configurações",
-          "viewer": "VIEWER: bloqueado do painel admin. Apenas leitura ao help público",
-          "freshdeskNote": "Sync Freshdesk: apenas SUPERADMIN e ADMIN podem disparar push/pull manual",
-          "cronNote": "Cron automático: roda sem restrição de role (protegido por CRON_SECRET)"
-        },
-        "workspaces": {
-          "title": "Comparação de Workspaces",
-          "desc": "O help está dividido entre dois workspaces com capacidades diferentes:",
-          "rkm_name": "Soluções RKM (solucoesrkm.com)",
-          "rkm_help": "✅ /help — 13 tópicos corporativos (planos, pagamento, admin, docs técnicos, Freshdesk)",
-          "rkm_editor": "✅ /admin/help-editor — edição visual com Markdown, preview e versionamento",
-          "rkm_sync": "✅ Sync bidirecional com Freshdesk (push/pull automático + manual)",
-          "rkm_versions": "✅ Versionamento: até 10.000 versões por tópico com rollback",
-          "rkm_history": "✅ Histórico de sync: até 10.000 entradas com auditoria completa",
-          "tracka_name": "Tracka (Controle das Coisas)",
-          "tracka_help": "✅ /help — tópicos do aplicativo (funcionalidades, como usar, dicas)",
-          "tracka_editor": "❌ Sem editor admin — conteúdo editado nos JSONs de tradução",
-          "tracka_sync": "❌ Sem sync com Freshdesk",
-          "tracka_versions": "❌ Sem versionamento automático (versionado apenas via Git)",
-          "tracka_history": "❌ Sem histórico de edições"
-        },
-        "fileStructure": {
-          "title": "Estrutura de Arquivos i18n",
-          "desc": "As traduções são separadas em dois grupos para manter os JSONs organizados:",
-          "ui": "messages/pt.json e messages/en.json — traduções da UI (admin, landing, componentes). ~310 linhas.",
-          "help": "messages/help/pt.json e messages/help/en.json — conteúdo extenso dos tópicos de help. ~1200 linhas.",
-          "merge": "O merge é feito automaticamente em src/i18n/request.ts — a chave 'help' é carregada do arquivo separado e injetada no objeto de mensagens.",
-          "why": "Essa separação reduz ~80% do tamanho dos JSONs principais. Mesma estratégia usada no Tracka."
-        },
-        "tip": "Para adicionar um novo tópico: registre em help-topics.ts e adicione as traduções em messages/help/pt.json e messages/help/en.json (conteúdo do help) — NÃO nos JSONs principais. O tópico será incluído automaticamente no sync com Freshdesk."
+        "tip": "Use o Help Editor para ajustes rápidos. Para alterações permanentes, valide e faça commit do JSON atualizado."
       }
     },
     "freshdeskSync": {
-      "title": "Sync Bidirecional Help ↔ Freshdesk",
+      "title": "Sync Bidirecional Freshdesk KB",
       "subtitle": "Sincronização automática e bidirecional dos tópicos do help com a Knowledge Base do Freshdesk",
       "content": {
-        "intro": "O Soluções RKM sincroniza bidirecionalmente todos os tópicos do help corporativo com a Knowledge Base do Freshdesk, mantendo uma única fonte de verdade com conteúdo dinâmico, versionamento e auditoria completa.",
+        "intro": "O SoluçõesRKM sincroniza o Help interno com a Knowledge Base do Freshdesk de forma bidirecional: push envia conteúdo do app, pull importa edições feitas no Freshdesk.",
         "howItWorks": {
-          "title": "Como funciona",
-          "desc": "O sistema lê conteúdo de duas fontes (DB overrides do help-editor e JSON default), converte para HTML e publica ou importa via API v2 do Freshdesk.",
-          "step1": "Acesse Admin → Freshdesk → Knowledge Base",
-          "step2": "Clique em \"Push para Freshdesk\" para enviar do site para o Freshdesk",
-          "step3": "Clique em \"Pull do Freshdesk\" para importar edições feitas no Freshdesk para o site",
-          "step4": "O cron automático faz pull + push diariamente às 3:30 AM UTC"
+          "title": "Como funciona a Sync",
+          "desc": "A sincronização utiliza a API do Freshdesk para criar, atualizar e importar artigos na Knowledge Base.",
+          "step1": "Push — envia os tópicos do help (overrides do banco ou JSON base) para o Freshdesk KB como artigos",
+          "step2": "Pull — importa artigos editados diretamente no Freshdesk e salva como overrides locais",
+          "step3": "Push + Pull — executa as duas ações em sequência para sincronização completa"
         },
-        "dynamic": {
-          "title": "Conteúdo Dinâmico",
-          "desc": "O sync lê conteúdo automaticamente de duas fontes com prioridade:",
-          "step1": "DB override (help-editor): se o tópico foi editado via Markdown no help-editor, essa versão tem prioridade",
-          "step2": "JSON default (messages/help/pt.json): usado como fallback se não houver override",
-          "step3": "Conversão automática: Markdown → HTML (overrides) ou JSON → HTML (defaults)",
-          "step4": "13 tópicos são gerados dinamicamente a partir de HELP_CATEGORIES em help-topics.ts"
+        "credentials": {
+          "title": "Onde Encontrar as Credenciais",
+          "desc": "Para configurar a integração, você precisa de dois dados do Freshdesk:",
+          "domain": {
+            "name": "Domínio Freshworks",
+            "desc": "Login no freshdesk.com → olhe a URL → a parte antes de .freshdesk.com (ex: solucoesrkm)"
+          },
+          "apiKey": {
+            "name": "API Key",
+            "desc": "No Freshdesk → clique no avatar (canto superior direito) → Profile Settings → copie Your API Key"
+          }
         },
-        "versioning": {
-          "title": "Versionamento e Auditoria",
-          "desc": "Todas as operações de sync são versionadas e auditadas:",
-          "backup": "Backup automático antes de cada push e pull — a versão anterior é preservada",
-          "history": "Histórico de sync: até 10.000 entradas com timestamp, direção, quem disparou, resultados e erros",
-          "versions": "Versões por tópico: até 10.000 versões com conteúdo, autor, data e fonte (editor/freshdesk/rollback)",
-          "rollback": "Rollback disponível via PATCH /api/admin/help-topics para restaurar qualquer versão anterior"
+        "security": {
+          "title": "Segurança da API Key",
+          "desc": "A API Key pode ser configurada de dois modos, com prioridade para variável de ambiente:",
+          "env": {
+            "name": "Variável de Ambiente (recomendado)",
+            "desc": "Defina FRESHDESK_API_KEY na Vercel/servidor. Nunca sai do servidor, mais seguro para produção."
+          },
+          "config": {
+            "name": "Página de Configurações (fallback)",
+            "desc": "Campo na página admin. Salva no banco de dados. Qualquer ADMIN pode ver/alterar. Use apenas para desenvolvimento."
+          }
         },
-        "visibility": {
-          "title": "Controle de Visibilidade",
-          "desc": "A visibilidade dos artigos é definida automaticamente com base nas permissões do tópico:",
-          "public": "Tópicos sem restrição — visíveis a todos os visitantes da KB",
-          "agents": "Tópicos superadminOnly — visíveis apenas para agentes Freshdesk (informações internas)"
+        "permissions": {
+          "title": "Permissões Necessárias",
+          "desc": "A API Key deve ser de um agente com permissão Admin no Freshdesk para criar/editar artigos na Knowledge Base.",
+          "step1": "GET (consultar status e histórico): ADMIN ou SUPERADMIN",
+          "step2": "POST (executar push/pull): apenas SUPERADMIN"
         },
-        "api": {
-          "title": "Endpoints da API",
-          "desc": "O sync pode ser acionado via API (útil para automação):",
-          "push": "POST /api/admin/freshdesk-sync {action:'push'} — envia do site para o Freshdesk",
-          "pull": "POST /api/admin/freshdesk-sync {action:'pull'} — importa do Freshdesk para o site",
-          "both": "POST /api/admin/freshdesk-sync {action:'both'} — bidirecional completo",
-          "status": "GET /api/admin/freshdesk-sync — status do último sync/pull + contagem de artigos",
-          "historyApi": "GET /api/admin/freshdesk-sync?history=true — histórico completo de syncs",
-          "cron": "GET /api/cron/freshdesk-sync — protegido por CRON_SECRET (Vercel Cron)"
-        },
-        "warning": "É necessário configurar FRESHDESK_API_KEY e FRESHDESK_DOMAIN (via Admin → API Keys ou variáveis de ambiente) antes do primeiro sync.",
-        "tip": "O cron diário garante que edições feitas diretamente no Freshdesk sejam importadas automaticamente. Para sync imediato, use os botões Push/Pull no admin."
+        "tip": "Se a env var FRESHDESK_API_KEY estiver definida, ela tem prioridade sobre o campo da página de config. Em produção, sempre use variável de ambiente."
       }
     },
     "freshdeskKb": {
       "title": "Freshdesk — Suporte ao Cliente",
-      "subtitle": "Configuração dos módulos de suporte: widget, tickets, Knowledge Base e chat",
+      "subtitle": "Configuração dos módulos de suporte: widget, tickets, Knowledge Base, chat e sync bidirecional",
       "content": {
-        "intro": "O Soluções RKM integra com o Freshworks para oferecer 4 módulos de suporte ao cliente, todos configuráveis pelo painel admin.",
+        "intro": "O SoluçõesRKM integra com o Freshworks para oferecer módulos de suporte ao cliente, todos configuráveis pelo painel admin.",
         "modules": {
           "title": "Módulos disponíveis",
           "widget": {
             "icon": "🌐",
             "name": "Widget de Suporte",
-            "desc": "Bolha flutuante no canto da tela para acesso rápido a FAQ e contato"
-          },
-          "tickets": {
-            "icon": "🎫",
-            "name": "Portal de Tickets",
-            "desc": "Página dedicada para criar e acompanhar chamados de suporte"
+            "desc": "Bolha flutuante para contato e FAQ, identificada por widget_id"
           },
           "kb": {
             "icon": "📚",
             "name": "Knowledge Base",
-            "desc": "Base de conhecimento com artigos de ajuda sincronizados do Help interno"
+            "desc": "Artigos de autoatendimento sincronizados bidirecionalmente com o help"
+          },
+          "tickets": {
+            "icon": "🎫",
+            "name": "Tickets",
+            "desc": "Sistema de suporte por tickets para acompanhamento de solicitações"
           },
           "chat": {
             "icon": "💬",
             "name": "Freshchat",
-            "desc": "Chat em tempo real com a equipe de suporte"
+            "desc": "Chat ao vivo integrado, identificado por token UUID"
           }
         },
         "config": {
-          "title": "Como configurar",
-          "step1": "Acesse Admin → Freshdesk",
-          "step2": "Ative os módulos desejados com o toggle",
-          "step3": "Preencha os campos obrigatórios (Widget ID, Token, URLs)",
-          "step4": "Clique em \"Salvar Freshdesk\""
+          "title": "Como Configurar",
+          "desc": "Acesse Admin → Configurações → seção 'Freshdesk — Suporte ao Cliente'. Para cada módulo:",
+          "step1": "Preencha o Domínio Freshworks (obtido na URL do seu painel Freshdesk)",
+          "step2": "Preencha a API Key (Avatar → Profile Settings → Your API Key)",
+          "step3": "Ative/desative cada módulo individualmente (Widget, KB, Tickets, Chat)",
+          "step4": "Para o Widget: cole o script de deploy — o widget_id é extraído automaticamente",
+          "step5": "Para o Chat: cole o script — o token UUID é extraído automaticamente"
         },
-        "auth": {
-          "title": "Identificação automática",
-          "desc": "Os módulos Widget e Freshchat podem identificar automaticamente o usuário logado. Quando ativado, o nome e e-mail do usuário são enviados ao Freshdesk, eliminando a necessidade de preencher dados ao abrir um ticket ou iniciar um chat."
+        "securityNote": {
+          "title": "Segurança",
+          "desc": "Para produção, defina FRESHDESK_API_KEY como variável de ambiente no servidor (Vercel). O campo da página admin serve como fallback para desenvolvimento."
         },
-        "tip": "Você pode colar o script de deploy inteiro do Freshworks — o sistema extrai automaticamente o Widget ID e o Chat Token!"
+        "tip": "Use a API Key de um agente Admin no Freshdesk para ter acesso completo à Knowledge Base e tickets."
       }
     },
     "faqLegal": {

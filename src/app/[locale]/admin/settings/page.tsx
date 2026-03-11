@@ -83,9 +83,7 @@ export default async function AdminSettingsPage() {
                         </div>
                         <div className="hidden sm:block h-6 w-px bg-gray-200 dark:bg-white/10" />
                         <Breadcrumb items={[
-                            { label: ta('breadcrumb.home'), href: '/' },
-                            { label: ta('breadcrumb.admin') },
-                            { label: ta('breadcrumb.settings') },
+                            { label: 'Configurações' },
                         ]} />
                     </div>
                     <div className="flex items-center gap-2">
