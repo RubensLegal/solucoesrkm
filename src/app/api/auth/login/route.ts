@@ -6,11 +6,17 @@
  * Sem cadastro público — user deve existir no banco.
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyPassword, signToken, setSession, type SessionPayload } from '@/lib/auth';
+import { rateLimit } from '@/infrastructure/security/rate-limiter';
 
-export async function POST(req: Request) {
+// 5 tentativas de login por minuto por IP (proteção contra brute force)
+const loginLimiter = rateLimit({ maxRequests: 5, windowMs: 60_000, prefix: 'login' });
+
+export async function POST(req: NextRequest) {
+    const limited = loginLimiter(req);
+    if (limited) return limited;
     try {
         const { email, password } = await req.json();
 
