@@ -1222,6 +1222,113 @@
         "warning": "The free Google Translate API may have usage limits. For high-volume production, consider using a paid API.",
         "tip": "Always edit in the primary language (Portuguese) and let the system automatically translate to the second language."
       }
+    },
+    "ecosystemArchitecture": {
+      "title": "Project Architecture",
+      "subtitle": "Folder structure, layers, and security patterns",
+      "content": {
+        "intro": "The project follows a layered architecture (Clean Architecture lite) to keep code organized, testable, and scalable. Each folder has a clear responsibility and well-defined dependency rules.",
+        "layers": {
+          "title": "Architecture Layers",
+          "items": [
+            {
+              "name": "shared/",
+              "icon": "🧩",
+              "desc": "Pure utility functions — no framework, database, or external API dependencies. E.g.: formatDate(), cn(), formatCurrency(). Any layer can import from shared/."
+            },
+            {
+              "name": "infrastructure/",
+              "icon": "🔌",
+              "desc": "External service integrations — database (Prisma/Turso), Google Cloud (Translate), security (rate limiter, API helpers), and environment variables."
+            },
+            {
+              "name": "domain/",
+              "icon": "💎",
+              "desc": "Pure business rules — authentication, permissions, validation schemas (Zod), help topic model. The 'heart' of the system: what the app DOES, regardless of implementation."
+            },
+            {
+              "name": "application/",
+              "icon": "⚙️",
+              "desc": "Use cases and services — orchestrates domain + infrastructure. Contains services (business logic) and actions (Next.js Server Actions). Organized by feature: house/, item/, admin/, etc."
+            },
+            {
+              "name": "app/",
+              "icon": "🖥️",
+              "desc": "Presentation layer — Next.js App Router with API routes, pages, and layouts."
+            },
+            {
+              "name": "components/",
+              "icon": "🎨",
+              "desc": "Reusable React components — UI primitives (Button, Input, Card), layout components (Sidebar, BottomNav), and feature components (HouseCard, ItemDetail)."
+            }
+          ]
+        },
+        "dependencyRules": {
+          "title": "Dependency Rules",
+          "description": "Layers follow a hierarchy: inner layers DO NOT know about outer layers.",
+          "rules": [
+            "shared/ → imports nothing (pure)",
+            "domain/ → can import shared/",
+            "infrastructure/ → can import shared/",
+            "application/ → can import domain/, infrastructure/, and shared/",
+            "app/ and components/ → can import everything"
+          ]
+        },
+        "folderStructure": {
+          "title": "Complete Folder Structure",
+          "tree": "src/\n├── shared/           ← utils puros\n│   ├── utils.ts\n│   ├── currency.ts\n│   └── markdown-to-html.ts\n├── infrastructure/   ← integrações\n│   ├── database/prisma.ts\n│   ├── google/translate.ts\n│   ├── env.ts\n│   └── security/\n│       ├── rate-limiter.ts\n│       └── api-helpers.ts\n├── domain/           ← regras de negócio\n│   ├── auth/auth.ts\n│   └── help/help-topics.ts\n├── application/      ← services + actions\n│   ├── admin/\n│   ├── freshdesk/\n│   └── help/\n├── app/              ← Next.js pages + API\n├── components/       ← React components\n└── lib/              ← re-exports"
+        },
+        "security": {
+          "title": "Security",
+          "items": [
+            {
+              "name": "Rate Limiting",
+              "desc": "Auth endpoints protected against brute force: login (5/min), register (3/min), forgot-password (3/min)."
+            },
+            {
+              "name": "Auth Guards",
+              "desc": "Reusable withAuth() and withRole() guards eliminate boilerplate. Located at infrastructure/security/api-helpers.ts."
+            },
+            {
+              "name": "OAuth CSRF Protection",
+              "desc": "Google OAuth flow saves state in httpOnly cookie and verifies on callback."
+            },
+            {
+              "name": "Standardized API Errors",
+              "desc": "All error responses follow { error: { code, message } } format. 500+ errors are auto-logged."
+            }
+          ]
+        },
+        "cicd": {
+          "title": "CI/CD Pipeline",
+          "description": "GitHub Actions runs automatically on every push or PR:",
+          "steps": [
+            "Type-check (tsc --noEmit)",
+            "Lint (next lint)",
+            "Build (next build)"
+          ],
+          "note": "Configure branch protection to block merges of failing PRs."
+        },
+        "monitoring": {
+          "title": "Monitoring",
+          "items": [
+            {
+              "name": "Health Check",
+              "desc": "GET /api/health — returns app status and DB connectivity. Use with Uptime Robot."
+            },
+            {
+              "name": "Error Logging",
+              "desc": "500+ errors auto-logged via apiError(). Consider Sentry for centralized tracking in production."
+            }
+          ]
+        },
+        "migration": {
+          "title": "Migration & Compatibility",
+          "description": "The restructuring used re-exports to avoid breaking any existing imports. Files in lib/, services/, and actions/ are now proxies.",
+          "example": "// Old import (still works via re-export)\nimport { cn } from '@/lib/utils';\n// New import (preferred)\nimport { cn } from '@/shared/utils';",
+          "note": "Gradually migrate imports to new paths and remove re-exports."
+        }
+      }
     }
   }
 }

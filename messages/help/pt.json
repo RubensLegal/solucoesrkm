@@ -1222,6 +1222,113 @@
         "warning": "A API gratuita do Google Translate pode ter limites de uso. Para produção de alto volume, considere usar uma API paga.",
         "tip": "Edite sempre no idioma principal (português) e deixe o sistema traduzir automaticamente para o segundo idioma."
       }
+    },
+    "ecosystemArchitecture": {
+      "title": "Arquitetura do Projeto",
+      "subtitle": "Estrutura de pastas, camadas e padrões de segurança",
+      "content": {
+        "intro": "O projeto segue uma arquitetura em camadas (Clean Architecture lite) para manter o código organizado, testável e escalável. Cada pasta tem uma responsabilidade clara e regras de dependência bem definidas.",
+        "layers": {
+          "title": "Camadas da Arquitetura",
+          "items": [
+            {
+              "name": "shared/",
+              "icon": "🧩",
+              "desc": "Funções utilitárias puras — sem dependência de framework, banco de dados ou API externa. Ex: formatDate(), cn(), formatCurrency(). Qualquer camada pode importar de shared/."
+            },
+            {
+              "name": "infrastructure/",
+              "icon": "🔌",
+              "desc": "Integrações com serviços externos — banco de dados (Prisma/Turso), Google Cloud (Translate), segurança (rate limiter, API helpers) e variáveis de ambiente."
+            },
+            {
+              "name": "domain/",
+              "icon": "💎",
+              "desc": "Regras de negócio puras — autenticação, permissões, schemas de validação (Zod), modelo de tópicos de ajuda. É o 'coração' do sistema: o que o app FAZ, independente de como é implementado."
+            },
+            {
+              "name": "application/",
+              "icon": "⚙️",
+              "desc": "Casos de uso e serviços — orquestra domain + infrastructure. Contém services (lógica de negócio) e actions (Server Actions do Next.js). Organizado por feature: house/, item/, admin/, etc."
+            },
+            {
+              "name": "app/",
+              "icon": "🖥️",
+              "desc": "Camada de apresentação — Next.js App Router com rotas de API, páginas e layouts. Aqui ficam os route handlers e componentes de página."
+            },
+            {
+              "name": "components/",
+              "icon": "🎨",
+              "desc": "Componentes React reutilizáveis — UI primitivos (Button, Input, Card), componentes de layout (Sidebar, BottomNav) e componentes de feature (HouseCard, ItemDetail)."
+            }
+          ]
+        },
+        "dependencyRules": {
+          "title": "Regras de Dependência",
+          "description": "As camadas seguem uma hierarquia: camadas internas NÃO conhecem camadas externas.",
+          "rules": [
+            "shared/ → não importa nada (puro)",
+            "domain/ → pode importar shared/",
+            "infrastructure/ → pode importar shared/",
+            "application/ → pode importar domain/, infrastructure/ e shared/",
+            "app/ e components/ → podem importar tudo"
+          ]
+        },
+        "folderStructure": {
+          "title": "Estrutura de Pastas Completa",
+          "tree": "src/\n├── shared/           ← utils puros\n│   ├── utils.ts\n│   ├── currency.ts\n│   └── markdown-to-html.ts\n├── infrastructure/   ← integrações\n│   ├── database/prisma.ts\n│   ├── google/translate.ts\n│   ├── env.ts\n│   └── security/\n│       ├── rate-limiter.ts\n│       └── api-helpers.ts\n├── domain/           ← regras de negócio\n│   ├── auth/auth.ts\n│   └── help/help-topics.ts\n├── application/      ← services + actions\n│   ├── admin/\n│   ├── freshdesk/\n│   └── help/\n├── app/              ← Next.js pages + API\n├── components/       ← React components\n└── lib/              ← re-exports"
+        },
+        "security": {
+          "title": "Segurança",
+          "items": [
+            {
+              "name": "Rate Limiting",
+              "desc": "Endpoints de autenticação são protegidos contra brute force: login (5/min), register (3/min), forgot-password (3/min). Implementado em infrastructure/security/rate-limiter.ts."
+            },
+            {
+              "name": "Auth Guards",
+              "desc": "Dois guards reutilizáveis em infrastructure/security/api-helpers.ts: withAuth() (verifica sessão) e withRole(['SUPERADMIN', 'ADMIN']) (verifica permissão). Eliminam boilerplate de getSession() em cada rota."
+            },
+            {
+              "name": "OAuth CSRF Protection",
+              "desc": "O fluxo Google OAuth salva um state em cookie httpOnly e verifica no callback, prevenindo ataques de Cross-Site Request Forgery."
+            },
+            {
+              "name": "API Errors Padronizados",
+              "desc": "Todas as respostas de erro seguem o formato { error: { code, message } }. Erros 500+ são logados automaticamente com prefixo [API_ERROR] para debugging."
+            }
+          ]
+        },
+        "cicd": {
+          "title": "CI/CD Pipeline",
+          "description": "O projeto usa GitHub Actions para integração contínua. A cada push ou PR, roda automaticamente:",
+          "steps": [
+            "Type-check (tsc --noEmit) — verifica erros de TypeScript",
+            "Lint (next lint) — verifica padrões de código ESLint",
+            "Build (next build) — compila o projeto como faria o Vercel"
+          ],
+          "note": "Se qualquer etapa falhar, o ícone fica vermelho ❌ no GitHub. Configure 'branch protection' para bloquear merges de PRs com falhas."
+        },
+        "monitoring": {
+          "title": "Monitoramento",
+          "items": [
+            {
+              "name": "Health Check",
+              "desc": "GET /api/health — retorna status do app e conectividade com o banco. Use com Uptime Robot ou similar para ser alertado quando o app cair."
+            },
+            {
+              "name": "Error Logging",
+              "desc": "Erros 500+ são logados automaticamente via apiError() com código, mensagem e stack trace (apenas em dev). Em produção, considere integrar Sentry para tracking centralizado."
+            }
+          ]
+        },
+        "migration": {
+          "title": "Migração e Compatibilidade",
+          "description": "A reestruturação usou re-exports para não quebrar nenhum import existente. Os arquivos em lib/, services/ e actions/ agora são proxies que apontam para os novos locais. Exemplo:",
+          "example": "// lib/utils.ts (arquivo antigo — agora é re-export)\n/** @deprecated Mova para '@/shared/utils' */\nexport * from '@/shared/utils';\n\n// Imports antigos continuam funcionando:\nimport { cn } from '@/lib/utils';     // ← OK (via re-export)\nimport { cn } from '@/shared/utils';  // ← OK (direto, preferível)",
+          "note": "Com o tempo, migre seus imports para os novos caminhos (@/shared/, @/domain/, etc.) e remova os re-exports."
+        }
+      }
     }
   }
 }
