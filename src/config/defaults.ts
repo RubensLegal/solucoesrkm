@@ -31,5 +31,7 @@ export const DEFAULT_LANDING_CONFIG: LandingPageConfig = {
         exportData: 'Exporte seus dados para backup ou análise',
         consolidation: 'Organize e mova itens entre cômodos e casas',
         aiAssistant: 'Assistente inteligente que ajuda a organizar e encontrar itens',
+        notifications: 'Tipo de notificações disponíveis no seu plano',
+        support: 'Nível de suporte técnico incluído no seu plano',
     },
 };

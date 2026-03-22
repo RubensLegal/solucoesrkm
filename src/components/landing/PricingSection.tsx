@@ -32,6 +32,8 @@ const DEFAULT_TOOLTIPS: Record<string, { pt: string; en: string }> = {
     exportData:            { pt: 'Exporte seus dados para backup ou análise', en: 'Export your data for backup or analysis' },
     consolidation:         { pt: 'Organize e mova itens entre cômodos e casas', en: 'Organize and move items between rooms and homes' },
     aiAssistant:           { pt: 'Assistente inteligente que ajuda a organizar e encontrar itens', en: 'Smart assistant that helps organize and find items' },
+    notifications:         { pt: 'Tipo de notificações disponíveis no seu plano', en: 'Type of notifications available in your plan' },
+    support:               { pt: 'Nível de suporte técnico incluído no seu plano', en: 'Level of technical support included in your plan' },
 };
 
 /** Tooltip lookup: DB value (admin) → hardcoded default → null */

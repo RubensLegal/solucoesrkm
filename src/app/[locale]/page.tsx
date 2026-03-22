@@ -113,6 +113,16 @@ async function fetchPricing(t: any): Promise<PricingParams[]> {
                 if (lim.consolidation) booleanFeatures.push({ key: 'consolidation', text: 'Consolidação/Mudança' });
                 if (lim.aiAssistant) booleanFeatures.push({ key: 'aiAssistant', text: 'Assistente IA 🤖' });
 
+                // String-type features (always present, vary by plan)
+                if (lim.notifications) {
+                    const notifText = lim.notifications === 'full' ? 'Notificações completas' : 'Notificações básicas';
+                    booleanFeatures.push({ key: 'notifications', text: notifText });
+                }
+                if (lim.support) {
+                    const supportText = lim.support === 'priority' ? 'Suporte prioritário' : lim.support === 'email' ? 'Suporte e-mail' : 'Suporte comunidade';
+                    booleanFeatures.push({ key: 'support', text: supportText });
+                }
+
                 // Trial plan: todas as features incluídas, sem excluded
                 const isTrial = key === 'trial';
                 const excludedFeatures: { key: string; text: string }[] = [];
@@ -123,6 +133,7 @@ async function fetchPricing(t: any): Promise<PricingParams[]> {
                     if (!lim.exportData) excludedFeatures.push({ key: 'exportData', text: 'Exportação de dados' });
                     if (!lim.consolidation) excludedFeatures.push({ key: 'consolidation', text: 'Consolidação/Mudança' });
                     if (!lim.aiAssistant) excludedFeatures.push({ key: 'aiAssistant', text: 'Assistente IA 🤖' });
+                    // notifications and support are always included (never excluded — they have a value for every plan)
                 }
 
                 // Determine button text and link

@@ -62,6 +62,8 @@ const siteConfigSchema = z.object({
         exportData: z.string().optional(),
         consolidation: z.string().optional(),
         aiAssistant: z.string().optional(),
+        notifications: z.string().optional(),
+        support: z.string().optional(),
     }).optional(),
 });
 
@@ -612,6 +614,7 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                                         'items', 'visionAi', 'houses', 'roomsPerHouse', 'furniturePerRoom',
                                         'photosPerItem', 'collaboratorsPerHouse', 'history', 'ranking',
                                         'importExcel', 'exportData', 'consolidation', 'aiAssistant',
+                                        'notifications', 'support',
                                     ] as const).map((key) => (
                                         <FormField
                                             key={key}
