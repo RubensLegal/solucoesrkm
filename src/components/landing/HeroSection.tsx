@@ -25,28 +25,28 @@ export function HeroSection({ title, subtitle, image, badgeNew, badgeOriginal, c
         <section className="relative w-full flex items-center justify-start px-4 md:px-12 pt-24 pb-48 md:min-h-[90vh]" style={{ minHeight: 'max(80vh, 560px)' }}>
             {/* Animated Gradient Mesh Background */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                {/* Background Image */}
+                {/* Background Image — uses image prop from config */}
                 <div
                     className="absolute inset-0 bg-cover bg-center transition-all duration-700 animate-scale-in"
-                    style={{ backgroundImage: "url('/hero-bg.png')" }}
+                    style={{ backgroundImage: `url('${image}')` }}
                 />
 
                 {/* Floating orbs overlay */}
                 <div
                     className="absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full animate-float opacity-20"
-                    style={{ background: 'radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%)' }}
+                    style={{ background: 'var(--landing-orb-indigo)' }}
                 />
                 <div
                     className="absolute top-1/3 right-0 w-[600px] h-[600px] rounded-full animate-pulse-glow opacity-15"
                     style={{
-                        background: 'radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%)',
+                        background: 'var(--landing-orb-purple)',
                         animationDelay: '2s',
                     }}
                 />
 
                 {/* Gradient overlays for legibility */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a1a] via-[#0a0a1a]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-primary)] via-[var(--color-bg-primary)]/30 to-transparent" />
             </div>
 
             {/* Content */}
@@ -63,11 +63,7 @@ export function HeroSection({ title, subtitle, image, badgeNew, badgeOriginal, c
 
                 {/* Title */}
                 <div className="flex flex-col items-start space-y-5">
-                    <h1 className="text-7xl md:text-9xl font-extrabold leading-[1.05]" style={{
-                        background: 'linear-gradient(135deg, rgb(129, 140, 248) 0%, rgb(168, 85, 247) 50%, rgb(236, 72, 153) 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}>
+                    <h1 className="text-7xl md:text-9xl font-extrabold leading-[1.05] landing-title-gradient">
                         {title.startsWith('S') ? (
                             <span className="inline-flex items-baseline">
                                 <img
@@ -90,9 +86,7 @@ export function HeroSection({ title, subtitle, image, badgeNew, badgeOriginal, c
                     <a
                         href={`${appUrl}/register`}
                         className="group flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold text-lg text-white transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/25"
-                        style={{
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
-                        }}
+                        style={{ background: 'var(--landing-gradient-cta)' }}
                     >
                         <Sparkles className="w-5 h-5" />
                         {ctaPrimary}
@@ -108,7 +102,7 @@ export function HeroSection({ title, subtitle, image, badgeNew, badgeOriginal, c
             <div
                 className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03]"
                 style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                    backgroundImage: `linear-gradient(var(--landing-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--landing-grid-line) 1px, transparent 1px)`,
                     backgroundSize: '60px 60px',
                 }}
             />

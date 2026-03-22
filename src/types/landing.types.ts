@@ -15,14 +15,23 @@ export interface FooterLinkItem {
     href: string;
 }
 
+/** Feature individual de um plano de pricing. */
+export interface PricingFeature {
+    /** Chave da feature (ex: 'items', 'visionAi', 'roomsPerHouse') */
+    key: string;
+    /** Texto de exibição (ex: '50 Itens', 'Histórico de uso') */
+    text: string;
+}
+
 /** Parâmetros de um plano de pricing. */
 export interface PricingParams {
     name: string;
     price: string;
     description: string;
-    features: string[];
-    excludedFeatures?: string[];
+    features: PricingFeature[];
+    excludedFeatures?: PricingFeature[];
     isPopular: boolean;
+    isTrial?: boolean;
     buttonText: string;
     buttonLink: string;
 }
@@ -74,4 +83,7 @@ export interface LandingPageConfig {
     testimonials?: TestimonialItem[];
     faq?: FAQItem[];
     footerLinks?: FooterLinkItem[];
+
+    // Tooltips das features de pricing
+    featureTooltips?: Record<string, string>;
 }

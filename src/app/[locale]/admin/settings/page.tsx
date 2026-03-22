@@ -147,6 +147,7 @@ export default async function AdminSettingsPage() {
                     subtitle={ta('visibility.subtitle')}
                     icon={<LayoutList className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-amber-500 to-orange-600"
+                    defaultOpen={false}
                 >
                     <PricingVisibilityForm plansConfig={plansConfig} canEdit={isCanEdit} initialVisibility={pricingVisibility} history={pricingVisibilityHistory} />
                 </CollapsibleSection>
@@ -157,6 +158,7 @@ export default async function AdminSettingsPage() {
                     subtitle={ta('plans.subtitle')}
                     icon={<CreditCard className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-violet-500 to-purple-600"
+                    defaultOpen={false}
                 >
                     <div className="space-y-4">
                         <div className="p-6 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
@@ -190,6 +192,7 @@ export default async function AdminSettingsPage() {
                     subtitle={ta('apiKeys.subtitle')}
                     icon={<Key className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-blue-500 to-cyan-600"
+                    defaultOpen={false}
                 >
                     <ApiKeysForm canEdit={isCanEdit} history={apiKeysHistory} />
                 </CollapsibleSection>
@@ -200,6 +203,7 @@ export default async function AdminSettingsPage() {
                     subtitle={ta('freshdesk.subtitle')}
                     icon={<Headset className="w-4 h-4 text-white" />}
                     iconBg="bg-gradient-to-br from-indigo-500 to-purple-600"
+                    defaultOpen={false}
                 >
                     <FreshdeskConfigForm initialData={freshdeskConfig} canEdit={isCanEdit} history={freshdeskHistory} />
                 </CollapsibleSection>
@@ -211,6 +215,7 @@ export default async function AdminSettingsPage() {
                         subtitle="Sincronize FAQ, Termos, Privacidade, Legal e Cookies com a Knowledge Base."
                         icon={<RefreshCw className="w-4 h-4 text-white" />}
                         iconBg="bg-gradient-to-br from-emerald-500 to-teal-600"
+                        defaultOpen={false}
                     >
                         <FreshdeskSyncButton />
                     </CollapsibleSection>

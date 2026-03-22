@@ -186,8 +186,13 @@ export async function updateSiteSettings(key: string, value: any) {
             });
         }
 
+        // Revalidar landing pages em todos os locales + admin
         revalidatePath('/');
+        revalidatePath('/pt');
+        revalidatePath('/en');
         revalidatePath('/admin/settings');
+        revalidatePath('/pt/admin/settings');
+        revalidatePath('/en/admin/settings');
         return { success: true, changesCount: changes.length };
     } catch (error) {
         console.error(`[SiteSettings] Failed to update key="${key}":`, error);

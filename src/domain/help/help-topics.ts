@@ -1,6 +1,6 @@
 import {
     CreditCard, Shield, FileCheck, ShieldCheck, Settings, RefreshCw, BookOpen,
-    Code, Terminal, Database, Globe, Rocket, Languages,
+    Code, Terminal, Database, Globe, Rocket, Languages, BarChart3,
     type LucideIcon,
 } from 'lucide-react';
 
@@ -56,6 +56,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
             { slug: 'dev-api', icon: Globe, translationKey: 'devApi', superadminOnly: true },
             { slug: 'dev-deploy', icon: Rocket, translationKey: 'devDeploy', superadminOnly: true },
             { slug: 'auto-translation', icon: Languages, translationKey: 'autoTranslation', superadminOnly: true },
+            { slug: 'pricing-flow', icon: BarChart3, translationKey: 'pricingFlow', superadminOnly: true },
         ],
     },
 ];

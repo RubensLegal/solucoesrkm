@@ -62,6 +62,72 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+
+  /* ═══ Landing Page Design Tokens ═══ */
+
+  /* ─── Gradients ─── */
+  --landing-gradient-title: linear-gradient(135deg, rgb(129, 140, 248) 0%, rgb(168, 85, 247) 50%, rgb(236, 72, 153) 100%);
+  --landing-gradient-text: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  --landing-gradient-logo: linear-gradient(135deg, rgb(129, 140, 248), rgb(168, 85, 247));
+  --landing-gradient-cta: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --landing-gradient-popular: linear-gradient(135deg, #f59e0b, #f97316);
+  --landing-gradient-page: linear-gradient(180deg, #0a0a1a 0%, #0d0d24 20%, #0a0a1a 40%, #080816 100%);
+
+  /* ─── Card Surfaces ─── */
+  --landing-card-bg: linear-gradient(135deg, rgba(20, 20, 40, 0.8), rgba(15, 15, 30, 0.9));
+  --landing-card-bg-active: linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(20, 20, 50, 0.95));
+  --landing-card-border: rgba(255, 255, 255, 0.06);
+  --landing-card-border-active: rgba(99, 102, 241, 0.4);
+  --landing-card-hover-glow: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+
+  /* ─── Section Backgrounds ─── */
+  --landing-header-bg: rgba(10, 10, 20, 0.6);
+  --landing-testimonial-bg: #141414;
+  --landing-testimonial-card-bg: #1c1c1c;
+  --landing-cta-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(88, 28, 135, 0.2) 50%, rgba(15, 15, 30, 0.9) 100%);
+  --landing-cta-border: rgba(99, 102, 241, 0.2);
+  --landing-footer-gradient: linear-gradient(180deg, transparent 0%, rgba(10, 10, 20, 0.8) 30%, rgba(5, 5, 15, 1) 100%);
+  --landing-divider: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+
+  /* ─── Decorative Orbs ─── */
+  --landing-orb-indigo: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+  --landing-orb-purple: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%);
+  --landing-orb-cta-indigo: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent);
+  --landing-orb-cta-purple: radial-gradient(circle, rgba(168, 85, 247, 0.15), transparent);
+
+  /* ─── Feature Row Icon Box ─── */
+  --landing-icon-box-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+  --landing-icon-box-border: rgba(99, 102, 241, 0.3);
+
+  /* ─── FAQ ─── */
+  --landing-faq-bg: rgba(20, 20, 30, 0.6);
+  --landing-faq-border: rgba(255, 255, 255, 0.05);
+
+  /* ─── Accent Colors ─── */
+  --landing-badge-text: #c4b5fd;
+  --landing-disclaimer-bg: rgba(245, 158, 11, 0.08);
+  --landing-disclaimer-border: rgba(245, 158, 11, 0.2);
+  --landing-grid-line: rgba(255, 255, 255, 0.1);
+}
+
+/* ═══ Landing Utility Classes ═══ */
+
+.landing-text-gradient {
+  background: var(--landing-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.landing-title-gradient {
+  background: var(--landing-gradient-title);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.landing-logo-gradient {
+  background: var(--landing-gradient-logo);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 body {
@@ -70,14 +136,13 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Light theme defaults */
-.light body,
-body:not(.dark *) {
-  background: #0a0a0a;
-  color: #ffffff;
+/* Light theme */
+.light body {
+  background: #f9fafb;
+  color: #111827;
 }
 
-/* Dark theme (landing page + admin) — default behavior */
+/* Dark theme (landing page + admin) */
 .dark body {
   background: #0a0a0a;
   color: #ffffff;

@@ -61,7 +61,7 @@ interface Props {
 /* ─── Feature keys ──────────────────────────────────────────── */
 
 const NUMERIC_KEYS = ['items', 'visionAi', 'houses', 'roomsPerHouse', 'furniturePerRoom', 'photosPerItem', 'collaboratorsPerHouse'] as const;
-const BOOLEAN_KEYS = ['history', 'ranking', 'importExcel', 'exportData', 'consolidation'] as const;
+const BOOLEAN_KEYS = ['history', 'ranking', 'importExcel', 'exportData', 'consolidation', 'aiAssistant'] as const;
 
 /* ─── Defaults ──────────────────────────────────────────────── */
 

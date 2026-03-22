@@ -11,17 +11,18 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
-    FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { updateSiteSettings } from '@/actions/site-settings.actions';
 import { useState, useRef, useTransition } from 'react';
 import { toast } from 'sonner';
 import { LandingPageConfig } from '@/config/landing.config';
-import { Plus, Trash2, Eye, EyeOff, Save, Shield, ExternalLink, CreditCard, Loader2 } from 'lucide-react';
+import {
+    Plus, Trash2, Eye, EyeOff, Save, Shield, ExternalLink,
+    Loader2, ChevronDown, ChevronUp, Image, Layout, Type,
+    Megaphone, MessageSquareQuote, HelpCircle, Link2, MessageCircle,
+} from 'lucide-react';
 import { ChangeHistory } from '@/components/admin/ChangeHistory';
 import type { SettingsHistoryEntry } from '@/actions/site-settings.actions';
 
@@ -47,11 +48,24 @@ const siteConfigSchema = z.object({
     faq: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
     footerLinks: z.array(z.object({ label: z.string(), href: z.string() })).optional(),
     testimonials: z.array(z.object({ name: z.string(), role: z.string(), content: z.string() })).optional(),
+    featureTooltips: z.object({
+        items: z.string().optional(),
+        visionAi: z.string().optional(),
+        houses: z.string().optional(),
+        roomsPerHouse: z.string().optional(),
+        furniturePerRoom: z.string().optional(),
+        photosPerItem: z.string().optional(),
+        collaboratorsPerHouse: z.string().optional(),
+        history: z.string().optional(),
+        ranking: z.string().optional(),
+        importExcel: z.string().optional(),
+        exportData: z.string().optional(),
+        consolidation: z.string().optional(),
+        aiAssistant: z.string().optional(),
+    }).optional(),
 });
 
 type SiteConfigValues = z.infer<typeof siteConfigSchema>;
-
-
 
 interface SiteConfigFormProps {
     initialData: LandingPageConfig;
@@ -93,21 +107,63 @@ function ToggleSwitch({ label, checked, onChange, disabled }: {
     );
 }
 
-/* ───────────────── Section Card ─────────────────── */
+/* ───────────────── Field Group (Freshdesk pattern) ────────────────── */
 
-function SectionCard({ title, description, children, className = '' }: {
-    title: string; description?: string; children: React.ReactNode; className?: string;
+function FieldGroup({ label, hint, children }: {
+    label: string; hint?: string; children: React.ReactNode;
 }) {
     return (
-        <Card className={`border-gray-200 dark:border-white/5 shadow-sm dark:shadow-lg dark:shadow-black/20 overflow-hidden ${className}`}>
-            <CardHeader className="pb-4">
-                <CardTitle className="text-base font-semibold text-gray-900 dark:text-white">{title}</CardTitle>
-                {description && <CardDescription className="text-xs text-gray-500">{description}</CardDescription>}
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {children}
-            </CardContent>
-        </Card>
+        <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-900 dark:text-white">{label}</label>
+            {children}
+            {hint && <p className="text-xs text-gray-500">{hint}</p>}
+        </div>
+    );
+}
+
+/* ───────────────── Module Section (Freshdesk pattern) ────────────────── */
+
+function ModuleSection({ title, description, icon, children, defaultExpanded = true }: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
+    defaultExpanded?: boolean;
+}) {
+    const [expanded, setExpanded] = useState(defaultExpanded);
+
+    return (
+        <div className="border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden transition-all bg-white dark:bg-white/[0.01]">
+            {/* Header */}
+            <div
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                onClick={() => setExpanded(!expanded)}
+            >
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400">
+                        {icon}
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h4>
+                        <p className="text-[11px] text-gray-500">{description}</p>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
+                >
+                    {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+            </div>
+
+            {/* Content */}
+            {expanded && (
+                <div className="px-4 pb-4 space-y-4 border-t border-gray-100 dark:border-white/5 pt-4">
+                    {children}
+                </div>
+            )}
+        </div>
     );
 }
 
@@ -167,6 +223,21 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
             faq: initialData?.faq || [],
             footerLinks: initialData?.footerLinks || [],
             testimonials: initialData?.testimonials || [],
+            featureTooltips: {
+                items: initialData?.featureTooltips?.items || '',
+                visionAi: initialData?.featureTooltips?.visionAi || '',
+                houses: initialData?.featureTooltips?.houses || '',
+                roomsPerHouse: initialData?.featureTooltips?.roomsPerHouse || '',
+                furniturePerRoom: initialData?.featureTooltips?.furniturePerRoom || '',
+                photosPerItem: initialData?.featureTooltips?.photosPerItem || '',
+                collaboratorsPerHouse: initialData?.featureTooltips?.collaboratorsPerHouse || '',
+                history: initialData?.featureTooltips?.history || '',
+                ranking: initialData?.featureTooltips?.ranking || '',
+                importExcel: initialData?.featureTooltips?.importExcel || '',
+                exportData: initialData?.featureTooltips?.exportData || '',
+                consolidation: initialData?.featureTooltips?.consolidation || '',
+                aiAssistant: initialData?.featureTooltips?.aiAssistant || '',
+            },
         },
     });
 
@@ -218,7 +289,6 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
             const result = await res.json();
 
             if (res.ok && result.success) {
-                // Collect any per-field errors
                 const newErrors: Record<string, string> = {};
                 let errorCount = 0;
 
@@ -270,12 +340,9 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
         if (!canEdit) return;
         startTransition(async () => {
             try {
-                // Save with locale-specific key
                 const key = `landing_page_config_${currentLocale}`;
                 await updateSiteSettings(key, data);
                 toast.success(t('save') + ' ✓');
-
-                // Auto-translate changed fields to other locale
                 autoTranslate(data);
             } catch (error) {
                 toast.error('Erro ao salvar configurações.');
@@ -284,190 +351,199 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
         });
     }
 
-    /* ── Responsive grid: <1200 = 1col, 1200-1500 = 2col, >1500 = 3col ── */
-    const gridClass = 'columns-1 min-[1200px]:columns-2 min-[1500px]:columns-3 gap-6 [column-rule:1px_solid_rgba(255,255,255,0.07)]';
-
     return (
         <>
             <Form {...form}>
                 <fieldset disabled={!canEdit} className="group">
                     <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <div className="space-y-6">
 
+                            {/* ── Visibilidade das Seções ── */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                                <ToggleSwitch
+                                    label={t('toggleFeatures')}
+                                    checked={form.watch('showFeatures') ?? true}
+                                    onChange={(v) => form.setValue('showFeatures', v)}
+                                    disabled={!canEdit}
+                                />
+                                <ToggleSwitch
+                                    label={t('toggleTechnology')}
+                                    checked={form.watch('showTechnology') ?? true}
+                                    onChange={(v) => form.setValue('showTechnology', v)}
+                                    disabled={!canEdit}
+                                />
+                                <ToggleSwitch
+                                    label={t('toggleTestimonials')}
+                                    checked={form.watch('showTestimonials') ?? false}
+                                    onChange={(v) => form.setValue('showTestimonials', v)}
+                                    disabled={!canEdit}
+                                />
+                                <ToggleSwitch
+                                    label={t('togglePricing')}
+                                    checked={form.watch('showPricing') ?? false}
+                                    onChange={(v) => form.setValue('showPricing', v)}
+                                    disabled={!canEdit}
+                                />
+                                <ToggleSwitch
+                                    label={t('toggleFaq')}
+                                    checked={form.watch('showFaq') ?? true}
+                                    onChange={(v) => form.setValue('showFaq', v)}
+                                    disabled={!canEdit}
+                                />
+                            </div>
 
-                        <div className={gridClass}>
+                            <div className="border-t border-gray-200 dark:border-white/5" />
 
-                            {/* ═══ Col 1: Hero + CTA ═══ */}
-                            <SectionCard title={t('hero')} description={t('heroDesc')} className="break-inside-avoid mb-6">
+                            {/* ── 1. Hero (Principal) ── */}
+                            <ModuleSection
+                                title={t('hero')}
+                                description={t('heroDesc')}
+                                icon={<Image className="w-4.5 h-4.5" />}
+                            >
                                 <FormField control={form.control} name="heroTitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('heroTitle')}</FormLabel>
-                                        <FormControl><Input placeholder="Ex: Soluções RKM" {...field} /></FormControl>
-                                        <FormMessage />
+                                        <FieldGroup label={t('heroTitle')}>
+                                            <FormControl><Input placeholder="Ex: Soluções RKM" {...field} /></FormControl>
+                                        </FieldGroup>
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="heroSubtitle" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('heroSubtitle')}</FormLabel>
-                                        <FormControl><Textarea rows={3} {...field} /></FormControl>
-                                        <FormMessage />
+                                        <FieldGroup label={t('heroSubtitle')}>
+                                            <FormControl><Textarea rows={3} {...field} /></FormControl>
+                                        </FieldGroup>
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="heroImage" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('heroImageUrl')}</FormLabel>
-                                        <FormControl><Input placeholder="/hero-bg.jpg" {...field} /></FormControl>
-                                        <FormMessage />
+                                        <FieldGroup label={t('heroImageUrl')} hint="Caminho relativo ou URL absoluta da imagem">
+                                            <FormControl><Input placeholder="/hero-bg.png" {...field} /></FormControl>
+                                        </FieldGroup>
                                     </FormItem>
                                 )} />
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-4">
                                     <FormField control={form.control} name="ctaPrimaryText" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('ctaPrimaryText')}</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
+                                            <FieldGroup label={t('ctaPrimaryText')}>
+                                                <FormControl><Input {...field} /></FormControl>
+                                            </FieldGroup>
                                         </FormItem>
                                     )} />
                                     <FormField control={form.control} name="ctaPrimaryLink" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('ctaPrimaryLink')}</FormLabel>
-                                            <FormControl><Input placeholder="/register" {...field} /></FormControl>
+                                            <FieldGroup label={t('ctaPrimaryLink')}>
+                                                <FormControl><Input placeholder="/register" {...field} /></FormControl>
+                                            </FieldGroup>
                                         </FormItem>
                                     )} />
                                 </div>
-                            </SectionCard>
+                            </ModuleSection>
 
-                            {/* ═══ Col 2: Visibilidade + Títulos + Footer CTA ═══ */}
-                            <div className="space-y-6 break-inside-avoid mb-6">
-                                <SectionCard title={t('visibility')} description={t('sections')}>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                        <ToggleSwitch
-                                            label={t('toggleFeatures')}
-                                            checked={form.watch('showFeatures') ?? true}
-                                            onChange={(v) => form.setValue('showFeatures', v)}
-                                            disabled={!canEdit}
-                                        />
-                                        <ToggleSwitch
-                                            label={t('toggleTechnology')}
-                                            checked={form.watch('showTechnology') ?? true}
-                                            onChange={(v) => form.setValue('showTechnology', v)}
-                                            disabled={!canEdit}
-                                        />
-                                        <ToggleSwitch
-                                            label={t('toggleTestimonials')}
-                                            checked={form.watch('showTestimonials') ?? false}
-                                            onChange={(v) => form.setValue('showTestimonials', v)}
-                                            disabled={!canEdit}
-                                        />
-                                        <ToggleSwitch
-                                            label={t('togglePricing')}
-                                            checked={form.watch('showPricing') ?? false}
-                                            onChange={(v) => form.setValue('showPricing', v)}
-                                            disabled={!canEdit}
-                                        />
-                                        <ToggleSwitch
-                                            label={t('toggleFaq')}
-                                            checked={form.watch('showFaq') ?? true}
-                                            onChange={(v) => form.setValue('showFaq', v)}
-                                            disabled={!canEdit}
-                                        />
-                                    </div>
-                                </SectionCard>
+                            {/* ── 2. Títulos das Seções ── */}
+                            <ModuleSection
+                                title={t('sectionTitles')}
+                                description="Títulos personalizados das seções da landing"
+                                icon={<Type className="w-4.5 h-4.5" />}
+                                defaultExpanded={false}
+                            >
+                                <FormField control={form.control} name="featuresTitle" render={({ field }) => (
+                                    <FormItem>
+                                        <FieldGroup label={t('features')}>
+                                            <FormControl><Input {...field} /></FormControl>
+                                        </FieldGroup>
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="techTitle" render={({ field }) => (
+                                    <FormItem>
+                                        <FieldGroup label={t('technology')}>
+                                            <FormControl><Input {...field} /></FormControl>
+                                        </FieldGroup>
+                                    </FormItem>
+                                )} />
+                            </ModuleSection>
 
-                                <SectionCard title={t('sectionTitles')}>
-                                    <FormField control={form.control} name="featuresTitle" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('features')}</FormLabel>
+                            {/* ── 3. CTA (Call to Action) ── */}
+                            <ModuleSection
+                                title={t('cta')}
+                                description={t('ctaDesc')}
+                                icon={<Megaphone className="w-4.5 h-4.5" />}
+                                defaultExpanded={false}
+                            >
+                                <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
+                                    <FormItem>
+                                        <FieldGroup label={t('ctaTitle')}>
                                             <FormControl><Input {...field} /></FormControl>
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="techTitle" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('technology')}</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
-                                        </FormItem>
-                                    )} />
-                                </SectionCard>
-
-                                <SectionCard title={t('cta')} description={t('ctaDesc')}>
-                                    <FormField control={form.control} name="footerCtaTitle" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('ctaTitle')}</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('ctaSubtitle')}</FormLabel>
+                                        </FieldGroup>
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="footerCtaSubtitle" render={({ field }) => (
+                                    <FormItem>
+                                        <FieldGroup label={t('ctaSubtitle')}>
                                             <FormControl><Textarea rows={2} {...field} /></FormControl>
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('ctaButton')}</FormLabel>
+                                        </FieldGroup>
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="footerCtaButton" render={({ field }) => (
+                                    <FormItem>
+                                        <FieldGroup label={t('ctaButton')}>
                                             <FormControl><Input {...field} /></FormControl>
-                                        </FormItem>
-                                    )} />
-                                </SectionCard>
-                            </div>
+                                        </FieldGroup>
+                                    </FormItem>
+                                )} />
+                            </ModuleSection>
 
-                            {/* ═══ Col 3: Depoimentos + Planos ═══ */}
-                            <div className="space-y-6 break-inside-avoid mb-6">
-                                <SectionCard title={t('testimonials')} description={t('testimonialsDesc')}>
-                                    {testimonialFields.map((item, index) => (
-                                        <div key={item.id} className="border border-gray-200 dark:border-white/5 p-4 rounded-lg bg-gray-50 dark:bg-white/[0.02] space-y-3">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-xs font-medium text-gray-400">#{index + 1}</span>
-                                                <Button type="button" variant="ghost" size="icon" onClick={() => removeTestimonial(index)}>
-                                                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                                                </Button>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <FormField control={form.control} name={`testimonials.${index}.name`} render={({ field }) => (
-                                                    <FormItem><FormLabel>{t('name')}</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                                                )} />
-                                                <FormField control={form.control} name={`testimonials.${index}.role`} render={({ field }) => (
-                                                    <FormItem><FormLabel>{t('role')}</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
-                                                )} />
-                                            </div>
-                                            <FormField control={form.control} name={`testimonials.${index}.content`} render={({ field }) => (
-                                                <FormItem><FormLabel>{t('comment')}</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl></FormItem>
+                            {/* ── 4. Depoimentos ── */}
+                            <ModuleSection
+                                title={t('testimonials')}
+                                description={t('testimonialsDesc')}
+                                icon={<MessageSquareQuote className="w-4.5 h-4.5" />}
+                                defaultExpanded={false}
+                            >
+                                {testimonialFields.map((item, index) => (
+                                    <div key={item.id} className="border border-gray-200 dark:border-white/5 p-4 rounded-lg bg-gray-50 dark:bg-white/[0.02] space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs font-medium text-gray-400">#{index + 1}</span>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeTestimonial(index)}>
+                                                <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <FormField control={form.control} name={`testimonials.${index}.name`} render={({ field }) => (
+                                                <FormItem>
+                                                    <FieldGroup label={t('name')}>
+                                                        <FormControl><Input {...field} /></FormControl>
+                                                    </FieldGroup>
+                                                </FormItem>
+                                            )} />
+                                            <FormField control={form.control} name={`testimonials.${index}.role`} render={({ field }) => (
+                                                <FormItem>
+                                                    <FieldGroup label={t('role')}>
+                                                        <FormControl><Input {...field} /></FormControl>
+                                                    </FieldGroup>
+                                                </FormItem>
                                             )} />
                                         </div>
-                                    ))}
-                                    <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendTestimonial({ name: '', role: '', content: '' })}>
-                                        <Plus className="w-4 h-4 mr-2" /> {t('addTestimonial')}
-                                    </Button>
-                                </SectionCard>
-
-                                <SectionCard title={`💰 ${tp('title')}`} description={tp('subtitle')}>
-                                    <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-500/[0.06] border border-amber-200 dark:border-amber-500/15 transition-colors">
-                                        <div className="flex items-start gap-3">
-                                            <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-                                            <div className="space-y-2">
-                                                <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                                    {tp('info')}
-                                                </p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                    {tp('infoDetail', { role: tp('superAdmin') })}
-                                                </p>
-                                                {appUrl && (
-                                                    <a
-                                                        href={`${appUrl}/pt/admin/settings`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors mt-2"
-                                                    >
-                                                        <ExternalLink className="w-3.5 h-3.5" />
-                                                        {tp('openConfig')}
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
+                                        <FormField control={form.control} name={`testimonials.${index}.content`} render={({ field }) => (
+                                            <FormItem>
+                                                <FieldGroup label={t('comment')}>
+                                                    <FormControl><Textarea rows={2} {...field} /></FormControl>
+                                                </FieldGroup>
+                                            </FormItem>
+                                        )} />
                                     </div>
-                                </SectionCard>
-                            </div>
+                                ))}
+                                <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendTestimonial({ name: '', role: '', content: '' })}>
+                                    <Plus className="w-4 h-4 mr-2" /> {t('addTestimonial')}
+                                </Button>
+                            </ModuleSection>
 
-                            {/* ═══ FAQ ═══ */}
-                            <SectionCard title={t('faq')} description={t('faqDesc')} className="break-inside-avoid mb-6">
+                            {/* ── 5. FAQ ── */}
+                            <ModuleSection
+                                title={t('faq')}
+                                description={t('faqDesc')}
+                                icon={<HelpCircle className="w-4.5 h-4.5" />}
+                                defaultExpanded={false}
+                            >
                                 {faqFields.map((item, index) => (
                                     <div key={item.id} className="flex gap-3 items-start border border-gray-200 dark:border-white/5 p-3 rounded-lg bg-gray-50 dark:bg-white/[0.02]">
                                         <div className="flex-1 space-y-2">
@@ -486,18 +562,25 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                                 <Button type="button" variant="outline" size="sm" className="w-full border-dashed border-gray-300 dark:border-white/10" onClick={() => appendFaq({ question: '', answer: '' })}>
                                     <Plus className="w-4 h-4 mr-2" /> {t('addQuestion')}
                                 </Button>
-                            </SectionCard>
+                            </ModuleSection>
 
-                            {/* ═══ Rodapé ═══ */}
-                            <SectionCard title={t('footer')} description={t('footerDesc')} className="break-inside-avoid mb-6">
+                            {/* ── 6. Rodapé ── */}
+                            <ModuleSection
+                                title={t('footer')}
+                                description={t('footerDesc')}
+                                icon={<Link2 className="w-4.5 h-4.5" />}
+                                defaultExpanded={false}
+                            >
                                 <FormField control={form.control} name="footerContact" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('footerContact')}</FormLabel>
-                                        <FormControl><Input {...field} /></FormControl>
+                                        <FieldGroup label={t('footerContact')}>
+                                            <FormControl><Input {...field} /></FormControl>
+                                        </FieldGroup>
                                     </FormItem>
                                 )} />
-                                <div className="space-y-2">
-                                    <FormLabel>{t('footerLinks')}</FormLabel>
+
+                                <div className="border-t border-gray-100 dark:border-white/5 pt-4 space-y-3">
+                                    <label className="text-sm font-medium text-gray-900 dark:text-white">{t('footerLinks')}</label>
                                     {linkFields.map((item, index) => (
                                         <div key={item.id} className="flex gap-3 items-center">
                                             <FormField control={form.control} name={`footerLinks.${index}.label`} render={({ field }) => (
@@ -515,7 +598,44 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                                         <Plus className="w-4 h-4 mr-2" /> {t('addLink')}
                                     </Button>
                                 </div>
-                            </SectionCard>
+                            </ModuleSection>
+
+                            {/* ── Tooltips dos planos ── */}
+                            <ModuleSection
+                                title={t('tooltips')}
+                                description={t('tooltipsDesc')}
+                                icon={<MessageCircle className="w-4 h-4" />}
+                                defaultExpanded={false}
+                            >
+                                <div className="space-y-4">
+                                    {([
+                                        'items', 'visionAi', 'houses', 'roomsPerHouse', 'furniturePerRoom',
+                                        'photosPerItem', 'collaboratorsPerHouse', 'history', 'ranking',
+                                        'importExcel', 'exportData', 'consolidation', 'aiAssistant',
+                                    ] as const).map((key) => (
+                                        <FormField
+                                            key={key}
+                                            control={form.control}
+                                            name={`featureTooltips.${key}`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FieldGroup label={t(`tooltip_${key}`)}>
+                                                        <FormControl>
+                                                            <Input
+                                                                {...field}
+                                                                disabled={!canEdit}
+                                                                placeholder={t(`tooltip_${key}`)}
+                                                            />
+                                                        </FormControl>
+                                                    </FieldGroup>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    ))}
+                                </div>
+                            </ModuleSection>
+
+
                         </div>
 
                         {/* ═══ Save Button ═══ */}
@@ -548,7 +668,6 @@ export function SiteConfigForm({ initialData, canEdit = true, history = [], appU
                     </form>
                 </fieldset>
             </Form>
-
 
             {/* ── Histórico de Alterações ── */}
             <ChangeHistory

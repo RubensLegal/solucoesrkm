@@ -89,21 +89,24 @@
     "pricing": {
       "title": "Planos e Preços",
       "subtitle": "Escolha o plano ideal para suas necessidades.",
-      "trial": "✨ 15 dias grátis com todas as features ao se cadastrar!",
+      "trial": "✨ 14 dias grátis com todas as features — sem cartão de crédito!",
+      "trial_price": "14 dias grátis",
+      "trial_desc": "Todas as features Pro por 14 dias. Sem cartão de crédito.",
+      "trial_no_card": "Sem cartão de crédito",
       "included_label": "O QUE ESTÁ INCLUÍDO",
       "free": {
         "name": "Free",
         "price": "Grátis",
         "desc": "Para uso pessoal e pequenas organizações.",
         "features": "50 Itens,50 Vision AI 🤖,1 Casas,5 Cômodos/casa,5 Móveis/cômodo,1 Fotos/item,0 Colaboradores/casa",
-        "excluded": "Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
+        "excluded": "Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança,Assistente IA 🤖",
         "button": "Começar Grátis"
       },
       "plus": {
         "name": "Plus",
         "price": "R$ 9,90/mês",
         "desc": "Para quem precisa de mais espaço e recursos.",
-        "features": "200 Itens,600 Vision AI 🤖,3 Casas,15 Cômodos/casa,15 Móveis/cômodo,3 Fotos/item,2 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Exportação de dados,Consolidação/Mudança",
+        "features": "200 Itens,200 Vision AI 🤖,3 Casas,15 Cômodos/casa,15 Móveis/cômodo,1 Fotos/item,2 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
         "button": "Assinar Agora",
         "popular": "POPULAR"
       },
@@ -111,7 +114,7 @@
         "name": "Pro",
         "price": "R$ 19,90/mês",
         "desc": "Para quem precisa do máximo do Tracka.",
-        "features": "2.000 Itens,10.000 Vision AI 🤖,10 Casas,50 Cômodos/casa,50 Móveis/cômodo,5 Fotos/item,10 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança",
+        "features": "2.000 Itens,2.000 Vision AI 🤖,10 Casas,50 Cômodos/casa,50 Móveis/cômodo,1 Fotos/item,10 Colaboradores/casa,Histórico de uso,Ranking (mais usados),Importação (Excel),Exportação de dados,Consolidação/Mudança,Assistente IA 🤖",
         "button": "Assinar Agora"
       }
     },
@@ -139,7 +142,8 @@
     "cta": {
       "title": "Pronto para organizar sua vida?",
       "subtitle": "Comece gratuitamente e descubra como o Tracka pode simplificar seu dia a dia.",
-      "button": "Começar Agora"
+      "button": "Começar Agora",
+      "badge": "Comece agora"
     }
   },
   "admin": {
@@ -201,6 +205,21 @@
       "linkLabel": "Texto",
       "linkHref": "URL / Rota",
       "addLink": "Adicionar Link",
+      "tooltips": "💡 Tooltips dos Planos",
+      "tooltipsDesc": "Textos explicativos ao passar o mouse sobre as features",
+      "tooltip_items": "Itens",
+      "tooltip_visionAi": "Vision AI",
+      "tooltip_houses": "Casas",
+      "tooltip_roomsPerHouse": "Cômodos/casa",
+      "tooltip_furniturePerRoom": "Móveis/cômodo",
+      "tooltip_photosPerItem": "Fotos/item",
+      "tooltip_collaboratorsPerHouse": "Colaboradores/casa",
+      "tooltip_history": "Histórico de uso",
+      "tooltip_ranking": "Ranking",
+      "tooltip_importExcel": "Importação",
+      "tooltip_exportData": "Exportação",
+      "tooltip_consolidation": "Consolidação/Mudança",
+      "tooltip_aiAssistant": "Assistente IA",
       "save": "Salvar",
       "saving": "Salvando..."
     },
@@ -242,6 +261,7 @@
       "importExcel": "Importação (Excel)",
       "exportData": "Exportação de dados",
       "consolidation": "Consolidação/Mudança",
+      "aiAssistant": "Assistente IA 🤖",
       "enabled": "Habilitado",
       "disabled": "Desabilitado",
       "notifBasic": "Básicas",

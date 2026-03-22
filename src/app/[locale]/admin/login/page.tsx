@@ -11,7 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://tracka.solucoesrkm.com';
 
@@ -25,6 +25,7 @@ export default function AdminLoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     // Load remembered credentials on mount
@@ -194,18 +195,43 @@ export default function AdminLoginPage() {
                         {/* Password */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontSize: '0.9rem', fontWeight: 500, color: '#0f172a' }}>Senha</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                placeholder="********"
-                                required
-                                autoComplete="current-password"
-                                style={inputStyle}
-                                onFocus={handleFocus}
-                                onBlur={handleBlur}
-                                suppressHydrationWarning
-                            />
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    placeholder="********"
+                                    required
+                                    autoComplete="current-password"
+                                    style={{ ...inputStyle, paddingRight: '3rem' }}
+                                    onFocus={handleFocus}
+                                    onBlur={handleBlur}
+                                    suppressHydrationWarning
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '0.75rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '0.25rem',
+                                        color: '#94a3b8',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        transition: 'color 0.2s',
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.color = '#287D8B')}
+                                    onMouseLeave={e => (e.currentTarget.style.color = '#94a3b8')}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         {/* Remember me + Forgot password */}

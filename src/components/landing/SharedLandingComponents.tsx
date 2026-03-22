@@ -23,8 +23,8 @@ export function FeatureRow({ id, title, icon, children, viewAllText }: {
         <section id={id} className="space-y-6 group/row scroll-mt-24">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-100 flex items-center gap-4 pl-2 transition-colors duration-300">
                 <span className="flex items-center justify-center w-10 h-10 rounded-lg" style={{
-                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
-                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    background: 'var(--landing-icon-box-bg)',
+                    border: '1px solid var(--landing-icon-box-border)',
                 }}>
                     {icon}
                 </span>
@@ -58,13 +58,13 @@ export function FeatureCard({ title, description, icon, wide = false }: {
             snap-start
             flex flex-col
         `} style={{
-                background: 'linear-gradient(135deg, rgba(20, 20, 40, 0.8), rgba(15, 15, 30, 0.9))',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                background: 'var(--landing-card-bg)',
+                border: '1px solid var(--landing-card-border)',
             }}>
             {/* Gradient border glow on hover */}
             <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15))',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
+                background: 'var(--landing-card-hover-glow)',
+                border: '1px solid var(--landing-icon-box-border)',
                 borderRadius: 'inherit',
             }} />
 
@@ -92,8 +92,8 @@ export function FeatureCard({ title, description, icon, wide = false }: {
                 {/* Descrição — expand on hover (desktop), always visible (mobile) */}
                 <div className="lg:max-h-0 lg:opacity-0 lg:overflow-hidden group-hover:max-h-[300px] group-hover:opacity-100 transition-all duration-500 ease-in-out">
                     <p className="text-sm md:text-base text-gray-400 group-hover:text-gray-200 mt-3 leading-relaxed p-3 rounded-xl transition-colors" style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        background: 'var(--color-glass)',
+                        border: '1px solid var(--landing-faq-border)',
                     }}>
                         {description}
                     </p>

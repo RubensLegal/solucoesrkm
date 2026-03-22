@@ -4,7 +4,7 @@
  */
 
 import { Link } from '@/i18n/navigation';
-import { FooterLinkItem } from '@/config/landing.config';
+import type { FooterLinkItem } from '@/types';
 
 interface LandingFooterProps {
     contactText: string;
@@ -15,16 +15,12 @@ interface LandingFooterProps {
 export function LandingFooter({ contactText, copyrightText, links }: LandingFooterProps) {
     return (
         <footer className="relative py-16" style={{
-            background: 'linear-gradient(180deg, transparent 0%, rgba(10, 10, 20, 0.8) 30%, rgba(5, 5, 15, 1) 100%)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.04)',
+            background: 'var(--landing-footer-gradient)',
+            borderTop: '1px solid var(--landing-faq-border)',
         }}>
             <div className="container mx-auto px-4 max-w-6xl text-center space-y-8">
                 {/* Logo */}
-                <div className="font-bold text-2xl tracking-tighter" style={{
-                    background: 'linear-gradient(135deg, rgb(129, 140, 248), rgb(168, 85, 247))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                }}>
+                <div className="font-bold text-2xl tracking-tighter landing-logo-gradient">
                     Tracka
                 </div>
 
@@ -32,7 +28,7 @@ export function LandingFooter({ contactText, copyrightText, links }: LandingFoot
                 <div className="text-gray-400 font-medium">{contactText}</div>
 
                 {/* Links */}
-                <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+                <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4" aria-label="Footer navigation">
                     {links.map((link, idx) => (
                         <Link key={idx} href={link.href} className="text-sm text-gray-500 hover:text-indigo-400 transition-colors duration-200">
                             {link.label}
@@ -42,7 +38,7 @@ export function LandingFooter({ contactText, copyrightText, links }: LandingFoot
 
                 {/* Divider */}
                 <div className="w-24 h-px mx-auto" style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent)',
+                    background: 'var(--landing-divider)',
                 }} />
 
                 {/* Copyright */}

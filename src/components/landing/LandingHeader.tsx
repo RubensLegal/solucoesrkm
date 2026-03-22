@@ -27,24 +27,20 @@ export function LandingHeader({ logoText, navHome, navFeatures, navPricing, navA
 
     return (
         <header className="fixed top-0 w-full z-50 px-4 py-3 md:px-12 transition-all duration-300" style={{
-            background: 'rgba(10, 10, 20, 0.6)',
+            background: 'var(--landing-header-bg)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+            borderBottom: '1px solid var(--landing-card-border)',
         }}>
             <div className="flex items-center justify-between max-w-7xl mx-auto">
                 <div className="flex items-center gap-8">
                     {/* Logo */}
-                    <Link href="/" className="font-bold text-2xl tracking-tighter cursor-pointer hover:scale-105 transition-transform" style={{
-                        background: 'linear-gradient(135deg, rgb(129, 140, 248), rgb(168, 85, 247))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}>
+                    <Link href="/" className="font-bold text-2xl tracking-tighter cursor-pointer hover:scale-105 transition-transform landing-logo-gradient">
                         {logoText}
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-400">
+                    <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-400" aria-label="Main navigation">
                         <ScrollTopLink>{navHome}</ScrollTopLink>
                         <NavLink href="/#features">{navFeatures}</NavLink>
                         <NavLink href="/#pricing">{navPricing}</NavLink>
@@ -58,9 +54,7 @@ export function LandingHeader({ logoText, navHome, navFeatures, navPricing, navA
                     <a
                         href={`${appUrl}/login`}
                         className="text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 hover:scale-105"
-                        style={{
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        }}
+                        style={{ background: 'var(--landing-gradient-cta)' }}
                     >
                         {loginText}
                     </a>

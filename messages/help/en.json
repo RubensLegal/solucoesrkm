@@ -582,7 +582,7 @@
           "trial": {
             "icon": "🎁",
             "name": "Trial",
-            "desc": "15 days with all features. After the period, automatically migrates to Free."
+            "desc": "14 days free with all Pro features — no credit card required. After the period, automatically migrates to Free."
           },
           "free": {
             "icon": "🆓",
@@ -822,10 +822,12 @@
         "adminSettings": {
           "title": "/admin/settings — Admin Panel",
           "desc": "Accessible by SUPERADMIN, ADMIN, EDITOR and VIEWER (read-only). Controls global system settings.",
-          "step1": "Landing Page — text, sections, plans, testimonials and public page links",
+          "step1": "Landing Page — collapsible sections (Hero, Titles, CTA, Testimonials, FAQ, Footer) using ModuleSection pattern",
           "step2": "Integrations / API Keys — API keys for external services",
-          "step3": "Freshdesk — Customer Support — widget, tickets, KB, chat and Freshdesk sync",
-          "step4": "Plan Visibility — visibility and features configuration per plan"
+          "step3": "Freshdesk — Customer Support — widget, tickets, KB, chat and sync (ModuleSection pattern)",
+          "step4": "Plan Visibility — visibility and features configuration per plan",
+          "step5": "Plan Tooltips — explanatory text shown on hover over each feature in pricing cards. Each feature is identified by key (e.g. items, visionAi, roomsPerHouse). Admin edits via collapsible ModuleSection, values are saved in featureTooltips of landing_page_config. If empty, uses hardcoded default with PT/EN support",
+          "step6": "SEO — robots.txt, sitemap.xml, JSON-LD, Open Graph and Twitter Cards are generated automatically"
         },
         "adminPages": {
           "title": "Admin Pages",
@@ -877,6 +879,16 @@
             "name": "SUPERADMIN",
             "desc": "Full access: validate help, run sync, restore defaults, delete overrides."
           }
+        },
+        "landingArchitecture": {
+          "title": "Landing Page Architecture",
+          "desc": "The landing page uses a standardized and professional architecture:",
+          "step1": "Design Tokens — 24+ CSS variables in globals.css for colors, gradients and effects",
+          "step2": "Components — 10 modular landing components with typed props",
+          "step3": "Config-Driven — sections controlled by admin config (showFeatures, showFaq, etc.)",
+          "step4": "Complete SEO — robots.ts, sitemap.ts, JSON-LD (SoftwareApplication + Organization + FAQPage)",
+          "step5": "Themes — light/dark support with Tailwind dark: classes and correct body theme",
+          "step6": "i18n — all strings via next-intl, auto-translation between PT/EN on save"
         },
         "tip": "Use the Help Editor for quick adjustments. For permanent changes, validate and commit the updated JSON."
       }
@@ -1221,6 +1233,107 @@
         },
         "warning": "The free Google Translate API may have usage limits. For high-volume production, consider using a paid API.",
         "tip": "Always edit in the primary language (Portuguese) and let the system automatically translate to the second language."
+      }
+    },
+    "pricingFlow": {
+      "title": "Pricing Visibility Flow",
+      "subtitle": "How the plan visibility control system works on the landing page — SUPERADMIN",
+      "content": {
+        "intro": "The pricing visibility system lets you control which plans and which features of each plan are displayed on the public landing page. The flow involves 3 layers: editing (admin), storage (database), and display (landing page).",
+        "storage": {
+          "title": "Where It's Stored (Database)",
+          "desc": "Everything is stored in the SiteSettings table as serialized JSON, in a key-value model.",
+          "configKey": {
+            "name": "pricing_visibility",
+            "desc": "JSON object with hiddenPlans (array of names) and hiddenFeatures (Record<plan, features[]>)"
+          },
+          "historyKey": {
+            "name": "pricing_visibility_history",
+            "desc": "JSON array with timestamp, userId, userName and changes[] — change history"
+          },
+          "readFn": {
+            "name": "getSiteSettings('pricing_visibility')",
+            "desc": "Reads config. File: application/admin/site-settings.actions.ts"
+          },
+          "writeFn": {
+            "name": "updateSiteSettings('pricing_visibility', value)",
+            "desc": "Saves config + calculates diff + records history. Requires EDITOR/ADMIN/SUPERADMIN"
+          }
+        },
+        "editing": {
+          "title": "Where It's Edited (Admin Settings)",
+          "desc": "Editing takes place in the admin panel at /admin/settings, in the 'Plan Visibility' section.",
+          "dataSource": {
+            "name": "Plan Data Source",
+            "desc": "Admin fetches raw data from Tracka via API: fetch(APP_URL/api/plan-config). If Tracka is offline, shows empty state with warning icon."
+          },
+          "component": {
+            "name": "PricingVisibilityForm",
+            "desc": "Client-side component at components/admin/PricingVisibilityForm.tsx. Displays grid with columns=plans and rows=features. Checkboxes control visibility."
+          },
+          "togglePlan": {
+            "name": "Plan Toggle",
+            "desc": "Hides/shows an entire plan (Free, Plus, Pro). Hidden plan appears with reduced opacity in the grid."
+          },
+          "toggleFeature": {
+            "name": "Feature Toggle",
+            "desc": "Hides/shows a specific feature of a plan (e.g., hide 'visionAi' only from Plus)."
+          },
+          "save": {
+            "name": "Save",
+            "desc": "Save button calls updateSiteSettings('pricing_visibility', visibility). Verifies auth + calculates diff + records history."
+          }
+        },
+        "display": {
+          "title": "Where It's Displayed (Landing Page)",
+          "desc": "The landing page consumes filtered data in app/[locale]/page.tsx via the fetchPricing() function. Each feature is a PricingFeature { key, text } object — the key identifies the feature for tooltips and filters without relying on substring matching.",
+          "step1": "Reads pricing_visibility from database via getSiteSettings()",
+          "step2": "Fetches plans from Tracka public API (PLAN_ORDER: free, trial, plus, pro)",
+          "step3": "If API fails, uses fallback with 3 hardcoded plans from i18n translations",
+          "step4": "Applies filters: removes hidden plans (hiddenPlans) and hidden features by feature.key (hiddenFeatures)",
+          "step5": "Renders PricingSection with dynamic grid (3 or 4 columns based on plan count). Trial has amber styling with '14 DAYS' badge and 'no credit card' badge"
+        },
+        "twoControls": {
+          "title": "Two Separate Controls",
+          "showPricing": {
+            "name": "showPricing (Landing Config)",
+            "desc": "Boolean toggle that controls whether the ENTIRE pricing section appears on the landing page. Edited in the 'Landing Page' section of admin."
+          },
+          "pricingVisibility": {
+            "name": "pricing_visibility (Visibility)",
+            "desc": "Object with hiddenPlans and hiddenFeatures that controls WHICH plans and features appear within the section. Edited in the 'Plan Visibility' section of admin."
+          }
+        },
+        "dataFormat": {
+          "title": "Saved Data Format",
+          "desc": "Example of JSON saved in the database as pricing_visibility:",
+          "example": "{ hiddenPlans: ['Free'], hiddenFeatures: { 'Plus': ['visionAi', 'ranking'] } }"
+        },
+        "files": {
+          "title": "Files Involved",
+          "form": {
+            "name": "components/admin/PricingVisibilityForm.tsx",
+            "desc": "Edit form with toggle grid"
+          },
+          "settings": {
+            "name": "app/[locale]/admin/settings/page.tsx",
+            "desc": "Admin page that loads data and renders the form"
+          },
+          "actions": {
+            "name": "application/admin/site-settings.actions.ts",
+            "desc": "Server Actions for database read/write + history"
+          },
+          "landing": {
+            "name": "app/[locale]/page.tsx",
+            "desc": "Landing page that applies filters and renders"
+          },
+          "pricing": {
+            "name": "components/landing/PricingSection.tsx",
+            "desc": "Client-side visual component that renders plan cards with dynamic grid (3 or 4 cols), key-based tooltips (DB → default fallback), amber styling for Trial, currency conversion for EN, and 'no credit card' badge for trial"
+          }
+        },
+        "warning": "showPricing and pricing_visibility are independent controls. If showPricing is false, the entire section disappears — regardless of pricing_visibility settings.",
+        "tip": "To hide specific features of a plan without hiding the entire plan, use the individual toggles in the grid. Ideal for hiding beta or non-disclosable features."
       }
     },
     "ecosystemArchitecture": {

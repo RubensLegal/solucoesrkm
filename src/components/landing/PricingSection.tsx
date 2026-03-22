@@ -11,10 +11,38 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X, Crown, Sparkles } from 'lucide-react';
+import { Check, X, Crown, Sparkles, Info, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PricingParams } from '@/config/landing.config';
+import type { PricingParams, PricingFeature } from '@/types';
 import { detectCurrency, fetchExchangeRate, convertFromBRL, getCacheKey, type CurrencyInfo } from '@/lib/currency-utils';
+
+/* ─── Feature Tooltip Defaults (fallback when DB is empty) ─── */
+
+const DEFAULT_TOOLTIPS: Record<string, { pt: string; en: string }> = {
+    items:                 { pt: 'Quantidade máxima de itens que você pode cadastrar', en: 'Maximum number of items you can register' },
+    visionAi:              { pt: 'Identificação inteligente de itens por foto usando IA', en: 'Smart item identification by photo using AI' },
+    houses:                { pt: 'Número de residências/locais que você pode gerenciar', en: 'Number of homes/locations you can manage' },
+    roomsPerHouse:         { pt: 'Cômodos disponíveis em cada residência', en: 'Rooms available in each home' },
+    furniturePerRoom:      { pt: 'Móveis que podem ser cadastrados por cômodo', en: 'Furniture items per room' },
+    photosPerItem:         { pt: 'Fotos que podem ser anexadas a cada item', en: 'Photos that can be attached to each item' },
+    collaboratorsPerHouse: { pt: 'Pessoas que podem acessar sua residência', en: 'People who can access your home' },
+    history:               { pt: 'Registro de todas as movimentações dos seus itens', en: 'Log of all movements of your items' },
+    ranking:               { pt: 'Veja quais itens são mais usados e movimentados', en: 'See which items are most used and moved' },
+    importExcel:           { pt: 'Importe itens em massa via planilha Excel', en: 'Bulk import items via Excel spreadsheet' },
+    exportData:            { pt: 'Exporte seus dados para backup ou análise', en: 'Export your data for backup or analysis' },
+    consolidation:         { pt: 'Organize e mova itens entre cômodos e casas', en: 'Organize and move items between rooms and homes' },
+    aiAssistant:           { pt: 'Assistente inteligente que ajuda a organizar e encontrar itens', en: 'Smart assistant that helps organize and find items' },
+};
+
+/** Tooltip lookup: DB value (admin) → hardcoded default → null */
+function getTooltip(key: string, locale: string, dbTooltips?: Record<string, string>): string | null {
+    // 1. DB tooltip from admin (highest priority)
+    if (dbTooltips?.[key]) return dbTooltips[key];
+    // 2. Hardcoded default by locale
+    const def = DEFAULT_TOOLTIPS[key];
+    if (def) return locale === 'en' ? def.en : def.pt;
+    return null;
+}
 
 interface PricingSectionProps {
     items: PricingParams[];
@@ -24,11 +52,13 @@ interface PricingSectionProps {
     trialText?: string;
     includedLabel?: string;
     popularLabel?: string;
+    featureTooltips?: Record<string, string>;
+    trialNoCardText?: string;
 }
 
 export function PricingSection({
     items, locale = 'pt', title, subtitle, trialText,
-    includedLabel, popularLabel
+    includedLabel, popularLabel, featureTooltips, trialNoCardText
 }: PricingSectionProps) {
     const [mounted, setMounted] = useState(false);
     const [currency, setCurrency] = useState<CurrencyInfo>({ code: 'USD', symbol: '$', name: 'US Dollar' });
@@ -75,27 +105,61 @@ export function PricingSection({
         return null;
     };
 
+    /** Render a single feature row (included or excluded) */
+    const renderFeature = (feature: PricingFeature, idx: number, isPopular: boolean, excluded: boolean, isTrial: boolean = false) => {
+        const tooltip = getTooltip(feature.key, locale, featureTooltips);
+        const checkColor = isTrial ? 'bg-amber-500/20' : (isPopular ? 'bg-indigo-500/20' : 'bg-emerald-500/15');
+        const checkIcon = isTrial ? 'text-amber-400' : (isPopular ? 'text-indigo-400' : 'text-emerald-400');
+        return (
+            <div key={excluded ? `excl-${idx}` : idx} className="flex items-start gap-3">
+                {excluded ? (
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 bg-red-500/10">
+                        <X className="w-3.5 h-3.5 text-red-400/60" />
+                    </div>
+                ) : (
+                    <div className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 ${checkColor}`}>
+                        <Check className={`w-3.5 h-3.5 ${checkIcon}`} />
+                    </div>
+                )}
+                {tooltip ? (
+                    <span className={`text-sm relative group cursor-help inline-flex items-center gap-1 ${excluded ? 'text-gray-600 line-through' : 'text-gray-300'}`}>
+                        {feature.text}
+                        <Info className={`w-3 h-3 group-hover:text-indigo-400 transition-colors shrink-0 ${excluded ? 'text-gray-700' : 'text-gray-600'}`} style={excluded ? { textDecoration: 'none' } : undefined} />
+                        <span className="absolute bottom-full left-0 mb-2 w-60 p-2.5 rounded-lg text-xs text-gray-200 leading-relaxed invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-50 pointer-events-none" style={{
+                            background: 'rgba(15, 15, 30, 0.95)',
+                            border: '1px solid var(--color-glass-border-strong)',
+                            backdropFilter: 'blur(8px)',
+                            textDecoration: 'none',
+                        }}>
+                            {tooltip}
+                        </span>
+                    </span>
+                ) : (
+                    <span className={`text-sm ${excluded ? 'text-gray-600 line-through' : 'text-gray-300'}`}>{feature.text}</span>
+                )}
+            </div>
+        );
+    };
+
+    // Dynamic grid columns based on number of plans
+    const gridCols = items.length >= 4 ? 'lg:grid-cols-4 md:grid-cols-2' : 'md:grid-cols-3';
+
     return (
         <section id="pricing" className="py-24 text-white">
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="text-center mb-6 max-w-2xl mx-auto">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{
-                        background: 'linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}>{title || 'Planos e Preços'}</h2>
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4 landing-text-gradient">{title || 'Planos e Preços'}</h2>
                     {subtitle && <p className="text-gray-400 text-lg">{subtitle}</p>}
                 </div>
 
                 {/* Trial badge */}
                 {trialText && (
                     <div className="flex justify-center mb-14">
-                        <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium"
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(99, 102, 241, 0.15))',
-                                border: '1px solid rgba(168, 85, 247, 0.3)',
-                                color: '#c4b5fd',
+                        <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium" style={{
+                                background: 'var(--landing-card-hover-glow)',
+                                border: '1px solid var(--landing-icon-box-border)',
+                                color: 'var(--landing-badge-text)',
                             }}>
                             <Sparkles className="w-4 h-4" />
                             {trialText}
@@ -104,39 +168,65 @@ export function PricingSection({
                 )}
 
                 {/* Cards grid */}
-                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div className={`grid ${gridCols} gap-6 max-w-7xl mx-auto`}>
                     {items.map((plan, index) => {
                         const planKey = getPlanKey(plan.name);
                         const brlPrice = planKey ? BRL_PRICES[planKey] : null;
                         const showConverted = mounted && locale === 'en' && brlPrice;
+                        const isTrial = plan.isTrial || false;
+
+                        // Card styling
+                        const cardBg = isTrial
+                            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.03))'
+                            : plan.isPopular
+                                ? 'var(--landing-card-bg-active)'
+                                : 'var(--landing-card-bg)';
+                        const cardBorder = isTrial
+                            ? '1px solid rgba(245, 158, 11, 0.3)'
+                            : plan.isPopular
+                                ? '1px solid var(--landing-card-border-active)'
+                                : '1px solid var(--color-glass-border)';
+                        const hoverShadow = isTrial
+                            ? 'hover:shadow-2xl hover:shadow-amber-500/15'
+                            : plan.isPopular
+                                ? 'hover:shadow-2xl hover:shadow-indigo-500/20'
+                                : 'hover:shadow-xl hover:shadow-white/5';
 
                         return (
                             <div
                                 key={index}
-                                className={`relative rounded-2xl p-8 flex flex-col transition-all duration-500 hover:-translate-y-2 ${plan.isPopular
-                                    ? 'hover:shadow-2xl hover:shadow-indigo-500/20'
-                                    : 'hover:shadow-xl hover:shadow-white/5'
-                                    }`}
-                                style={{
-                                    background: plan.isPopular
-                                        ? 'linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(20, 20, 50, 0.95))'
-                                        : 'linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(15, 15, 25, 0.9))',
-                                    border: plan.isPopular
-                                        ? '1px solid rgba(99, 102, 241, 0.4)'
-                                        : '1px solid rgba(255, 255, 255, 0.08)',
-                                }}
+                                className={`relative rounded-2xl p-8 flex flex-col transition-all duration-500 hover:-translate-y-2 ${hoverShadow}`}
+                                style={{ background: cardBg, border: cardBorder }}
                             >
-                                {/* Popular badge */}
-                                {plan.isPopular && (
+                                {/* Trial badge */}
+                                {isTrial && (
                                     <>
                                         <div className="absolute -inset-px rounded-2xl pointer-events-none" style={{
-                                            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.1))',
+                                            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), transparent)',
+                                            filter: 'blur(1px)',
+                                            zIndex: 0,
+                                        }} />
+                                        <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-3 z-10">
+                                            <span className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-lg"
+                                                style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                                                <Clock className="w-3.5 h-3.5" />
+                                                14 {locale === 'en' ? 'DAYS' : 'DIAS'}
+                                            </span>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Popular badge */}
+                                {plan.isPopular && !isTrial && (
+                                    <>
+                                        <div className="absolute -inset-px rounded-2xl pointer-events-none" style={{
+                                            background: 'var(--landing-card-hover-glow)',
                                             filter: 'blur(1px)',
                                             zIndex: 0,
                                         }} />
                                         <div className="absolute top-0 right-0 transform translate-x-2 -translate-y-3 z-10">
                                             <span className="flex items-center gap-1.5 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide shadow-lg" style={{
-                                                background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                                background: 'var(--landing-gradient-popular)',
                                             }}>
                                                 <Crown className="w-3.5 h-3.5" />
                                                 {popularLabel || 'Popular'}
@@ -152,11 +242,7 @@ export function PricingSection({
                                     <div className="flex items-baseline gap-1 flex-wrap">
                                         {showConverted ? (
                                             <>
-                                                <span className="text-4xl font-bold" style={plan.isPopular ? {
-                                                    background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
-                                                    WebkitBackgroundClip: 'text',
-                                                    WebkitTextFillColor: 'transparent',
-                                                } : {}}>~{currency.symbol}{toLocal(brlPrice)}</span>
+                                                <span className={`text-4xl font-bold ${plan.isPopular ? 'landing-text-gradient' : ''}`}>~{currency.symbol}{toLocal(brlPrice)}</span>
                                                 <span className="text-gray-500">/mo</span>
                                                 <span className="text-xs text-gray-600 ml-1">
                                                     (R$ {brlPrice.toFixed(2).replace('.', ',')})
@@ -164,15 +250,22 @@ export function PricingSection({
                                             </>
                                         ) : (
                                             <>
-                                                <span className="text-4xl font-bold" style={plan.isPopular ? {
-                                                    background: 'linear-gradient(135deg, #a5b4fc, #c084fc)',
-                                                    WebkitBackgroundClip: 'text',
-                                                    WebkitTextFillColor: 'transparent',
-                                                } : {}}>{plan.price}</span>
-                                                {plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/') && <span className="text-gray-500">/mês</span>}
+                                                <span className={`text-4xl font-bold ${isTrial ? '' : ''} ${plan.isPopular ? 'landing-text-gradient' : ''}`}
+                                                    style={isTrial ? { background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' } : undefined}
+                                                >{plan.price}</span>
+                                                {!isTrial && plan.price !== 'Grátis' && plan.price !== 'Free' && !plan.price.includes('/') && <span className="text-gray-500">/mês</span>}
                                             </>
                                         )}
                                     </div>
+                                    {/* No credit card badge for trial */}
+                                    {isTrial && trialNoCardText && (
+                                        <div className="mt-2">
+                                            <span className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full"
+                                                style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+                                                💳 {trialNoCardText}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* CTA button */}
@@ -181,7 +274,7 @@ export function PricingSection({
                                         variant={plan.isPopular ? 'primary' : 'secondary'}
                                         className={`w-full ${plan.isPopular ? '' : 'border-white/10 hover:bg-white/5'}`}
                                         style={plan.isPopular ? {
-                                            background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                            background: 'var(--landing-gradient-popular)',
                                         } : {}}
                                         href={`${appUrl}${plan.buttonLink}`}
                                     >
@@ -198,22 +291,9 @@ export function PricingSection({
 
                                 {/* Features */}
                                 <div className="flex-1 space-y-3 relative z-10">
-                                    {plan.features.map((feature, idx) => (
-                                        <div key={idx} className="flex items-start gap-3">
-                                            <div className={`flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 ${plan.isPopular ? 'bg-indigo-500/20' : 'bg-emerald-500/15'}`}>
-                                                <Check className={`w-3.5 h-3.5 ${plan.isPopular ? 'text-indigo-400' : 'text-emerald-400'}`} />
-                                            </div>
-                                            <span className="text-sm text-gray-300">{feature}</span>
-                                        </div>
-                                    ))}
-                                    {plan.excludedFeatures && plan.excludedFeatures.length > 0 && plan.excludedFeatures.map((feature, idx) => (
-                                        <div key={`excl-${idx}`} className="flex items-start gap-3">
-                                            <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0 mt-0.5 bg-red-500/10">
-                                                <X className="w-3.5 h-3.5 text-red-400/60" />
-                                            </div>
-                                            <span className="text-sm text-gray-600 line-through">{feature}</span>
-                                        </div>
-                                    ))}
+                                    {plan.features.map((feature, idx) => renderFeature(feature, idx, plan.isPopular, false, isTrial))}
+                                    {plan.excludedFeatures && plan.excludedFeatures.length > 0 &&
+                                        plan.excludedFeatures.map((feature, idx) => renderFeature(feature, idx, plan.isPopular, true, isTrial))}
                                 </div>
                             </div>
                         );
@@ -224,8 +304,8 @@ export function PricingSection({
                 {mounted && locale === 'en' && (
                     <div className="mt-10 max-w-3xl mx-auto">
                         <div className="flex items-start gap-3 p-4 rounded-xl" style={{
-                            background: 'rgba(245, 158, 11, 0.08)',
-                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            background: 'var(--landing-disclaimer-bg)',
+                            border: '1px solid var(--landing-disclaimer-border)',
                         }}>
                             <span className="text-lg shrink-0 mt-0.5">💱</span>
                             <div className="space-y-1">

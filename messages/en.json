@@ -89,14 +89,17 @@
     "pricing": {
       "title": "Plans & Pricing",
       "subtitle": "Choose the ideal plan for your needs.",
-      "trial": "✨ 15-day free trial with all features on sign up!",
+      "trial": "✨ 14-day free trial with all features — no credit card required!",
+      "trial_price": "14 days free",
+      "trial_desc": "All Pro features for 14 days. No credit card needed.",
+      "trial_no_card": "No credit card required",
       "included_label": "WHAT'S INCLUDED",
       "free": {
         "name": "Free",
         "price": "Free",
         "desc": "For personal use and small organizations.",
         "features": "50 Items,50 Vision AI 🤖,1 House,5 Rooms/house,5 Furniture/room,1 Photos/item,0 Collaborators/house",
-        "excluded": "Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+        "excluded": "Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving,AI Assistant 🤖",
         "button": "Start Free"
       },
       "plus": {
@@ -105,7 +108,7 @@
         "priceMonthly": "/mo",
         "priceBrl": 9.9,
         "desc": "For those who need more space and resources.",
-        "features": "200 Items,600 Vision AI 🤖,3 Houses,15 Rooms/house,15 Furniture/room,3 Photos/item,2 Collaborators/house,Usage history,Ranking (most used),Data export,Consolidation/Moving",
+        "features": "200 Items,200 Vision AI 🤖,3 Houses,15 Rooms/house,15 Furniture/room,1 Photos/item,2 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
         "button": "Subscribe Now",
         "popular": "POPULAR"
       },
@@ -115,7 +118,7 @@
         "priceMonthly": "/mo",
         "priceBrl": 19.9,
         "desc": "For those who need the most out of Tracka.",
-        "features": "2000 Items,10000 Vision AI 🤖,10 Houses,50 Rooms/house,50 Furniture/room,5 Photos/item,10 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving",
+        "features": "2000 Items,2000 Vision AI 🤖,10 Houses,50 Rooms/house,50 Furniture/room,1 Photos/item,10 Collaborators/house,Usage history,Ranking (most used),Import (Excel),Data export,Consolidation/Moving,AI Assistant 🤖",
         "button": "Subscribe Now"
       }
     },
@@ -143,7 +146,8 @@
     "cta": {
       "title": "Ready to organize your life?",
       "subtitle": "Start for free and discover how Tracka can simplify your day.",
-      "button": "Start Now"
+      "button": "Start Now",
+      "badge": "Get started"
     }
   },
   "admin": {
@@ -205,6 +209,21 @@
       "linkLabel": "Text",
       "linkHref": "URL / Route",
       "addLink": "Add Link",
+      "tooltips": "💡 Plan Tooltips",
+      "tooltipsDesc": "Explanatory text shown on hover over pricing features",
+      "tooltip_items": "Items",
+      "tooltip_visionAi": "Vision AI",
+      "tooltip_houses": "Houses",
+      "tooltip_roomsPerHouse": "Rooms/house",
+      "tooltip_furniturePerRoom": "Furniture/room",
+      "tooltip_photosPerItem": "Photos/item",
+      "tooltip_collaboratorsPerHouse": "Collaborators/house",
+      "tooltip_history": "Usage History",
+      "tooltip_ranking": "Ranking",
+      "tooltip_importExcel": "Import",
+      "tooltip_exportData": "Export",
+      "tooltip_consolidation": "Consolidation/Moving",
+      "tooltip_aiAssistant": "AI Assistant",
       "save": "Save",
       "saving": "Saving..."
     },
@@ -246,6 +265,7 @@
       "importExcel": "Import (Excel)",
       "exportData": "Data Export",
       "consolidation": "Consolidation/Moving",
+      "aiAssistant": "AI Assistant 🤖",
       "enabled": "Enabled",
       "disabled": "Disabled",
       "notifBasic": "Basic",

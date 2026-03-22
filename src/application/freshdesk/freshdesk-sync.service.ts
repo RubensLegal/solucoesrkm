@@ -232,7 +232,7 @@ async function getCorporateArticles(): Promise<CorporateArticle[]> {
 function getCorporateSections(): { id: string; name: string; folderName: string }[] {
     return HELP_CATEGORIES.map((cat: HelpCategory) => ({
         id: cat.id,
-        name: `${cat.emoji} ${cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica'}`,
+        name: cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica',
         folderName: cat.translationKey === 'business' ? 'Planos e Assinaturas' : 'Documentação Técnica',
     }));
 }
@@ -260,7 +260,7 @@ async function saveMapping(mapping: FreshdeskMapping) {
 
 // ─── Main sync ───────────────────────────────────────────────────────────────
 
-const CATEGORY_NAME = '🏢 Soluções RKM — Corporativo';
+const CATEGORY_NAME = 'Soluções RKM — Corporativo';
 
 export async function syncCorporateToFreshdesk(triggeredBy: 'admin' | 'cron' = 'admin'): Promise<SyncResult> {
     const result: SyncResult = { success: true, created: 0, updated: 0, errors: [], details: [] };
@@ -287,7 +287,7 @@ export async function syncCorporateToFreshdesk(triggeredBy: 'admin' | 'cron' = '
             let folderId = mapping.folders[section.id];
             if (!folderId) {
                 const created = await freshdeskRequest('POST', `/solutions/categories/${categoryId}/folders`, {
-                    name: `${section.name}`,
+                    name: section.name,
                     description: `${section.folderName} — Soluções RKM`,
                     visibility: 1, // público
                 });
@@ -295,6 +295,13 @@ export async function syncCorporateToFreshdesk(triggeredBy: 'admin' | 'cron' = '
                 mapping.folders[section.id] = folderId;
                 result.created++;
                 result.details.push(`📂 Pasta criada: ${section.name}`);
+            } else {
+                // Atualiza nome da pasta (ex: remover emojis antigos)
+                try {
+                    await freshdeskRequest('PUT', `/solutions/folders/${folderId}`, {
+                        name: section.name,
+                    });
+                } catch { /* ignora erro de update de nome */ }
             }
         }
 
@@ -313,7 +320,6 @@ export async function syncCorporateToFreshdesk(triggeredBy: 'admin' | 'cron' = '
                 title: article.title,
                 description: article.htmlContent,
                 status: 2, // published
-                art_type: 1, // permanent
             };
 
             const articleId = mapping.articles[article.slug];

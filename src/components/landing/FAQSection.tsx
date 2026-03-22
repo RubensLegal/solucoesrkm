@@ -10,7 +10,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { FAQItem } from '@/config/landing.config';
+import type { FAQItem } from '@/types';
 
 interface FAQSectionProps {
     title: string;
@@ -26,22 +26,18 @@ export function FAQSection({ title, items }: FAQSectionProps) {
         <section id="faq" className="py-24 text-white">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-6" style={{
-                        background: 'linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}>{title}</h2>
+                    <h2 className="text-3xl md:text-5xl font-bold mb-6 landing-text-gradient">{title}</h2>
                 </div>
 
                 <div className="space-y-4">
                     {items.map((item, index) => (
                         <div key={index} className="rounded-xl overflow-hidden transition-all duration-300" style={{
                             background: openIndex === index
-                                ? 'linear-gradient(135deg, rgba(30, 30, 60, 0.8), rgba(20, 20, 50, 0.9))'
-                                : 'rgba(20, 20, 30, 0.6)',
+                                ? 'var(--landing-card-bg-active)'
+                                : 'var(--landing-faq-bg)',
                             border: openIndex === index
-                                ? '1px solid rgba(99, 102, 241, 0.2)'
-                                : '1px solid rgba(255, 255, 255, 0.05)',
+                                ? '1px solid var(--landing-cta-border)'
+                                : '1px solid var(--landing-faq-border)',
                         }}>
                             <button
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
